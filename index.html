@@ -24,6 +24,7 @@ body::before{content:"";position:fixed;inset:0;background-image:url("data:image/
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 5%;background:rgba(8,11,18,0.82);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);transition:padding 0.3s;}
 nav.scrolled{padding:12px 5%;}
 .logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-right{display:flex;align-items:center;gap:14px;}
 .nav-links{display:flex;align-items:center;gap:32px;list-style:none;}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s;position:relative;}
 .nav-links a::after{content:"";position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s;}
@@ -242,6 +243,9 @@ footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-c
 @media(max-width:768px){h1{font-size:clamp(1.85rem,7.5vw,2.8rem)!important;word-break:break-word;}.hero{padding:100px 5% 60px;}.hero p{font-size:0.98rem;}.hero-badge{font-size:0.7rem;padding:5px 12px;}
   .features-wrap{grid-template-columns:1fr;}
   nav .nav-links{display:none;}
+  nav{padding:14px 5%;}
+  .nav-right{margin-left:auto;}
+  .nav-account-btn{padding:8px 12px;font-size:0.78rem;}
   footer{flex-direction:column;text-align:center;}
   .hero-stats .divider{display:none;}
   .products-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
@@ -263,7 +267,8 @@ footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-c
 .co-title{font-family:"Syne",sans-serif;font-weight:800;font-size:0.9rem;}
 .co-sub{font-size:0.68rem;color:var(--muted);margin-top:1px;}
 .co-price-badge{margin-left:auto;background:rgba(124,109,250,0.12);border:1px solid rgba(124,109,250,0.22);border-radius:8px;padding:4px 10px;text-align:center;flex-shrink:0;}
-.co-price{font-family:"Syne",sans-serif;font-weight:800;font-size:1rem;background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.co-price{display:flex;flex-direction:column;align-items:center;line-height:1;font-family:"Syne",sans-serif;font-weight:800;font-size:1rem;background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.co-price-cut{font-family:"DM Sans",sans-serif;font-size:0.55rem;font-weight:700;color:var(--muted);text-decoration:line-through;-webkit-text-fill-color:var(--muted);background:none;margin-top:4px;}
 .co-onetime{font-size:0.55rem;color:var(--muted);letter-spacing:0.06em;}
 .co-close{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.8rem;transition:background 0.2s,transform 0.3s;flex-shrink:0;}
 .co-close:hover{background:rgba(255,255,255,0.12);color:var(--text);transform:rotate(90deg);}
@@ -277,6 +282,13 @@ footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-c
 .co-timer-val{font-family:"Syne",sans-serif;font-weight:700;font-size:0.95rem;color:var(--accent3);}
 .co-timer-val.urgent{color:#ef4444;animation:coTick 0.9s ease-in-out infinite;}
 @keyframes coTick{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.co-credit-box{display:none;background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.18);border-radius:10px;padding:10px 12px;margin-bottom:12px;}
+.co-credit-box.show{display:block;}
+.co-credit-title{font-size:0.66rem;font-weight:700;letter-spacing:0.08em;color:var(--accent2);text-transform:uppercase;margin-bottom:6px;}
+.co-credit-row{display:flex;align-items:center;justify-content:space-between;font-size:0.72rem;color:var(--muted);padding:3px 0;gap:10px;}
+.co-credit-row strong{font-family:"Syne",sans-serif;font-size:0.82rem;font-weight:700;color:var(--text);}
+.co-credit-row.total{margin-top:6px;padding-top:8px;border-top:1px solid rgba(79,209,197,0.16);}
+.co-credit-row.total span,.co-credit-row.total strong{color:var(--accent2);}
 .co-qr-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:8px;}
 .co-qr-wrap{display:flex;justify-content:center;align-items:center;margin-bottom:6px;width:100%;}
 .co-qr-frame{background:#fff;border:1.5px solid rgba(124,109,250,0.26);border-radius:18px;padding:12px;cursor:zoom-in;transition:transform 0.2s,box-shadow 0.2s;display:inline-flex;align-items:center;justify-content:center;min-width:224px;min-height:224px;box-shadow:0 10px 28px rgba(0,0,0,0.14);}
@@ -465,13 +477,15 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeCatalog(); })
 <!-- NAV -->
 <nav>
   <a href="#" class="logo">TW STORE</a>
-  <ul class="nav-links">
-    <li><a href="#products">Shop</a></li>
-    <li><a href="#how">How It Works</a></li>
-    <li><a href="#reviews">Reviews</a></li>
-    <li><a href="https://wa.me/15482992818" class="nav-cta">WhatsApp Us &#8599;</a></li>
-    <li><button onclick="openAuthModal()" id="navAccountBtn" class="nav-account-btn">&#128100; Login</button></li>
-  </ul>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#products">Shop</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="https://wa.me/15482992818" class="nav-cta">WhatsApp Us &#8599;</a></li>
+    </ul>
+    <button onclick="openAuthModal()" id="navAccountBtn" class="nav-account-btn">&#128100; Login</button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -789,6 +803,21 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeCatalog(); })
       <div class="co-timer-row">
         <span class="co-timer-label">⏱️ &nbsp;Order expires in</span>
         <span class="co-timer-val" id="coTimerVal">05:00</span>
+      </div>
+      <div class="co-credit-box" id="coCreditBox">
+        <div class="co-credit-title">Referral Credit Applied</div>
+        <div class="co-credit-row">
+          <span>Available wallet credit</span>
+          <strong id="coCreditAvail">₹0</strong>
+        </div>
+        <div class="co-credit-row">
+          <span>Auto discount on this order</span>
+          <strong id="coCreditUsed">-₹0</strong>
+        </div>
+        <div class="co-credit-row total">
+          <span>You pay now</span>
+          <strong id="coPayNow">₹0</strong>
+        </div>
       </div>
       <div class="co-qr-label">Scan QR with any UPI app</div>
       <div class="co-qr-wrap">
@@ -1274,14 +1303,65 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+window._firebaseDb = db;
 
 let currentUser = null;
+
+async function ensureUserReferralDefaults(user, baseData = {}) {
+  if (!user) return;
+  const userRef = doc(db, 'users', user.uid);
+  const snap = await getDoc(userRef);
+  const defaults = {
+    referralCode: 'REF-' + user.uid.substring(0,8).toUpperCase(),
+    walletCredit: 0,
+    lifetimeReferralCredit: 0,
+    creditsUsed: 0,
+    referralOrderCount: 0,
+    referredBy: '',
+    referredByUid: '',
+    referralRewardGranted: false
+  };
+
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      name: user.displayName || user.email?.split('@')[0] || 'User',
+      email: user.email || '',
+      createdAt: serverTimestamp(),
+      orders: 0,
+      totalSpent: 0,
+      ...defaults,
+      ...baseData
+    });
+    return;
+  }
+
+  const data = snap.data() || {};
+  const updates = {};
+  Object.entries(defaults).forEach(([key, value]) => {
+    if (data[key] === undefined || data[key] === null) updates[key] = value;
+  });
+  if (Object.keys(baseData).length) {
+    Object.entries(baseData).forEach(([key, value]) => {
+      if ((data[key] === undefined || data[key] === null || data[key] === '') && value !== undefined) {
+        updates[key] = value;
+      }
+    });
+  }
+  if (Object.keys(updates).length) {
+    await setDoc(userRef, updates, { merge: true });
+  }
+}
 
 // ---- Auth State Listener ----
 onAuthStateChanged(auth, async user => {
   currentUser = user;
   const btn = document.getElementById('navAccountBtn');
   if (user) {
+    try {
+      await ensureUserReferralDefaults(user);
+    } catch (e) {
+      console.log('User defaults sync failed', e);
+    }
     window._currentUserUid = user.uid;
     const name = user.displayName || user.email.split('@')[0];
     btn.textContent = '👤 ' + name.split(' ')[0];
@@ -1310,7 +1390,19 @@ window.doRegister = async function() {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
     await updateProfile(cred.user, { displayName: name });
     await setDoc(doc(db, 'users', cred.user.uid), {
-      name, email, createdAt: serverTimestamp(), orders: 0, totalSpent: 0
+      name,
+      email,
+      createdAt: serverTimestamp(),
+      orders: 0,
+      totalSpent: 0,
+      referralCode: 'REF-' + cred.user.uid.substring(0,8).toUpperCase(),
+      walletCredit: 0,
+      lifetimeReferralCredit: 0,
+      creditsUsed: 0,
+      referralOrderCount: 0,
+      referredBy: '',
+      referredByUid: '',
+      referralRewardGranted: false
     });
     showMsg('Account created! Welcome 🎉', 'success');
     setTimeout(() => {
@@ -1364,8 +1456,24 @@ window.doGoogle = async function() {
     const snap = await getDoc(userRef);
     if (!snap.exists()) {
       await setDoc(userRef, {
-        name: user.displayName, email: user.email,
-        createdAt: serverTimestamp(), orders: 0, totalSpent: 0
+        name: user.displayName,
+        email: user.email,
+        createdAt: serverTimestamp(),
+        orders: 0,
+        totalSpent: 0,
+        referralCode: 'REF-' + user.uid.substring(0,8).toUpperCase(),
+        walletCredit: 0,
+        lifetimeReferralCredit: 0,
+        creditsUsed: 0,
+        referralOrderCount: 0,
+        referredBy: '',
+        referredByUid: '',
+        referralRewardGranted: false
+      });
+    } else {
+      await ensureUserReferralDefaults(user, {
+        name: user.displayName || '',
+        email: user.email || ''
       });
     }
     showMsg('Logged in with Google ✓', 'success');
@@ -1554,6 +1662,10 @@ function firebaseError(code) {
           <div class="dash-stat-num" id="dashSpent">₹0</div>
           <div class="dash-stat-label">Total Spent</div>
         </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-num" id="dashCredit">₹0</div>
+          <div class="dash-stat-label">Wallet Credit</div>
+        </div>
       </div>
 
       <div class="dash-section-title">My Orders</div>
@@ -1628,7 +1740,7 @@ document.getElementById('navAccountBtn').onclick = openAuthModal;
 
 
 <!-- ===================== REFERRAL + REDEEM SYSTEM JS ===================== -->
-<script>
+<script type="text/plain" id="legacyReferralScript">
 const REF_CREDIT = 15;
 
 // ===== GENERATE REFERRAL CODE FROM UID =====
@@ -1782,6 +1894,433 @@ document.addEventListener('DOMContentLoaded', ()=>{
   setTimeout(()=>{
     if(window._currentUserUid) updateRefUI({uid: window._currentUserUid});
   }, 2000);
+});
+</script>
+
+<script>
+const REF_CREDIT = 15;
+const REF_STORAGE_KEY = 'streamox_ref';
+const REF_LINK_FALLBACK = 'https://streamox.store/';
+const REFERRAL_STATE = {
+  user: null,
+  userData: null,
+  walletCredit: 0,
+  appliedCredit: 0,
+  payableAmount: 0,
+  syncing: false
+};
+
+let referralFsPromise = null;
+
+function genRefCode(uid) {
+  return 'REF-' + String(uid || '').substring(0, 8).toUpperCase();
+}
+
+function normalizeRefCode(value) {
+  const code = String(value || '').trim().toUpperCase();
+  return code.startsWith('REF-') ? code : '';
+}
+
+function getPendingReferralCode() {
+  return normalizeRefCode(localStorage.getItem(REF_STORAGE_KEY));
+}
+
+function storePendingReferralCode(code) {
+  const normalized = normalizeRefCode(code);
+  if (!normalized) return;
+  localStorage.setItem(REF_STORAGE_KEY, normalized);
+}
+
+function clearPendingReferralCode() {
+  localStorage.removeItem(REF_STORAGE_KEY);
+}
+
+function getRefBaseUrl() {
+  try {
+    if (window.location.protocol !== 'file:') {
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.hash = '';
+      return url.toString();
+    }
+  } catch (e) {}
+  return REF_LINK_FALLBACK;
+}
+
+function getRefLink(value) {
+  const code = normalizeRefCode(value) || genRefCode(value);
+  const url = new URL(getRefBaseUrl());
+  url.searchParams.set('ref', code);
+  return url.toString();
+}
+
+function formatINR(amount) {
+  const numeric = Number(amount) || 0;
+  return '₹' + numeric.toFixed(Number.isInteger(numeric) ? 0 : 2);
+}
+
+function getWalletPricing(walletCredit, baseAmount) {
+  const originalAmount = Math.max(0, Number(baseAmount) || 0);
+  const availableCredit = Math.max(0, Number(walletCredit) || 0);
+  const creditUsed = Math.min(availableCredit, originalAmount);
+  const payableAmount = Math.max(0, Number((originalAmount - creditUsed).toFixed(2)));
+  return { originalAmount, availableCredit, creditUsed, payableAmount };
+}
+
+function getCheckoutPricing() {
+  if (!coKey || !CO_DATA[coKey]) return getWalletPricing(0, 0);
+  return getWalletPricing(REFERRAL_STATE.walletCredit || 0, CO_DATA[coKey].amt);
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setHtml(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = value;
+}
+
+async function getReferralFirestore() {
+  if (!referralFsPromise) {
+    referralFsPromise = import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+  }
+  return referralFsPromise;
+}
+
+function renderCheckoutCreditInfo() {
+  const creditBox = document.getElementById('coCreditBox');
+  const priceEl = document.getElementById('coPrice');
+  const amountHint = document.getElementById('coAmtHint');
+  if (!creditBox || !priceEl || !amountHint || !coKey || !CO_DATA[coKey]) return;
+
+  const pricing = getCheckoutPricing();
+  REFERRAL_STATE.appliedCredit = pricing.creditUsed;
+  REFERRAL_STATE.payableAmount = pricing.payableAmount;
+
+  setText('coCreditAvail', formatINR(pricing.availableCredit));
+  setText('coCreditUsed', '-' + formatINR(pricing.creditUsed));
+  setText('coPayNow', formatINR(pricing.payableAmount));
+
+  if (pricing.creditUsed > 0) {
+    setHtml('coPrice', `${formatINR(pricing.payableAmount)}<span class="co-price-cut">${formatINR(pricing.originalAmount)}</span>`);
+    amountHint.textContent = pricing.payableAmount.toFixed(pricing.payableAmount % 1 === 0 ? 0 : 2);
+    creditBox.classList.add('show');
+  } else {
+    priceEl.textContent = formatINR(pricing.originalAmount);
+    amountHint.textContent = pricing.originalAmount.toFixed(pricing.originalAmount % 1 === 0 ? 0 : 2);
+    creditBox.classList.remove('show');
+  }
+}
+
+function renderReferralUiForUser(user, userData) {
+  const bubble = document.getElementById('refBubble');
+  if (!bubble) return;
+
+  if (!user || !userData) {
+    bubble.style.display = 'none';
+    setText('refCreditAmt', '₹0');
+    setText('dashCredit', '₹0');
+    setText('dashRefLink', 'Login to generate your referral link');
+    REFERRAL_STATE.user = null;
+    REFERRAL_STATE.userData = null;
+    REFERRAL_STATE.walletCredit = 0;
+    renderCheckoutCreditInfo();
+    return;
+  }
+
+  const referralCode = userData.referralCode || genRefCode(user.uid);
+  const link = getRefLink(referralCode);
+  const walletCredit = Math.max(0, Number(userData.walletCredit) || 0);
+
+  bubble.style.display = 'flex';
+  setText('refLinkBox', link);
+  setText('dashRefLink', link);
+  setText('refCreditAmt', formatINR(walletCredit));
+  setText('dashCredit', formatINR(walletCredit));
+
+  REFERRAL_STATE.user = user;
+  REFERRAL_STATE.userData = userData;
+  REFERRAL_STATE.walletCredit = walletCredit;
+  renderCheckoutCreditInfo();
+}
+
+async function fetchUserReferralData(uid) {
+  const db = window._firebaseDb;
+  if (!db || !uid) return null;
+  const { doc, getDoc } = await getReferralFirestore();
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? snap.data() : null;
+}
+
+async function bindPendingReferralToUser(user, userData) {
+  const db = window._firebaseDb;
+  const pendingCode = getPendingReferralCode();
+  if (!db || !user || !userData || !pendingCode) return userData;
+
+  const ownCode = normalizeRefCode(userData.referralCode || genRefCode(user.uid));
+  if (pendingCode === ownCode || userData.referredByUid) {
+    clearPendingReferralCode();
+    return userData;
+  }
+
+  const { collection, doc, getDocs, query, setDoc, where } = await getReferralFirestore();
+  const snap = await getDocs(query(collection(db, 'users'), where('referralCode', '==', pendingCode)));
+  if (snap.empty) {
+    clearPendingReferralCode();
+    return userData;
+  }
+
+  const referrerDoc = snap.docs[0];
+  if (!referrerDoc || referrerDoc.id === user.uid) {
+    clearPendingReferralCode();
+    return userData;
+  }
+
+  await setDoc(doc(db, 'users', user.uid), {
+    referredBy: pendingCode,
+    referredByUid: referrerDoc.id
+  }, { merge: true });
+
+  clearPendingReferralCode();
+  return {
+    ...userData,
+    referredBy: pendingCode,
+    referredByUid: referrerDoc.id
+  };
+}
+
+async function syncReferralState(user) {
+  if (REFERRAL_STATE.syncing) return;
+  REFERRAL_STATE.syncing = true;
+  try {
+    if (!user || !user.uid) {
+      renderReferralUiForUser(null, null);
+      return;
+    }
+
+    let userData = await fetchUserReferralData(user.uid);
+    if (!userData) {
+      userData = {
+        referralCode: genRefCode(user.uid),
+        walletCredit: 0,
+        referredBy: '',
+        referredByUid: '',
+        referralRewardGranted: false
+      };
+    }
+
+    userData = await bindPendingReferralToUser(user, userData);
+    renderReferralUiForUser(user, userData);
+  } catch (e) {
+    console.log('Referral sync failed', e);
+  } finally {
+    REFERRAL_STATE.syncing = false;
+  }
+}
+
+(function detectRef() {
+  const url = new URL(window.location.href);
+  const ref = normalizeRefCode(url.searchParams.get('ref'));
+  if (ref) {
+    storePendingReferralCode(ref);
+    url.searchParams.delete('ref');
+    try {
+      history.replaceState({}, document.title, url.toString());
+    } catch (e) {}
+  }
+})();
+
+window.toggleRefBubble = function() {
+  const tooltip = document.getElementById('refTooltip');
+  if (tooltip) tooltip.classList.toggle('open');
+};
+
+function copyText(text) {
+  return navigator.clipboard.writeText(text).catch(() => {
+    const area = document.createElement('textarea');
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    document.body.removeChild(area);
+  });
+}
+
+window.copyRefLink = function() {
+  const link = document.getElementById('refLinkBox')?.textContent || getRefBaseUrl();
+  copyText(link);
+  const btn = document.querySelector('.ref-copy-btn');
+  if (btn) {
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = 'Copy Referral Link'; }, 2000);
+  }
+};
+
+window.copyDashRefLink = function() {
+  const link = document.getElementById('dashRefLink')?.textContent || getRefBaseUrl();
+  copyText(link);
+  const btn = document.querySelector('.dash-ref-copy');
+  if (btn) {
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = 'Copy Referral Link'; }, 2000);
+  }
+};
+
+window.shareRef = function(platform) {
+  const link = document.getElementById('dashRefLink')?.textContent || document.getElementById('refLinkBox')?.textContent || getRefBaseUrl();
+  const shareText = 'Use my referral link on TW Store. When you buy, I get ₹15 wallet credit: ' + link;
+  const urls = {
+    whatsapp: 'https://wa.me/?text=' + encodeURIComponent(shareText),
+    telegram: 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent('Get premium subscriptions at low prices on TW Store'),
+    twitter: 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText),
+    instagram: 'https://www.instagram.com/'
+  };
+  window.open(urls[platform] || urls.whatsapp, '_blank');
+};
+
+window.updateRefUI = function(user) {
+  syncReferralState(user);
+};
+
+const _baseGetCheckoutUPIInfo = window.getCheckoutUPIInfo;
+window.getCheckoutUPIInfo = function() {
+  const info = _baseGetCheckoutUPIInfo ? _baseGetCheckoutUPIInfo() : null;
+  if (!info) return null;
+  const pricing = getCheckoutPricing();
+  info.amount = pricing.payableAmount.toFixed(2);
+  info.note = window._currentOrderId || info.note;
+  return info;
+};
+
+const _baseOpenCheckout = window.openCheckout;
+window.openCheckout = function(key) {
+  _baseOpenCheckout(key);
+  renderCheckoutCreditInfo();
+  if (REFERRAL_STATE.user || window._currentUserUid) {
+    syncReferralState(REFERRAL_STATE.user || { uid: window._currentUserUid });
+  }
+  setTimeout(() => {
+    renderCheckoutCreditInfo();
+    if (typeof renderCheckoutQR === 'function') renderCheckoutQR();
+  }, 80);
+};
+
+window.coPaid = async function() {
+  if (!coKey || !CO_DATA[coKey] || window._savingReferralOrder) return;
+
+  const db = window._firebaseDb;
+  const uid = window._currentUserUid;
+  const product = CO_DATA[coKey];
+  const orderId = window._currentOrderId || generateOrderId();
+  const baseAmount = Number(product.amt) || 0;
+  let pricing = getCheckoutPricing();
+  let userData = REFERRAL_STATE.userData || null;
+  let rewardGranted = false;
+
+  window._savingReferralOrder = true;
+
+  try {
+    if (db && uid) {
+      const { doc, getDoc, increment, serverTimestamp, setDoc } = await getReferralFirestore();
+      const userRef = doc(db, 'users', uid);
+      const userSnap = await getDoc(userRef);
+      userData = userSnap.exists() ? userSnap.data() : (userData || {});
+      pricing = getWalletPricing(userData.walletCredit || 0, baseAmount);
+
+      const orderRef = doc(db, 'orders', orderId);
+      const existingOrder = await getDoc(orderRef);
+
+      if (!existingOrder.exists()) {
+        if (userData.referredByUid && !userData.referralRewardGranted && userData.referredByUid !== uid) {
+          await setDoc(doc(db, 'users', userData.referredByUid), {
+            walletCredit: increment(REF_CREDIT),
+            lifetimeReferralCredit: increment(REF_CREDIT),
+            referralOrderCount: increment(1)
+          }, { merge: true });
+          rewardGranted = true;
+        }
+
+        await setDoc(orderRef, {
+          orderId,
+          uid,
+          product: coKey,
+          productName: product.name,
+          amount: pricing.payableAmount,
+          originalAmount: pricing.originalAmount,
+          discount: pricing.creditUsed,
+          discountSource: pricing.creditUsed > 0 ? 'referral_credit' : '',
+          status: 'pending',
+          referredBy: userData.referredBy || '',
+          referredByUid: userData.referredByUid || '',
+          referralCreditAwarded: rewardGranted,
+          referralCreditAmount: rewardGranted ? REF_CREDIT : 0,
+          createdAt: serverTimestamp(),
+          credentials: ''
+        });
+
+        const updatedWallet = Math.max(0, (Number(userData.walletCredit) || 0) - pricing.creditUsed);
+        const buyerUpdate = {
+          walletCredit: updatedWallet,
+          orders: increment(1),
+          totalSpent: increment(pricing.payableAmount)
+        };
+        if (pricing.creditUsed > 0) buyerUpdate.creditsUsed = increment(pricing.creditUsed);
+        if (rewardGranted) buyerUpdate.referralRewardGranted = true;
+        await setDoc(userRef, buyerUpdate, { merge: true });
+
+        userData = {
+          ...userData,
+          walletCredit: updatedWallet,
+          creditsUsed: (Number(userData.creditsUsed) || 0) + pricing.creditUsed,
+          referralRewardGranted: userData.referralRewardGranted || rewardGranted
+        };
+        renderReferralUiForUser(REFERRAL_STATE.user || { uid }, userData);
+      }
+    }
+  } catch (e) {
+    console.log('Order save error', e);
+  } finally {
+    window._savingReferralOrder = false;
+  }
+
+  const message = [
+    `Hi! I just placed an order for *${product.name}*.`,
+    `Order ID: *${orderId}*`,
+    pricing.creditUsed > 0 ? `Original price: *${formatINR(pricing.originalAmount)}*` : '',
+    pricing.creditUsed > 0 ? `Referral credit used: *${formatINR(pricing.creditUsed)}*` : '',
+    `Amount paid: *${formatINR(pricing.payableAmount)}*`,
+    'Sending my payment screenshot now, please confirm my order.'
+  ].filter(Boolean).join(' | ');
+
+  const waLink = 'https://wa.me/' + CO_WA + '?text=' + encodeURIComponent(message);
+  document.getElementById('coWaBtn').href = waLink;
+  document.getElementById('cos1').className = 'co-step done';
+  document.getElementById('cos2').className = 'co-step active';
+  document.getElementById('coBodyMain').style.display = 'none';
+  document.getElementById('coSuccess').classList.add('show');
+
+  setTimeout(() => {
+    window.open(waLink, '_blank');
+    document.getElementById('cos2').className = 'co-step done';
+    document.getElementById('cos3').className = 'co-step active';
+  }, 1000);
+};
+
+const _baseOpenDashboard = window.openDashboard;
+window.openDashboard = async function() {
+  await _baseOpenDashboard();
+  if (REFERRAL_STATE.user || window._currentUserUid) {
+    await syncReferralState(REFERRAL_STATE.user || { uid: window._currentUserUid });
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderCheckoutCreditInfo();
+  if (window._currentUserUid) {
+    syncReferralState({ uid: window._currentUserUid });
+  }
 });
 </script>
 
