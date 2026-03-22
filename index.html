@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>TW STORE — Premium Digital Accounts</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -208,6 +209,11 @@ section{padding:90px 5%;position:relative;z-index:1;}
 
 /* FOOTER */
 footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;}
+
+.footer-socials{display:flex;gap:12px;justify-content:center;margin-bottom:20px;}
+.footer-social-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--muted);transition:background 0.2s,color 0.2s,transform 0.3s,border-color 0.2s;}
+.footer-social-btn:hover{background:rgba(124,109,250,0.15);color:var(--accent);border-color:rgba(124,109,250,0.3);transform:translateY(-3px);}
+
 .footer-logo{font-family:"Syne",sans-serif;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .footer-links{display:flex;gap:24px;flex-wrap:wrap;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.85rem;transition:color 0.2s;}
@@ -713,6 +719,17 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeCatalog(); })
     <a href="#">Privacy Policy</a>
     <a href="#">Terms</a>
   </div>
+  <div class="footer-socials">
+    <a href="https://www.instagram.com/streamox.store?igsh=N25pY24xcHlxejdx" target="_blank" class="footer-social-btn" title="Instagram">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://x.com/Streamoxx" target="_blank" class="footer-social-btn" title="Twitter/X">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a href="https://discord.gg/dPVpzqf7Cp" target="_blank" class="footer-social-btn" title="Discord">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.101 18.08.112 18.1.12 18.12a19.879 19.879 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+    </a>
+  </div>
   <div class="footer-copy">&copy; 2026 TW STORE &middot; All rights reserved</div>
 </footer>
 
@@ -798,9 +815,38 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeCatalog(); })
           <img src="data:image/png;base64,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" alt="BHIM"/><span>BHIM</span>
         </button>
       </div>      </div>
+      <!-- ORDER ID -->
+      <div class="co-order-id-box">
+        <div class="co-order-id-label">📋 Your Order ID</div>
+        <div class="co-order-id-val" id="coOrderIdVal">SX-000000-XXXX</div>
+        <div class="co-order-id-hint">Add this in payment note if paying via QR</div>
+      </div>
+
+      <!-- DYNAMIC QR CODE -->
+      <div class="co-qr-section">
+        <div class="co-qr-label">Scan to Pay</div>
+        <div class="co-qr-wrap">
+          <div id="coDynamicQR" class="co-dynamic-qr"></div>
+        </div>
+        <div class="co-qr-hint">Amount + Order ID auto-filled ✓</div>
+      </div>
+
+      <div class="co-divider-text">— or pay with UPI app —</div>
+
       <div class="co-uid-row">
         <span class="co-uid">tanish.ind@fam</span>
         <button class="co-uid-copy" id="coUidCopy" onclick="coUidCopyFn()">Copy ID</button>
+      </div>
+      <div class="co-redeem-wrap">
+        <div class="co-redeem-row">
+          <input type="text" id="coRedeemInput" placeholder="Have a code? e.g. SAVE20 or REF-XXXXX" class="co-redeem-input" oninput="this.value=this.value.toUpperCase()"/>
+          <button class="co-redeem-btn" onclick="applyRedeemCode()">Apply</button>
+        </div>
+        <div class="co-redeem-msg" id="coRedeemMsg"></div>
+      </div>
+      <div class="co-final-amt-row" id="coFinalAmtRow" style="display:none">
+        <span>Discount Applied 🎉</span>
+        <span id="coFinalAmt" style="color:var(--accent2);font-weight:700"></span>
       </div>
       <button class="co-paid-btn" onclick="coPaid()">✅ &nbsp;I've Paid — Send Screenshot</button>
       <p class="co-paid-note">⚠️ Only a few slots left! Send your screenshot on WhatsApp — delivery within 3 hrs of verification. 🔒</p>
@@ -836,13 +882,56 @@ const CO_DATA = {
 };
 
 function openCheckoutFromCatalog(key) {
+  if (!window._currentUserUid) {
+    closeCatalog();
+    setTimeout(() => {
+      openAuthModal();
+      // Store pending product to open after login
+      window._pendingCheckoutKey = key;
+      const msg = document.getElementById('authMsg');
+      if(msg) { msg.textContent = '⚠️ Please login first to place your order!'; msg.className = 'auth-msg error'; }
+    }, 220);
+    return;
+  }
   closeCatalog();
   setTimeout(() => openCheckout(key), 220);
+}
+
+function generateOrderId() {
+  const now = new Date();
+  const date = now.getFullYear().toString().slice(2) +
+    String(now.getMonth()+1).padStart(2,'0') +
+    String(now.getDate()).padStart(2,'0');
+  const rand = Math.random().toString(36).substring(2,6).toUpperCase();
+  return 'SX-' + date + '-' + rand;
+}
+
+function generateDynamicQR(amt, productName, orderId) {
+  const pa = 'tanish.ind@fam';
+  const pn = 'Streamox';
+  const tn = encodeURIComponent(orderId + '-' + productName.replace(/\s+/g,'-'));
+  const upiString = `upi://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`;
+  const qrContainer = document.getElementById('coDynamicQR');
+  qrContainer.innerHTML = '';
+  try {
+    new QRCode(qrContainer, {
+      text: upiString,
+      width: 180,
+      height: 180,
+      colorDark: '#ffffff',
+      colorLight: '#0d1120',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {
+    qrContainer.innerHTML = '<div style="color:var(--muted);font-size:0.75rem;padding:20px;text-align:center">QR unavailable<br>Use UPI buttons below</div>';
+  }
 }
 
 function openCheckout(key) {
   const d = CO_DATA[key]; if (!d) return;
   coKey = key;
+  // Generate unique order ID
+  window._currentOrderId = generateOrderId();
   const logoEl = document.getElementById('coLogo');
   logoEl.innerHTML = (typeof IMGS !== 'undefined' && IMGS[key])
     ? `<img src="${IMGS[key]}" style="width:38px;height:38px;object-fit:cover;border-radius:10px;display:block"/>`
@@ -856,6 +945,11 @@ function openCheckout(key) {
   ['cos1','cos2','cos3'].forEach((id,i) => document.getElementById(id).className = 'co-step' + (i===0?' active':''));
   const cb = document.getElementById('coUidCopy');
   cb.textContent = 'Copy ID'; cb.className = 'co-uid-copy';
+  // Show Order ID
+  document.getElementById('coOrderIdVal').textContent = window._currentOrderId;
+  // Generate dynamic QR
+  const finalAmt = window._discountedAmt || d.amt;
+  generateDynamicQR(finalAmt, d.name, window._currentOrderId);
   startCoTimer(5*60);
   document.getElementById('coBackdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -887,10 +981,11 @@ function startCoTimer(secs) {
 
 function openUPI(app) {
   if (!coKey || !CO_DATA[coKey]) return;
-  const amt = CO_DATA[coKey].amt;
+  const amt = window._discountedAmt || CO_DATA[coKey].amt;
   const pa = 'tanish.ind@fam';
   const pn = 'Streamox';
-  const tn = encodeURIComponent(CO_DATA[coKey].name);
+  const orderId = window._currentOrderId || generateOrderId();
+  const tn = encodeURIComponent(orderId + '-' + CO_DATA[coKey].name.replace(/\s+/g,'-'));
   const urls = {
     gpay:    `gpay://upi/pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
     phonepe: `phonepe://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
@@ -898,9 +993,7 @@ function openUPI(app) {
     fampay:  `upi://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
     bhim:    `upi://pay?pa=${pa}&pn=${pn}&am=${amt}&cu=INR&tn=${tn}`,
   };
-  // FamPay uses standard UPI deep link; try app-specific then fallback
-  const url = urls[app] || urls.bhim;
-  window.location.href = url;
+  window.location.href = urls[app] || urls.bhim;
 }
 
 function coUidCopyFn() {
@@ -917,7 +1010,10 @@ function coUidCopyFn() {
 function coPaid() {
   if (!coKey || !CO_DATA[coKey]) return;
   const d = CO_DATA[coKey];
-  const waLink = 'https://wa.me/' + CO_WA + '?text=' + encodeURIComponent(d.msg);
+  const orderId = window._currentOrderId || 'N/A';
+  const amt = window._discountedAmt || d.amt;
+  const customMsg = d.msg.replace('Sending', 'Order ID: *' + orderId + '* | Sending').replace('₹' + d.amt, '₹' + amt);
+  const waLink = 'https://wa.me/' + CO_WA + '?text=' + encodeURIComponent(customMsg);
   document.getElementById('coWaBtn').href = waLink;
   document.getElementById('cos1').className = 'co-step done';
   document.getElementById('cos2').className = 'co-step active';
@@ -939,6 +1035,34 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeCheckout(); closeLightbox(); closeAuthModal(); closeDashboard(); }
 });
 </script>
+
+
+<!-- REFERRAL FLOATING BUBBLE -->
+<div class="ref-bubble" id="refBubble" style="display:none">
+  <div class="ref-bubble-tooltip" id="refTooltip">
+    <div class="ref-credit-pill">
+      <span>💰 Your Credits</span>
+      <span id="refCreditAmt">₹0</span>
+    </div>
+    <div class="ref-tooltip-title">🎁 Invite Friends — Earn ₹15</div>
+    <div class="ref-tooltip-sub">Share your link. When your friend buys anything, you automatically get ₹15 credit!</div>
+    <div class="ref-link-box" id="refLinkBox">Loading your link...</div>
+    <button class="ref-copy-btn" onclick="copyRefLink()">📋 Copy Referral Link</button>
+    <div class="ref-share-row">
+      <button class="ref-share-btn" onclick="shareRef('whatsapp')">💬 WhatsApp</button>
+      <button class="ref-share-btn" onclick="shareRef('telegram')">✈️ Telegram</button>
+      <button class="ref-share-btn" onclick="shareRef('twitter')">🐦 Twitter</button>
+      <button class="ref-share-btn" onclick="shareRef('instagram')">📸 Insta</button>
+    </div>
+  </div>
+  <div style="position:relative;display:flex;align-items:center">
+    <span class="ref-bubble-label">🎁 Earn ₹15</span>
+    <button class="ref-bubble-btn" onclick="toggleRefBubble()" title="Your Referral Link">
+      🎁
+      <span class="ref-bubble-badge">₹</span>
+    </button>
+  </div>
+</div>
 
 <!-- ===================== ACCOUNT SYSTEM CSS ===================== -->
 <style>
@@ -982,6 +1106,62 @@ document.addEventListener('keydown', e => {
 .auth-msg.success{color:var(--accent2);}
 .auth-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+
+
+/* ORDER ID + DYNAMIC QR */
+.co-order-id-box{background:rgba(124,109,250,0.08);border:1px solid rgba(124,109,250,0.2);border-radius:10px;padding:12px 14px;margin-bottom:12px;text-align:center;}
+.co-order-id-label{font-size:0.65rem;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;}
+.co-order-id-val{font-family:"Syne",sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:0.05em;}
+.co-order-id-hint{font-size:0.65rem;color:var(--muted);margin-top:3px;}
+.co-qr-section{display:flex;flex-direction:column;align-items:center;margin-bottom:12px;}
+.co-qr-label{font-size:0.72rem;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;}
+.co-qr-wrap{background:#0d1120;border:1px solid rgba(124,109,250,0.2);border-radius:14px;padding:14px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(124,109,250,0.1);}
+.co-dynamic-qr img{border-radius:6px;display:block;}
+.co-dynamic-qr canvas{border-radius:6px;display:block;}
+.co-qr-hint{font-size:0.65rem;color:var(--accent2);margin-top:8px;font-weight:600;}
+.co-divider-text{text-align:center;color:var(--muted);font-size:0.72rem;margin:10px 0;letter-spacing:0.05em;}
+
+/* REDEEM CODE IN CHECKOUT */
+.co-redeem-wrap{margin-bottom:12px;}
+.co-redeem-row{display:flex;gap:8px;margin-bottom:6px;}
+.co-redeem-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:9px;font-family:"DM Sans",sans-serif;font-size:0.82rem;outline:none;transition:border-color 0.2s;}
+.co-redeem-input:focus{border-color:rgba(124,109,250,0.5);}
+.co-redeem-input::placeholder{color:rgba(107,122,153,0.5);font-size:0.75rem;}
+.co-redeem-btn{background:rgba(124,109,250,0.15);border:1px solid rgba(124,109,250,0.3);color:var(--accent);padding:10px 16px;border-radius:9px;font-family:"DM Sans",sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.co-redeem-btn:hover{background:rgba(124,109,250,0.25);}
+.co-redeem-msg{font-size:0.75rem;min-height:16px;transition:color 0.2s;}
+.co-redeem-msg.success{color:var(--accent2);}
+.co-redeem-msg.error{color:#f472b6;}
+.co-final-amt-row{display:flex;justify-content:space-between;align-items:center;background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.2);border-radius:9px;padding:9px 14px;margin-bottom:12px;font-size:0.82rem;}
+
+/* REFERRAL FLOATING BUBBLE */
+.ref-bubble{position:fixed;bottom:86px;right:22px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.ref-bubble-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#5b4de8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 20px rgba(124,109,250,0.45);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.3s;position:relative;}
+.ref-bubble-label{position:absolute;right:58px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;font-size:0.6rem;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;letter-spacing:0.05em;pointer-events:none;box-shadow:0 2px 8px rgba(124,109,250,0.4);}
+.ref-bubble-btn:hover{transform:scale(1.12);box-shadow:0 8px 32px rgba(124,109,250,0.6);}
+.ref-bubble-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#f472b6;border-radius:50%;font-size:0.55rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;animation:badgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;}
+.ref-bubble-tooltip{background:rgba(8,11,18,0.95);border:1px solid rgba(124,109,250,0.3);border-radius:14px;padding:16px;width:260px;box-shadow:0 16px 48px rgba(0,0,0,0.5);animation:fadeUp 0.3s ease both;display:none;}
+.ref-bubble-tooltip.open{display:block;}
+.ref-tooltip-title{font-family:"Syne",sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:4px;}
+.ref-tooltip-sub{color:var(--muted);font-size:0.72rem;margin-bottom:12px;line-height:1.5;}
+.ref-link-box{background:rgba(124,109,250,0.08);border:1px solid rgba(124,109,250,0.2);border-radius:8px;padding:8px 10px;font-size:0.68rem;color:var(--accent);word-break:break-all;margin-bottom:10px;font-family:monospace;}
+.ref-copy-btn{display:block;width:100%;background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;border:none;padding:9px;border-radius:8px;font-family:"DM Sans",sans-serif;font-weight:600;font-size:0.78rem;cursor:pointer;margin-bottom:8px;transition:opacity 0.2s;}
+.ref-copy-btn:hover{opacity:0.9;}
+.ref-share-row{display:flex;gap:7px;}
+.ref-share-btn{flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);font-size:0.68rem;font-weight:600;cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;text-align:center;}
+.ref-share-btn:hover{background:rgba(255,255,255,0.09);color:var(--text);border-color:rgba(255,255,255,0.15);}
+.ref-credit-pill{display:flex;align-items:center;justify-content:space-between;background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.2);border-radius:8px;padding:7px 10px;margin-bottom:8px;font-size:0.72rem;}
+.ref-credit-pill span:first-child{color:var(--muted);}
+.ref-credit-pill span:last-child{color:var(--accent2);font-weight:700;font-family:"Syne",sans-serif;}
+
+/* DASHBOARD REFERRAL SECTION */
+.dash-ref-box{background:rgba(124,109,250,0.06);border:1px solid rgba(124,109,250,0.18);border-radius:14px;padding:16px;margin-bottom:10px;}
+.dash-ref-link{font-size:0.72rem;color:var(--accent);word-break:break-all;background:rgba(124,109,250,0.08);padding:8px 10px;border-radius:8px;margin:8px 0;font-family:monospace;}
+.dash-ref-copy{display:block;width:100%;background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;border:none;padding:10px;border-radius:9px;font-family:"DM Sans",sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;margin-bottom:8px;}
+.dash-ref-share-row{display:flex;gap:8px;}
+.dash-ref-share-btn{flex:1;padding:9px 4px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);font-size:0.72rem;font-weight:600;cursor:pointer;transition:background 0.2s,color 0.2s;}
+.dash-ref-share-btn:hover{background:rgba(255,255,255,0.09);color:var(--text);}
 
 /* DASHBOARD MODAL */
 .dash-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
@@ -1053,14 +1233,18 @@ onAuthStateChanged(auth, async user => {
   currentUser = user;
   const btn = document.getElementById('navAccountBtn');
   if (user) {
+    window._currentUserUid = user.uid;
     const name = user.displayName || user.email.split('@')[0];
     btn.textContent = '👤 ' + name.split(' ')[0];
     btn.classList.add('logged-in');
     btn.onclick = openDashboard;
+    if(window.updateRefUI) updateRefUI(user);
   } else {
+    window._currentUserUid = null;
     btn.textContent = '👤 Login';
     btn.classList.remove('logged-in');
     btn.onclick = openAuthModal;
+    if(window.updateRefUI) updateRefUI(null);
   }
 });
 
@@ -1080,7 +1264,16 @@ window.doRegister = async function() {
       name, email, createdAt: serverTimestamp(), orders: 0, totalSpent: 0
     });
     showMsg('Account created! Welcome 🎉', 'success');
-    setTimeout(() => { closeAuthModal(); openDashboard(); }, 1200);
+    setTimeout(() => {
+      closeAuthModal();
+      if(window._pendingCheckoutKey) {
+        const k = window._pendingCheckoutKey;
+        window._pendingCheckoutKey = null;
+        openCheckout(k);
+      } else {
+        openDashboard();
+      }
+    }, 1200);
   } catch(e) {
     showMsg(firebaseError(e.code), 'error');
   }
@@ -1096,7 +1289,16 @@ window.doLogin = async function() {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     showMsg('Welcome back! 👋', 'success');
-    setTimeout(() => { closeAuthModal(); openDashboard(); }, 900);
+    setTimeout(() => {
+      closeAuthModal();
+      if(window._pendingCheckoutKey) {
+        const k = window._pendingCheckoutKey;
+        window._pendingCheckoutKey = null;
+        openCheckout(k);
+      } else {
+        openDashboard();
+      }
+    }, 900);
   } catch(e) {
     showMsg(firebaseError(e.code), 'error');
   }
@@ -1118,7 +1320,16 @@ window.doGoogle = async function() {
       });
     }
     showMsg('Logged in with Google ✓', 'success');
-    setTimeout(() => { closeAuthModal(); openDashboard(); }, 900);
+    setTimeout(() => {
+      closeAuthModal();
+      if(window._pendingCheckoutKey) {
+        const k = window._pendingCheckoutKey;
+        window._pendingCheckoutKey = null;
+        openCheckout(k);
+      } else {
+        openDashboard();
+      }
+    }, 900);
   } catch(e) {
     showMsg('Google sign-in failed. Try again.', 'error');
   }
@@ -1308,6 +1519,19 @@ function firebaseError(code) {
         <div class="dash-info-row"><span>Warranty</span><span>✓ Lifetime on all orders</span></div>
       </div>
 
+      <div class="dash-section-title">🎁 Your Referral Link</div>
+      <div class="dash-ref-box">
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">Share this link → Friend buys → You get <span style="color:var(--accent2);font-weight:700">₹15 credit</span> automatically!</div>
+        <div class="dash-ref-link" id="dashRefLink">Loading...</div>
+        <button class="dash-ref-copy" onclick="copyDashRefLink()">📋 Copy Referral Link</button>
+        <div class="dash-ref-share-row">
+          <button class="dash-ref-share-btn" onclick="shareRef('whatsapp')">💬 WhatsApp</button>
+          <button class="dash-ref-share-btn" onclick="shareRef('telegram')">✈️ Telegram</button>
+          <button class="dash-ref-share-btn" onclick="shareRef('twitter')">🐦 Twitter</button>
+          <button class="dash-ref-share-btn" onclick="shareRef('instagram')">📸 Insta</button>
+        </div>
+      </div>
+
       <div class="dash-section-title">Need Help?</div>
       <a href="https://wa.me/15482992818?text=Hi!+I+need+help+with+my+order." target="_blank" class="dash-wa-btn">
         💬 Contact Support on WhatsApp
@@ -1351,6 +1575,274 @@ function switchTab(tab) {
 }
 // Default: open auth modal on nav button click
 document.getElementById('navAccountBtn').onclick = openAuthModal;
+</script>
+
+
+<!-- ===================== REFERRAL + REDEEM SYSTEM JS ===================== -->
+<script>
+// ===== 30 UNIQUE PROMO CODES (₹20 off each, never expire) =====
+const PROMO_CODES = {
+  'STREAM01':'promo','STREAM02':'promo','STREAM03':'promo','STREAM04':'promo','STREAM05':'promo',
+  'STREAM06':'promo','STREAM07':'promo','STREAM08':'promo','STREAM09':'promo','STREAM10':'promo',
+  'TW2026A':'promo','TW2026B':'promo','TW2026C':'promo','TW2026D':'promo','TW2026E':'promo',
+  'TWVIP001':'promo','TWVIP002':'promo','TWVIP003':'promo','TWVIP004':'promo','TWVIP005':'promo',
+  'LAUNCH01':'promo','LAUNCH02':'promo','LAUNCH03':'promo','LAUNCH04':'promo','LAUNCH05':'promo',
+  'SAVE2026A':'promo','SAVE2026B':'promo','SAVE2026C':'promo','SAVE2026D':'promo','SAVE2026E':'promo'
+};
+const PROMO_DISCOUNT = 20;
+const REF_CREDIT = 15;
+const REF_DISCOUNT = 15;
+
+let appliedDiscount = 0;
+let appliedCode = '';
+
+// ===== GENERATE REFERRAL CODE FROM UID =====
+function genRefCode(uid) {
+  return 'REF-' + uid.substring(0,8).toUpperCase();
+}
+
+function getRefLink(uid) {
+  return 'https://streamox.store?ref=' + genRefCode(uid);
+}
+
+// ===== DETECT REFERRAL ON PAGE LOAD =====
+(function detectRef(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) {
+    sessionStorage.setItem('streamox_ref', ref);
+  }
+})();
+
+// ===== APPLY REDEEM CODE =====
+window.applyRedeemCode = async function() {
+  if (!coKey || !CO_DATA[coKey]) return;
+  const input = document.getElementById('coRedeemInput');
+  const msg = document.getElementById('coRedeemMsg');
+  const code = input.value.trim().toUpperCase();
+  if (!code) { msg.textContent = 'Please enter a code'; msg.className = 'co-redeem-msg error'; return; }
+
+  msg.textContent = '⏳ Checking code...'; msg.className = 'co-redeem-msg';
+
+  // Check referral credit (REF- prefix)
+  if (code.startsWith('REF-') && code.length === 12) {
+    const myCredit = parseInt(localStorage.getItem('sx_credit_' + (window._currentUserUid||'')) || '0');
+    if (myCredit >= REF_DISCOUNT) {
+      appliedDiscount = REF_DISCOUNT;
+      appliedCode = 'REFCREDIT';
+      showDiscountApplied(REF_DISCOUNT, '₹15 referral credit applied! 🎉');
+    } else {
+      msg.textContent = '❌ No referral credit available'; msg.className = 'co-redeem-msg error';
+    }
+    return;
+  }
+
+  // Check promo codes via Firebase (1-time use globally)
+  if (PROMO_CODES[code]) {
+    try {
+      const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      const db = getFirestore();
+      const codeRef = doc(db, 'promo_codes', code);
+      const snap = await getDoc(codeRef);
+      if (snap.exists() && snap.data().used) {
+        msg.textContent = '❌ This code has already been used by someone!'; msg.className = 'co-redeem-msg error';
+        return;
+      }
+      appliedDiscount = PROMO_DISCOUNT;
+      appliedCode = code;
+      showDiscountApplied(PROMO_DISCOUNT, '₹20 promo discount applied! 🎉');
+    } catch(e) {
+      msg.textContent = '❌ Error checking code. Try again.'; msg.className = 'co-redeem-msg error';
+    }
+    return;
+  }
+
+  msg.textContent = '❌ Invalid code. Try again!'; msg.className = 'co-redeem-msg error';
+};
+
+function showDiscountApplied(disc, message) {
+  const msg = document.getElementById('coRedeemMsg');
+  msg.textContent = '✅ ' + message; msg.className = 'co-redeem-msg success';
+  const origAmt = CO_DATA[coKey].amt;
+  const finalAmt = Math.max(origAmt - disc, 0);
+  document.getElementById('coFinalAmtRow').style.display = 'flex';
+  document.getElementById('coFinalAmt').textContent = 'Pay ₹' + finalAmt + ' (saved ₹' + disc + ')';
+  document.getElementById('coAmtHint').textContent = finalAmt;
+  document.getElementById('coPrice').textContent = '₹' + finalAmt;
+  // Update UPI amount
+  window._discountedAmt = finalAmt;
+}
+
+// ===== OVERRIDE openUPI to use discounted amount =====
+const _origOpenUPI = window.openUPI;
+window.openUPI = function(app) {
+  if (!coKey || !CO_DATA[coKey]) return;
+  const amt = window._discountedAmt || CO_DATA[coKey].amt;
+  const pa = 'tanish.ind@fam';
+  const pn = 'Streamox';
+  const tn = encodeURIComponent(CO_DATA[coKey].name);
+  const urls = {
+    gpay:    'gpay://upi/pay?pa=' + pa + '&pn=' + pn + '&am=' + amt + '&cu=INR&tn=' + tn,
+    phonepe: 'phonepe://pay?pa=' + pa + '&pn=' + pn + '&am=' + amt + '&cu=INR&tn=' + tn,
+    paytm:   'paytmmp://pay?pa=' + pa + '&pn=' + pn + '&am=' + amt + '&cu=INR&tn=' + tn,
+    fampay:  'upi://pay?pa=' + pa + '&pn=' + pn + '&am=' + amt + '&cu=INR&tn=' + tn,
+    bhim:    'upi://pay?pa=' + pa + '&pn=' + pn + '&am=' + amt + '&cu=INR&tn=' + tn,
+  };
+  window.location.href = urls[app] || urls.bhim;
+};
+
+// Reset discount when checkout opens
+const _origOpenCheckout = window.openCheckout;
+window.openCheckout = function(key) {
+  _origOpenCheckout(key);
+  appliedDiscount = 0; appliedCode = '';
+  window._discountedAmt = null;
+  const msg = document.getElementById('coRedeemMsg');
+  if(msg) { msg.textContent = ''; msg.className = 'co-redeem-msg'; }
+  const inp = document.getElementById('coRedeemInput');
+  if(inp) inp.value = '';
+  const row = document.getElementById('coFinalAmtRow');
+  if(row) row.style.display = 'none';
+  // Auto-fill referral credit if user has it
+  const uid = window._currentUserUid;
+  if (uid) {
+    const credit = parseInt(localStorage.getItem('sx_credit_' + uid)||'0');
+    if (credit >= 15) {
+      if(inp) inp.value = genRefCode(uid);
+    }
+  }
+};
+
+// Mark promo code as used after payment
+const _origCoPaid = window.coPaid;
+window.coPaid = function() {
+  if (appliedCode && appliedCode !== 'REFCREDIT' && PROMO_CODES[appliedCode]) {
+    // Mark as used in Firebase — globally 1 time use
+    try {
+      const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      const db = getFirestore();
+      await setDoc(doc(db, 'promo_codes', appliedCode), {
+        used: true,
+        usedBy: window._currentUserUid || 'guest',
+        usedAt: new Date().toISOString()
+      });
+    } catch(e) { console.log('Code mark error', e); }
+  }
+  if (appliedCode === 'REFCREDIT') {
+    const uid = window._currentUserUid || '';
+    const cur = parseInt(localStorage.getItem('sx_credit_' + uid)||'0');
+    localStorage.setItem('sx_credit_' + uid, Math.max(cur - REF_DISCOUNT, 0));
+  }
+  // Give credit to referrer if referred
+  const ref = sessionStorage.getItem('streamox_ref');
+  if (ref) {
+    const refKey = 'sx_credit_ref_' + ref;
+    const cur = parseInt(localStorage.getItem(refKey)||'0');
+    localStorage.setItem(refKey, cur + REF_CREDIT);
+    sessionStorage.removeItem('streamox_ref');
+  }
+
+  // Save order to Firebase
+  if (window._currentUserUid && window._currentOrderId && coKey && CO_DATA[coKey]) {
+    try {
+      const { getFirestore, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      const db = getFirestore();
+      const amt = window._discountedAmt || CO_DATA[coKey].amt;
+      await setDoc(doc(db, 'orders', window._currentOrderId), {
+        orderId: window._currentOrderId,
+        uid: window._currentUserUid,
+        product: coKey,
+        productName: CO_DATA[coKey].name,
+        amount: amt,
+        originalAmount: CO_DATA[coKey].amt,
+        discount: appliedDiscount || 0,
+        discountCode: appliedCode || '',
+        status: 'pending',
+        referredBy: ref || '',
+        createdAt: serverTimestamp(),
+        credentials: ''
+      });
+    } catch(e) { console.log('Order save error', e); }
+  }
+
+  _origCoPaid();
+};
+
+// ===== REFERRAL BUBBLE =====
+window.toggleRefBubble = function() {
+  const t = document.getElementById('refTooltip');
+  t.classList.toggle('open');
+};
+
+window.copyRefLink = function() {
+  const link = document.getElementById('refLinkBox').textContent;
+  navigator.clipboard.writeText(link).catch(()=>{
+    const t = document.createElement('textarea'); t.value=link;
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+  });
+  const btn = document.querySelector('.ref-copy-btn');
+  if(btn){ btn.textContent='✅ Copied!'; setTimeout(()=>{ btn.textContent='📋 Copy Referral Link'; },2000); }
+};
+
+window.copyDashRefLink = function() {
+  const link = document.getElementById('dashRefLink').textContent;
+  navigator.clipboard.writeText(link).catch(()=>{
+    const t = document.createElement('textarea'); t.value=link;
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+  });
+  const btn = document.querySelector('.dash-ref-copy');
+  if(btn){ btn.textContent='✅ Copied!'; setTimeout(()=>{ btn.textContent='📋 Copy Referral Link'; },2000); }
+};
+
+window.shareRef = function(platform) {
+  const link = (document.getElementById('refLinkBox')||document.getElementById('dashRefLink')||{}).textContent || 'https://streamox.store';
+  const text = encodeURIComponent('🎁 Get premium Netflix, Spotify & more at crazy low prices! Use my link: ' + link);
+  const urls = {
+    whatsapp: 'https://wa.me/?text=' + text,
+    telegram: 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent('🎁 Premium accounts at crazy prices!'),
+    twitter:  'https://twitter.com/intent/tweet?text=' + text,
+    instagram:'https://www.instagram.com/'
+  };
+  window.open(urls[platform] || urls.whatsapp, '_blank');
+};
+
+// ===== UPDATE REFERRAL UI WHEN USER LOGS IN =====
+function updateRefUI(user) {
+  if (!user) {
+    document.getElementById('refBubble').style.display = 'none';
+    return;
+  }
+  window._currentUserUid = user.uid;
+  const link = getRefLink(user.uid);
+  const refCode = genRefCode(user.uid);
+
+  // Show bubble
+  document.getElementById('refBubble').style.display = 'flex';
+  document.getElementById('refLinkBox').textContent = link;
+
+  // Credit from ref links pointing to this user
+  const credit = parseInt(localStorage.getItem('sx_credit_ref_' + refCode)||'0') +
+                 parseInt(localStorage.getItem('sx_credit_' + user.uid)||'0');
+  document.getElementById('refCreditAmt').textContent = '₹' + credit;
+
+  // Dashboard
+  const dl = document.getElementById('dashRefLink');
+  if(dl) dl.textContent = link;
+}
+
+// Hook into auth state
+const _origOnAuth = window._onAuthCallback;
+window._onAuthCallback = function(user) {
+  updateRefUI(user);
+  if(_origOnAuth) _origOnAuth(user);
+};
+
+// Also call on page load if already logged in
+document.addEventListener('DOMContentLoaded', ()=>{
+  setTimeout(()=>{
+    if(window._currentUserUid) updateRefUI({uid: window._currentUserUid});
+  }, 2000);
+});
 </script>
 
 </body>
