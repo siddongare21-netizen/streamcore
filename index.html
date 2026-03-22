@@ -279,13 +279,13 @@ footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-c
 @keyframes coTick{0%,100%{opacity:1;}50%{opacity:0.4;}}
 .co-qr-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:8px;}
 .co-qr-wrap{display:flex;justify-content:center;margin-bottom:6px;}
-.co-qr-frame{background:transparent;border:1.5px solid rgba(124,109,250,0.2);border-radius:14px;padding:12px;cursor:zoom-in;transition:transform 0.2s,box-shadow 0.2s;display:inline-block;}
-.co-qr-frame:hover{transform:scale(1.04);box-shadow:0 0 28px rgba(124,109,250,0.18);}
-.co-qr-frame img{width:148px;height:148px;display:block;border-radius:6px;}
+.co-qr-frame{background:#fff;border:1.5px solid rgba(124,109,250,0.26);border-radius:18px;padding:12px;cursor:zoom-in;transition:transform 0.2s,box-shadow 0.2s;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(0,0,0,0.14);}
+.co-qr-frame:hover{transform:scale(1.02);box-shadow:0 0 28px rgba(124,109,250,0.18);}
+.co-qr-frame img,.co-qr-frame canvas{width:200px;height:200px;display:block;border-radius:10px;background:#fff;image-rendering:pixelated;}
 .co-qr-hint{text-align:center;font-size:0.62rem;color:var(--muted);margin-bottom:10px;}
 .qr-lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:900;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;opacity:0;pointer-events:none;transition:opacity 0.3s;cursor:zoom-out;}
 .qr-lightbox.open{opacity:1;pointer-events:all;}
-.qr-lightbox img{width:min(300px,82vw);height:min(300px,82vw);border-radius:14px;background:rgba(235,235,255,0.14);padding:14px;border:1px solid rgba(124,109,250,0.28);}
+.qr-lightbox img,.qr-lightbox canvas{width:min(360px,84vw);height:min(360px,84vw);border-radius:18px;background:#fff;border:1px solid rgba(124,109,250,0.28);image-rendering:pixelated;}
 .qr-lightbox-hint{color:var(--muted);font-size:0.72rem;}
 .co-or{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:0.65rem;color:var(--muted);}
 .co-or::before,.co-or::after{content:"";flex:1;height:1px;background:var(--border);}
@@ -890,20 +890,20 @@ function getCheckoutUPIInfo() {
   if (!coKey || !CO_DATA[coKey]) return null;
   const product = CO_DATA[coKey];
   const orderId = window._currentOrderId || generateOrderId();
-  const note = orderId + '-' + product.name.replace(/\s+/g,'-');
+  const amountNumber = Number(product.amt);
   return {
     payee: 'tanish.ind@fam',
-    payeeName: 'Streamox',
-    amount: product.amt,
+    payeeName: 'Tanish',
+    amount: Number.isFinite(amountNumber) ? amountNumber.toFixed(2) : String(product.amt),
     orderId,
-    note
+    note: orderId
   };
 }
 
-function buildCheckoutUPIUri() {
+function getCheckoutUPIParams() {
   const info = getCheckoutUPIInfo();
-  if (!info) return '';
-  const params = new URLSearchParams({
+  if (!info) return null;
+  return new URLSearchParams({
     pa: info.payee,
     pn: info.payeeName,
     am: String(info.amount),
@@ -911,51 +911,71 @@ function buildCheckoutUPIUri() {
     tr: info.orderId,
     tn: info.note
   });
+}
+
+function buildCheckoutUPIUri() {
+  const params = getCheckoutUPIParams();
+  if (!params) return '';
   return 'upi://pay?' + params.toString();
 }
 
-function renderCheckoutQR() {
+function buildCheckoutQRCodeNode(text, size) {
+  const fallbackSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(text);
+  const makeFallbackImage = () => {
+    const img = document.createElement('img');
+    img.src = fallbackSrc;
+    img.alt = 'UPI payment QR code';
+    return img;
+  };
+
+  if (typeof QRCode !== 'function') return makeFallbackImage();
+
+  const temp = document.createElement('div');
+  try {
+    new QRCode(temp, {
+      text,
+      width: size,
+      height: size,
+      colorDark: '#111111',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.L
+    });
+  } catch (err) {
+    return makeFallbackImage();
+  }
+
+  const qrNode = temp.querySelector('canvas') || temp.querySelector('img');
+  if (!qrNode) return makeFallbackImage();
+  if (qrNode.tagName === 'CANVAS') {
+    qrNode.setAttribute('aria-label', 'UPI payment QR code');
+  } else {
+    qrNode.alt = 'UPI payment QR code';
+  }
+  return qrNode;
+}
+
+function renderCheckoutQR(retryCount = 0) {
   const upiUri = buildCheckoutUPIUri();
   if (!upiUri) return;
-  const modalQrImg = document.querySelector('.co-qr-frame img');
-  const lightboxQrImg = document.querySelector('#qrLightbox img');
-  if (!modalQrImg || !lightboxQrImg) return;
 
-  const setQrSrc = (src) => {
-    modalQrImg.src = src;
-    lightboxQrImg.src = src;
-  };
-  const fallbackSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=' + encodeURIComponent(upiUri);
+  const modalQrFrame = document.querySelector('.co-qr-frame');
+  const lightbox = document.getElementById('qrLightbox');
+  if (!modalQrFrame || !lightbox) return;
 
-  if (typeof QRCode !== 'function') {
-    setQrSrc(fallbackSrc);
+  if (typeof QRCode !== 'function' && retryCount < 12) {
+    setTimeout(() => renderCheckoutQR(retryCount + 1), 150);
     return;
   }
 
-  const temp = document.createElement('div');
-  temp.style.position = 'fixed';
-  temp.style.left = '-9999px';
-  temp.style.top = '-9999px';
-  temp.style.opacity = '0';
-  document.body.appendChild(temp);
+  const lightboxHint = lightbox.querySelector('.qr-lightbox-hint') || document.createElement('span');
+  lightboxHint.className = 'qr-lightbox-hint';
+  lightboxHint.textContent = 'Tap anywhere to close';
 
-  try {
-    new QRCode(temp, {
-      text: upiUri,
-      width: 512,
-      height: 512,
-      colorDark: '#111111',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
-    });
-    const qrCanvas = temp.querySelector('canvas');
-    const qrImg = temp.querySelector('img');
-    setQrSrc(qrCanvas ? qrCanvas.toDataURL('image/png') : (qrImg ? qrImg.src : fallbackSrc));
-  } catch (err) {
-    setQrSrc(fallbackSrc);
-  } finally {
-    temp.remove();
-  }
+  const modalQrNode = buildCheckoutQRCodeNode(upiUri, 200);
+  const lightboxQrNode = buildCheckoutQRCodeNode(upiUri, 360);
+
+  modalQrFrame.replaceChildren(modalQrNode);
+  lightbox.replaceChildren(lightboxQrNode, lightboxHint);
 }
 
 function openCheckout(key) {
@@ -1009,22 +1029,15 @@ function startCoTimer(secs) {
 }
 
 function openUPI(app) {
-  const info = getCheckoutUPIInfo();
-  if (!info) return;
-  const params = new URLSearchParams({
-    pa: info.payee,
-    pn: info.payeeName,
-    am: String(info.amount),
-    cu: 'INR',
-    tr: info.orderId,
-    tn: info.note
-  }).toString();
+  const params = getCheckoutUPIParams();
+  if (!params) return;
+  const query = params.toString();
   const urls = {
-    gpay:    `gpay://upi/pay?${params}`,
-    phonepe: `phonepe://pay?${params}`,
-    paytm:   `paytmmp://pay?${params}`,
-    fampay:  `upi://pay?${params}`,
-    bhim:    `upi://pay?${params}`,
+    gpay:    `gpay://upi/pay?${query}`,
+    phonepe: `phonepe://pay?${query}`,
+    paytm:   `paytmmp://pay?${query}`,
+    fampay:  `upi://pay?${query}`,
+    bhim:    `upi://pay?${query}`,
   };
   window.location.href = urls[app] || urls.bhim;
 }
