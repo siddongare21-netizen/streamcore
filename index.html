@@ -1268,6 +1268,13 @@ document.addEventListener('keydown', e => {
 .dash-alert-text strong{color:var(--accent2)}
 .dash-alert-btn{border:none;border-radius:10px;padding:10px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;white-space:nowrap}
 .dash-alert-close{background:transparent;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:0 2px}
+.dash-received-wrap{display:grid;gap:10px;margin-bottom:10px}
+.dash-received-card{background:rgba(79,209,197,0.07);border:1px solid rgba(79,209,197,0.2);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dash-received-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(79,209,197,0.14);color:var(--accent2);font-size:1rem;font-weight:700;flex-shrink:0}
+.dash-received-main{flex:1;min-width:0}
+.dash-received-name{font-weight:700;font-size:.88rem;margin-bottom:4px}
+.dash-received-meta{font-size:.75rem;color:var(--muted);line-height:1.5}
+.dash-received-btn{border:none;border-radius:10px;padding:10px 14px;font-size:.78rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff}
 .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.25s,transform 0.25s;flex-wrap:wrap;}
 .order-card:hover{border-color:rgba(124,109,250,0.3);transform:translateX(4px);}
 .order-card.clickable{cursor:pointer}
@@ -1719,6 +1726,11 @@ function firebaseError(code) {
           <div class="dash-stat-num" id="dashCredit">₹0</div>
           <div class="dash-stat-label">Wallet Credit</div>
         </div>
+      </div>
+
+      <div class="dash-section-title">Received Orders</div>
+      <div id="dashReceivedOrders">
+        <div class="dash-empty"><div class="dash-empty-icon">🔐</div>Delivered orders with saved credentials will appear here.</div>
       </div>
 
       <div class="dash-section-title">My Orders</div>
@@ -2556,7 +2568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('dashDeliveryAlertClose');
     if (!alertEl || !textEl || !openBtn || !closeBtn || !order) return;
 
-    textEl.innerHTML = `Your order for <strong>${escapeHtml(order.productName || order.product || 'Product')}</strong> has been approved. Tap open now to view credentials instantly.`;
+    textEl.innerHTML = `Your order for <strong>${escapeHtml(order.productName || order.product || 'Product')}</strong> has been received and saved in your dashboard. Tap open now to view credentials and your delivery note anytime.`;
     alertEl.classList.add('show');
     openBtn.onclick = () => {
       openOrderModalInternal(order);
@@ -2568,6 +2580,35 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideDeliveryAlert() {
     const alertEl = document.getElementById('dashDeliveryAlert');
     if (alertEl) alertEl.classList.remove('show');
+  }
+
+  function renderReceivedOrders(orders) {
+    const receivedEl = document.getElementById('dashReceivedOrders');
+    if (!receivedEl) return;
+    const deliveredOrders = orders.filter(order => (order.status || 'pending') === 'active');
+
+    if (!deliveredOrders.length) {
+      receivedEl.innerHTML = `<div class="dash-empty"><div class="dash-empty-icon">🔐</div>No delivered orders yet. Approved orders with credentials will stay saved here.</div>`;
+      return;
+    }
+
+    receivedEl.innerHTML = `<div class="dash-received-wrap">${deliveredOrders.map(order => `
+      <div class="dash-received-card">
+        <div class="dash-received-icon">✓</div>
+        <div class="dash-received-main">
+          <div class="dash-received-name">${escapeHtml(order.productName || order.product || 'Product')}</div>
+          <div class="dash-received-meta">Order ID: ${escapeHtml(order.orderId || order.id || 'Order')} · Delivered: ${escapeHtml(order.deliveredAt ? formatDateTime(order.deliveredAt) : 'Ready')}</div>
+        </div>
+        <button class="dash-received-btn" type="button" data-received-open="${escapeHtml(order.id)}">Open Credentials</button>
+      </div>
+    `).join('')}</div>`;
+
+    receivedEl.querySelectorAll('[data-received-open]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = deliveredOrders.find(item => item.id === btn.dataset.receivedOpen);
+        if (order) openOrderModalInternal(order);
+      });
+    });
   }
 
   function closeOrderModalInternal() {
@@ -2734,6 +2775,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const seenDelivered = getSeenDelivered(uid);
       const newlyDelivered = deliveredOrders.filter(order => !seenDelivered.includes(order.id));
       window.renderOrders(orders);
+      renderReceivedOrders(orders);
       const orderCountEl = document.getElementById('dashOrderCount');
       const spentEl = document.getElementById('dashSpent');
       const deliveredEl = document.getElementById('dashActive');
@@ -2745,7 +2787,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (newlyDelivered.length) {
         showDeliveryAlert(newlyDelivered[0]);
       } else if (deliveredOrders.length) {
-        hideDeliveryAlert();
+        showDeliveryAlert(deliveredOrders[0]);
       } else {
         hideDeliveryAlert();
         setSeenDelivered(uid, []);
