@@ -2582,6 +2582,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modal) return;
 
     hideDeliveryAlert();
+    const uid = window._currentUserUid;
+    if (uid && (order.status || 'pending') === 'active') {
+      const seen = getSeenDelivered(uid);
+      if (!seen.includes(order.id)) {
+        seen.push(order.id);
+        setSeenDelivered(uid, seen);
+      }
+    }
     window.__dashOrderDetails = order;
     document.getElementById('dashOrderTitle').textContent = `${order.orderId || order.id || 'Order'} · ${order.productName || order.product || 'Product'}`;
     document.getElementById('dashOrderSubtitle').textContent = (order.status || 'pending') === 'active'
@@ -2714,9 +2722,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  const previousOpenDashboard = window.openDashboard;
-  window.openDashboard = async function() {
-    await previousOpenDashboard();
+  async function syncEnhancedDashboard() {
     const uid = window._currentUserUid;
     if (!uid) return;
 
@@ -2738,7 +2744,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (deliveredLabel) deliveredLabel.textContent = 'Delivered Orders';
       if (newlyDelivered.length) {
         showDeliveryAlert(newlyDelivered[0]);
-        setSeenDelivered(uid, deliveredOrders.map(order => order.id));
       } else if (deliveredOrders.length) {
         hideDeliveryAlert();
       } else {
@@ -2748,7 +2753,28 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.log('Dashboard final load failed', error);
     }
+  }
+
+  const previousOpenDashboard = window.openDashboard;
+  window.openDashboard = async function() {
+    await previousOpenDashboard();
+    await syncEnhancedDashboard();
   };
+
+  let dashboardPoller = null;
+  function startDashboardPolling() {
+    if (dashboardPoller) return;
+    dashboardPoller = setInterval(() => {
+      const dash = document.getElementById('dashBackdrop');
+      if (dash && dash.classList.contains('open')) syncEnhancedDashboard();
+    }, 12000);
+  }
+
+  function stopDashboardPolling() {
+    if (!dashboardPoller) return;
+    clearInterval(dashboardPoller);
+    dashboardPoller = null;
+  }
 
   window.closeDashOrderModal = function(event) {
     if (event && event.target !== document.getElementById('dashOrderModal')) return;
@@ -2765,6 +2791,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') closeOrderModalInternal();
   });
+
+  const dashBackdrop = document.getElementById('dashBackdrop');
+  if (dashBackdrop && typeof MutationObserver !== 'undefined') {
+    new MutationObserver(() => {
+      if (dashBackdrop.classList.contains('open')) {
+        syncEnhancedDashboard();
+        startDashboardPolling();
+      } else {
+        stopDashboardPolling();
+      }
+    }).observe(dashBackdrop, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  const navAccountBtn = document.getElementById('navAccountBtn');
+  if (navAccountBtn) {
+    navAccountBtn.onclick = () => {
+      if (window._currentUserUid) {
+        window.openDashboard();
+      } else if (typeof openAuthModal === 'function') {
+        openAuthModal();
+      }
+    };
+  }
 })();
 </script>
 
