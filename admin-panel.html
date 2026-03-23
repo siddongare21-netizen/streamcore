@@ -164,6 +164,37 @@ tr:last-child td{border-bottom:none}
 .helper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .input,.select{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font-size:.92rem;outline:none}
 .input:focus,.select:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;width:min(100%,920px);margin-bottom:16px}
+.bulk-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,0.03);border:1px solid var(--border)}
+.bulk-actions{display:flex;gap:8px;flex-wrap:wrap}
+.bulk-meta{font-size:.82rem;color:var(--muted)}
+.order-check{width:18px;height:18px;accent-color:#7c6dfa}
+.order-card-head{display:flex;align-items:flex-start;gap:12px}
+.card-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tiny-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:.7rem;color:var(--muted)}
+.tiny-badge.urgent{color:#fca5a5;border-color:rgba(239,68,68,0.22);background:rgba(239,68,68,0.1)}
+.tiny-badge.ok{color:#86efac;border-color:rgba(52,211,153,0.24);background:rgba(52,211,153,0.1)}
+.split-section{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:18px}
+.timeline{display:grid;gap:10px}
+.timeline-item{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
+.timeline-dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:linear-gradient(135deg,var(--accent2),var(--accent))}
+.timeline-title{font-weight:700;font-size:.84rem}
+.timeline-time{font-size:.75rem;color:var(--muted);margin-top:2px}
+.drawer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.drawer-stat{padding:14px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
+.drawer-stat span{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.drawer-stat strong{font-family:"Syne",sans-serif;font-size:1.2rem}
+.activity-list,.audit-list{display:grid;gap:10px}
+.activity-item,.audit-item{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);font-size:.82rem;line-height:1.6}
+.health-card{padding:16px;border-radius:18px;background:rgba(255,255,255,0.03);border:1px solid var(--border)}
+.health-card h3{margin:0 0 12px;font-size:.92rem;font-family:"Syne",sans-serif}
+.export-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.muted-copy{font-size:.78rem;color:var(--muted);line-height:1.6}
+.stock-metric{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;font-size:.8rem;color:var(--muted)}
+.stock-state{font-weight:700}
+.stock-state.low{color:#fcd34d}
+.stock-state.out{color:#fca5a5}
+.stock-state.ready{color:#86efac}
 .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:.8rem;color:var(--muted)}
 
@@ -238,6 +269,7 @@ tr:last-child td{border-bottom:none}
 
 @media(max-width:860px){
   .editor-grid{grid-template-columns:1fr}
+  .split-section{grid-template-columns:1fr}
 }
 @media(max-width:640px){
   .app{padding:16px}
@@ -247,6 +279,8 @@ tr:last-child td{border-bottom:none}
   .modal-actions button{width:100%}
   .section-tools{width:100%}
   .search-shell{width:100%;min-width:0}
+  .tool-grid,.drawer-grid{grid-template-columns:1fr}
+  .bulk-bar{align-items:stretch}
 }
 </style>
 </head>
@@ -301,8 +335,38 @@ tr:last-child td{border-bottom:none}
             </label>
           </div>
         </div>
+        <div class="tool-grid">
+          <select class="select" id="pendingProductFilter"><option value="">All products</option></select>
+          <select class="select" id="pendingReferralFilter">
+            <option value="">All referral states</option>
+            <option value="referred">Referred only</option>
+            <option value="direct">Direct only</option>
+          </select>
+          <input class="input" id="pendingUserFilter" type="text" placeholder="Filter by user ID" />
+          <input class="input" id="pendingDateFrom" type="date" />
+          <input class="input" id="pendingDateTo" type="date" />
+          <input class="input" id="pendingAmountMin" type="number" min="0" step="1" placeholder="Min amount" />
+          <select class="select" id="pendingSortSelect">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="highest">Highest amount</option>
+            <option value="urgent">Most urgent</option>
+          </select>
+        </div>
         <div class="stat-line">
           <div class="stat-chip">Pending now: <strong id="pendingCountChip">0</strong></div>
+          <div class="stat-chip">Urgent: <strong id="pendingUrgentChip">0</strong></div>
+          <div class="stat-chip">Selected: <strong id="pendingSelectedChip">0</strong></div>
+        </div>
+        <div class="bulk-bar">
+          <div class="bulk-meta">Use bulk actions for fast review and export on high-volume order batches.</div>
+          <div class="bulk-actions">
+            <button class="ghost-btn" type="button" id="pendingSelectAllBtn">Select Visible</button>
+            <button class="save-btn" type="button" id="bulkApprovePendingBtn">Approve Selected</button>
+            <button class="success-btn" type="button" id="bulkDeliveredPendingBtn">Mark Delivered</button>
+            <button class="danger-btn" type="button" id="bulkRejectPendingBtn">Reject Selected</button>
+            <button class="ghost-btn" type="button" id="bulkExportPendingBtn">Export Selected CSV</button>
+          </div>
         </div>
         <div class="list-grid" id="pendingOrdersList"></div>
       </section>
@@ -321,8 +385,37 @@ tr:last-child td{border-bottom:none}
             </label>
           </div>
         </div>
+        <div class="tool-grid">
+          <select class="select" id="deliveredProductFilter"><option value="">All products</option></select>
+          <select class="select" id="deliveredReferralFilter">
+            <option value="">All referral states</option>
+            <option value="referred">Referred only</option>
+            <option value="direct">Direct only</option>
+          </select>
+          <input class="input" id="deliveredUserFilter" type="text" placeholder="Filter by user ID" />
+          <input class="input" id="deliveredDateFrom" type="date" />
+          <input class="input" id="deliveredDateTo" type="date" />
+          <input class="input" id="deliveredAmountMin" type="number" min="0" step="1" placeholder="Min amount" />
+          <select class="select" id="deliveredSortSelect">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="highest">Highest amount</option>
+            <option value="urgent">Most urgent</option>
+          </select>
+        </div>
         <div class="stat-line">
           <div class="stat-chip">Delivered: <strong id="deliveredCountChip">0</strong></div>
+          <div class="stat-chip">Avg delivery time: <strong id="deliveryTimeChip">0h</strong></div>
+          <div class="stat-chip">Selected: <strong id="deliveredSelectedChip">0</strong></div>
+        </div>
+        <div class="bulk-bar">
+          <div class="bulk-meta">Batch reopen, re-deliver, or export completed orders without opening one by one.</div>
+          <div class="bulk-actions">
+            <button class="ghost-btn" type="button" id="deliveredSelectAllBtn">Select Visible</button>
+            <button class="ghost-btn" type="button" id="bulkReopenDeliveredBtn">Reopen Selected</button>
+            <button class="success-btn" type="button" id="bulkDeliveredAgainBtn">Mark Delivered</button>
+            <button class="ghost-btn" type="button" id="bulkExportDeliveredBtn">Export Selected CSV</button>
+          </div>
         </div>
         <div class="list-grid" id="deliveredOrdersList"></div>
       </section>
@@ -422,6 +515,33 @@ tr:last-child td{border-bottom:none}
             <tbody id="productStatsBody"></tbody>
           </table>
         </div>
+        <div class="split-section">
+          <div class="health-card">
+            <h3>Revenue By Day</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Orders</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody id="revenueByDayBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="health-card">
+            <h3>Audit Log</h3>
+            <div class="audit-list" id="auditLogList"></div>
+          </div>
+        </div>
+        <div class="export-row">
+          <button class="ghost-btn" type="button" id="exportOrdersBtn">Export Orders CSV</button>
+          <button class="ghost-btn" type="button" id="exportCustomersBtn">Export Customers CSV</button>
+          <button class="ghost-btn" type="button" id="exportRevenueBtn">Export Revenue CSV</button>
+          <button class="ghost-btn" type="button" id="exportReferralPayoutsBtn">Export Referral Payouts CSV</button>
+        </div>
       </section>
 
       <section class="panel" id="stockPanel">
@@ -496,6 +616,29 @@ or any stock notes you want to save"></textarea>
     </div>
   </div>
 
+  <div class="modal-backdrop" id="customerDrawerBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="customerDrawerTitle">Customer Profile</h2>
+          <p class="modal-sub" id="customerDrawerSub">Order, referral, and recent activity history.</p>
+        </div>
+        <button class="close-btn" type="button" id="closeCustomerDrawer">âœ•</button>
+      </div>
+      <div class="drawer-grid" id="customerDrawerStats"></div>
+      <div class="split-section">
+        <div class="health-card">
+          <h3>Recent Activity</h3>
+          <div class="activity-list" id="customerActivityList"></div>
+        </div>
+        <div class="health-card">
+          <h3>Referral History</h3>
+          <div class="activity-list" id="customerReferralList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="adminToast"></div>
 
   <script type="module">
@@ -530,17 +673,24 @@ or any stock notes you want to save"></textarea>
     const db = getFirestore(app);
 
     const state = {
+      allOrders: [],
       pendingOrders: [],
       deliveredOrders: [],
       referralRequests: [],
       users: [],
       metrics: null,
+      auditLogs: [],
       stockMap: {},
       activeOrder: null,
       activeStockKey: null,
+      activeCustomer: null,
       pendingSearchTerm: '',
       deliveredSearchTerm: '',
-      usersSearchTerm: ''
+      usersSearchTerm: '',
+      pendingFilters: { product:'', referral:'', user:'', dateFrom:'', dateTo:'', amountMin:'', sort:'newest' },
+      deliveredFilters: { product:'', referral:'', user:'', dateFrom:'', dateTo:'', amountMin:'', sort:'newest' },
+      selectedPendingIds: new Set(),
+      selectedDeliveredIds: new Set()
     };
 
     const adminGate = document.getElementById('adminGate');
@@ -578,6 +728,18 @@ or any stock notes you want to save"></textarea>
     const usersTableBody = document.getElementById('usersTableBody');
     const statsGrid = document.getElementById('statsGrid');
     const productStatsBody = document.getElementById('productStatsBody');
+    const revenueByDayBody = document.getElementById('revenueByDayBody');
+    const auditLogList = document.getElementById('auditLogList');
+    const customerDrawerBackdrop = document.getElementById('customerDrawerBackdrop');
+    const customerDrawerTitle = document.getElementById('customerDrawerTitle');
+    const customerDrawerSub = document.getElementById('customerDrawerSub');
+    const customerDrawerStats = document.getElementById('customerDrawerStats');
+    const customerActivityList = document.getElementById('customerActivityList');
+    const customerReferralList = document.getElementById('customerReferralList');
+    const pendingUrgentChip = document.getElementById('pendingUrgentChip');
+    const pendingSelectedChip = document.getElementById('pendingSelectedChip');
+    const deliveredSelectedChip = document.getElementById('deliveredSelectedChip');
+    const deliveryTimeChip = document.getElementById('deliveryTimeChip');
 
     function showToast(message) {
       toast.textContent = message;
@@ -604,6 +766,152 @@ or any stock notes you want to save"></textarea>
       return createdAt?.toDate
         ? createdAt.toDate().toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'2-digit' })
         : 'Just now';
+    }
+
+    function toMillis(value) {
+      if (!value) return 0;
+      if (typeof value === 'number') return value;
+      if (value?.toMillis) return value.toMillis();
+      if (value?.seconds) return value.seconds * 1000;
+      const parsed = new Date(value).getTime();
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function formatDuration(ms) {
+      if (!ms || ms <= 0) return '0h';
+      const hours = ms / (1000 * 60 * 60);
+      if (hours < 1) return `${Math.max(1, Math.round(hours * 60))}m`;
+      return `${hours.toFixed(hours >= 10 ? 0 : 1)}h`;
+    }
+
+    function isReferredOrder(order) {
+      return !!(order?.referredByUid || order?.referredBy);
+    }
+
+    function getOrderUrgencyScore(order) {
+      const ageHours = Math.max(0, (Date.now() - toMillis(order?.createdAt)) / (1000 * 60 * 60));
+      const amountScore = Number(order?.amount || 0) / 100;
+      const reopenedBoost = order?.reopenedAt ? 4 : 0;
+      return ageHours + amountScore + reopenedBoost;
+    }
+
+    function getProductStockSummary(productKey) {
+      const notes = String(state.stockMap[productKey]?.notes || '');
+      const entries = notes.split('\n').map(line => line.trim()).filter(Boolean);
+      const available = entries.length;
+      const pending = state.pendingOrders.filter(order => order.product === productKey).length;
+      const readiness = Math.max(0, available - pending);
+      const stockState = available === 0 ? 'out' : available <= 3 ? 'low' : 'ready';
+      return { available, pending, readiness, stockState };
+    }
+
+    function matchesDateRange(order, dateFrom, dateTo) {
+      const orderDate = toMillis(order?.createdAt);
+      if (dateFrom) {
+        const start = new Date(`${dateFrom}T00:00:00`).getTime();
+        if (orderDate < start) return false;
+      }
+      if (dateTo) {
+        const end = new Date(`${dateTo}T23:59:59`).getTime();
+        if (orderDate > end) return false;
+      }
+      return true;
+    }
+
+    function applyOrderFilters(orders, searchTerm, filters) {
+      return orders
+        .filter(order => orderMatchesSearch(order, searchTerm))
+        .filter(order => !filters.product || order.product === filters.product)
+        .filter(order => !filters.user || String(order.uid || '').toLowerCase().includes(String(filters.user).toLowerCase()))
+        .filter(order => !filters.referral || (filters.referral === 'referred' ? isReferredOrder(order) : !isReferredOrder(order)))
+        .filter(order => !filters.amountMin || Number(order.amount || 0) >= Number(filters.amountMin || 0))
+        .filter(order => matchesDateRange(order, filters.dateFrom, filters.dateTo))
+        .sort((a, b) => {
+          if (filters.sort === 'oldest') return toMillis(a.createdAt) - toMillis(b.createdAt);
+          if (filters.sort === 'highest') return Number(b.amount || 0) - Number(a.amount || 0);
+          if (filters.sort === 'urgent') return getOrderUrgencyScore(b) - getOrderUrgencyScore(a);
+          return toMillis(b.deliveredAt || b.createdAt) - toMillis(a.deliveredAt || a.createdAt);
+        });
+    }
+
+    function getSelectedSet(panel) {
+      return panel === 'pending' ? state.selectedPendingIds : state.selectedDeliveredIds;
+    }
+
+    function toggleOrderSelection(panel, orderId, checked) {
+      const selectedSet = getSelectedSet(panel);
+      if (checked) selectedSet.add(orderId);
+      else selectedSet.delete(orderId);
+      if (pendingSelectedChip) pendingSelectedChip.textContent = String(state.selectedPendingIds.size);
+      if (deliveredSelectedChip) deliveredSelectedChip.textContent = String(state.selectedDeliveredIds.size);
+    }
+
+    function buildOrderTimeline(order) {
+      const items = [
+        { label:'Order created', at:order.createdAt },
+        { label:'Payment proof uploaded', at:order.proofUploadedAt || order.createdAt },
+        { label:'Approved', at:order.approvedAt },
+        { label:'Delivered', at:order.deliveredAt },
+        { label:'Reopened', at:order.reopenedAt },
+        { label:'Rejected', at:order.rejectedAt }
+      ].filter(item => item.at);
+      if (!items.length) return `<div class="empty">No timeline yet for this order.</div>`;
+      return `<div class="timeline">${items
+        .sort((a, b) => toMillis(a.at) - toMillis(b.at))
+        .map(item => `
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="timeline-title">${escapeHtml(item.label)}</div>
+              <div class="timeline-time">${escapeHtml(formatDate(item.at))}</div>
+            </div>
+          </div>
+        `).join('')}</div>`;
+    }
+
+    async function logAdminAction(action, order, meta = {}) {
+      const orderId = order?.orderId || order?.id || meta.orderId || '';
+      const logId = `${Date.now()}_${action}_${orderId || Math.random().toString(36).slice(2, 8)}`;
+      await setDoc(doc(db, 'auditLogs', logId), {
+        action,
+        orderId,
+        uid: order?.uid || meta.uid || '',
+        product: order?.product || meta.product || '',
+        amount: Number(order?.amount || meta.amount || 0),
+        summary: meta.summary || '',
+        createdAt: serverTimestamp(),
+        actor: 'admin-panel'
+      }, { merge: true });
+    }
+
+    function downloadCsv(filename, rows) {
+      const csv = rows.map(row => row.map(value => `"${String(value ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1200);
+    }
+
+    function exportOrdersCsv(orders, filename = 'orders.csv') {
+      downloadCsv(filename, [
+        ['Order ID', 'User ID', 'Product', 'Amount', 'Original Amount', 'Discount', 'Status', 'Verification', 'Delivery', 'Referral', 'Created At', 'Delivered At'],
+        ...orders.map(order => [
+          order.orderId || order.id,
+          order.uid || '',
+          order.productName || PRODUCTS[order.product] || order.product,
+          order.amount || 0,
+          order.originalAmount || order.amount || 0,
+          order.discount || 0,
+          order.status || '',
+          order.verificationStatus || '',
+          order.deliveryStatus || '',
+          order.referredBy || order.referredByUid || '',
+          formatDate(order.createdAt),
+          order.deliveredAt ? formatDate(order.deliveredAt) : ''
+        ])
+      ]);
     }
 
     function switchTab(tabId) {
@@ -684,8 +992,10 @@ or any stock notes you want to save"></textarea>
     }
 
     function renderPendingOrders() {
-      const filteredOrders = state.pendingOrders.filter(order => orderMatchesSearch(order, state.pendingSearchTerm));
+      const filteredOrders = applyOrderFilters(state.pendingOrders, state.pendingSearchTerm, state.pendingFilters);
       pendingCountChip.textContent = String(filteredOrders.length);
+      if (pendingUrgentChip) pendingUrgentChip.textContent = String(filteredOrders.filter(order => getOrderUrgencyScore(order) >= 24).length);
+      if (pendingSelectedChip) pendingSelectedChip.textContent = String(state.selectedPendingIds.size);
       if (!state.pendingOrders.length) {
         pendingOrdersList.innerHTML = `<div class="empty">No pending orders right now.</div>`;
         return;
@@ -697,29 +1007,54 @@ or any stock notes you want to save"></textarea>
 
       pendingOrdersList.innerHTML = filteredOrders.map(order => `
         <div class="card" data-order-id="${escapeHtml(order.id)}">
-          <div class="card-top">
-            <div>
-              <div class="card-title">${escapeHtml(order.orderId || order.id)}</div>
-              <div class="card-sub">${escapeHtml(order.productName || PRODUCTS[order.product] || order.product)}</div>
+          <div class="order-card-head">
+            <input class="order-check" type="checkbox" data-order-select="pending:${escapeHtml(order.id)}" ${state.selectedPendingIds.has(order.id) ? 'checked' : ''} />
+            <div style="flex:1;min-width:0">
+              <div class="card-top">
+                <div>
+                  <div class="card-title">${escapeHtml(order.orderId || order.id)}</div>
+                  <div class="card-sub">${escapeHtml(order.productName || PRODUCTS[order.product] || order.product)}</div>
+                </div>
+                <span class="badge pending">Pending</span>
+              </div>
+              <div class="card-tags">
+                <span class="tiny-badge ${getOrderUrgencyScore(order) >= 24 ? 'urgent' : ''}">${getOrderUrgencyScore(order) >= 24 ? 'Urgent' : 'Fresh'}</span>
+                <span class="tiny-badge">${escapeHtml(isReferredOrder(order) ? 'Referral' : 'Direct')}</span>
+              </div>
             </div>
-            <span class="badge pending">Pending</span>
           </div>
           <div class="meta-row"><span>Amount</span><strong>${formatAmount(order.amount)}</strong></div>
           <div class="meta-row"><span>Placed</span><strong>${escapeHtml(formatDate(order.createdAt))}</strong></div>
+          <div class="meta-row"><span>User</span><strong>${escapeHtml(order.uid || 'â€”')}</strong></div>
         </div>
       `).join('');
 
       pendingOrdersList.querySelectorAll('[data-order-id]').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', event => {
+          if (event.target.closest('[data-order-select]')) return;
           const order = filteredOrders.find(item => item.id === card.dataset.orderId);
           if (order) openOrderModal(order);
+        });
+      });
+      pendingOrdersList.querySelectorAll('[data-order-select]').forEach(input => {
+        input.addEventListener('change', event => {
+          const [, orderId] = String(event.target.dataset.orderSelect || '').split(':');
+          toggleOrderSelection('pending', orderId, event.target.checked);
         });
       });
     }
 
     function renderDeliveredOrders() {
-      const filteredOrders = state.deliveredOrders.filter(order => orderMatchesSearch(order, state.deliveredSearchTerm));
+      const filteredOrders = applyOrderFilters(state.deliveredOrders, state.deliveredSearchTerm, state.deliveredFilters);
       deliveredCountChip.textContent = String(filteredOrders.length);
+      if (deliveredSelectedChip) deliveredSelectedChip.textContent = String(state.selectedDeliveredIds.size);
+      const deliveredSamples = filteredOrders.filter(order => toMillis(order.deliveredAt) && toMillis(order.createdAt));
+      if (deliveryTimeChip) {
+        const avgDeliveryMs = deliveredSamples.length
+          ? deliveredSamples.reduce((sum, order) => sum + (toMillis(order.deliveredAt) - toMillis(order.createdAt)), 0) / deliveredSamples.length
+          : 0;
+        deliveryTimeChip.textContent = formatDuration(avgDeliveryMs);
+      }
       if (!state.deliveredOrders.length) {
         deliveredOrdersList.innerHTML = `<div class="empty">No delivered orders yet.</div>`;
         return;
@@ -744,9 +1079,31 @@ or any stock notes you want to save"></textarea>
       `).join('');
 
       deliveredOrdersList.querySelectorAll('[data-delivered-id]').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', event => {
+          if (event.target.closest('[data-order-select]')) return;
           const order = filteredOrders.find(item => item.id === card.dataset.deliveredId);
           if (order) openOrderModal(order);
+        });
+      });
+      deliveredOrdersList.querySelectorAll('[data-delivered-id]').forEach(card => {
+        const order = filteredOrders.find(item => item.id === card.dataset.deliveredId);
+        if (!order) return;
+        const top = card.querySelector('.card-top');
+        if (top && !card.querySelector('[data-order-select]')) {
+          top.insertAdjacentHTML('afterbegin', `<input class="order-check" type="checkbox" data-order-select="delivered:${escapeHtml(order.id)}" ${state.selectedDeliveredIds.has(order.id) ? 'checked' : ''} />`);
+        }
+        if (!card.querySelector('.card-tags')) {
+          top?.insertAdjacentHTML('beforeend', `<div class="card-tags"><span class="tiny-badge ok">${escapeHtml(order.deliveryStatus || 'delivered')}</span><span class="tiny-badge">${escapeHtml(isReferredOrder(order) ? 'Referral' : 'Direct')}</span></div>`);
+        }
+        if (!card.querySelector('[data-user-row]')) {
+          card.insertAdjacentHTML('beforeend', `<div class="meta-row" data-user-row><span>User</span><strong>${escapeHtml(order.uid || 'â€”')}</strong></div>`);
+        }
+      });
+      deliveredOrdersList.querySelectorAll('[data-order-select]').forEach(input => {
+        input.addEventListener('click', event => event.stopPropagation());
+        input.addEventListener('change', event => {
+          const [, orderId] = String(event.target.dataset.orderSelect || '').split(':');
+          toggleOrderSelection('delivered', orderId, event.target.checked);
         });
       });
     }
@@ -778,6 +1135,50 @@ or any stock notes you want to save"></textarea>
       referralRequestsBody.querySelectorAll('[data-referral-reject]').forEach(btn => {
         btn.addEventListener('click', () => rejectReferralRequest(btn.dataset.referralReject));
       });
+    }
+
+    function renderAuditLog() {
+      if (!auditLogList) return;
+      if (!state.auditLogs.length) {
+        auditLogList.innerHTML = `<div class="empty">No admin actions logged yet.</div>`;
+        return;
+      }
+      auditLogList.innerHTML = state.auditLogs.slice(0, 10).map(item => `
+        <div class="audit-item">
+          <strong>${escapeHtml(item.action || 'updated')}</strong> · ${escapeHtml(item.orderId || 'Unknown order')}<br />
+          ${escapeHtml(item.summary || item.product || 'No summary')}
+          <div class="muted-copy">${escapeHtml(formatDate(item.createdAt))}</div>
+        </div>
+      `).join('');
+    }
+
+    function openCustomerDrawer(user) {
+      if (!customerDrawerBackdrop) return;
+      state.activeCustomer = user;
+      const userOrders = state.allOrders.filter(order => order.uid === user.id).sort((a, b) => toMillis(b.deliveredAt || b.createdAt) - toMillis(a.deliveredAt || a.createdAt));
+      const referralOrders = state.allOrders.filter(order => order.referredByUid === user.id);
+      const rejectedCount = state.auditLogs.filter(item => item.uid === user.id && item.action === 'rejected').length;
+      const reopenedCount = state.auditLogs.filter(item => item.uid === user.id && item.action === 'reopened').length;
+      customerDrawerTitle.textContent = user.name || user.id || 'Customer Profile';
+      customerDrawerSub.textContent = `${user.email || 'No email'} · ${user.id}`;
+      customerDrawerStats.innerHTML = `
+        <div class="drawer-stat"><span>Total Orders</span><strong>${userOrders.length}</strong></div>
+        <div class="drawer-stat"><span>Total Spend</span><strong>${formatAmount(user.totalSpent || 0)}</strong></div>
+        <div class="drawer-stat"><span>Refund / Replacement History</span><strong>${reopenedCount + rejectedCount}</strong></div>
+        <div class="drawer-stat"><span>Referral History</span><strong>${referralOrders.length}</strong></div>
+      `;
+      customerActivityList.innerHTML = userOrders.length
+        ? userOrders.slice(0, 6).map(order => `<div class="activity-item"><strong>${escapeHtml(order.productName || order.product)}</strong><br />${escapeHtml(order.orderId || order.id)} · ${formatAmount(order.amount)} · ${escapeHtml(order.status || 'pending')}<div class="muted-copy">${escapeHtml(formatDate(order.deliveredAt || order.createdAt))}</div></div>`).join('')
+        : `<div class="empty">No recent activity for this user.</div>`;
+      customerReferralList.innerHTML = referralOrders.length
+        ? referralOrders.slice(0, 6).map(order => `<div class="activity-item"><strong>${escapeHtml(order.productName || order.product)}</strong><br />Referral order · ${escapeHtml(order.orderId || order.id)}<div class="muted-copy">${escapeHtml(formatDate(order.createdAt))}</div></div>`).join('')
+        : `<div class="empty">No referral conversions yet.</div>`;
+      customerDrawerBackdrop.classList.add('open');
+    }
+
+    function closeCustomerDrawer() {
+      state.activeCustomer = null;
+      customerDrawerBackdrop?.classList.remove('open');
     }
 
     function appendConsoleEntry(text, tone = 'system') {
@@ -961,7 +1362,8 @@ or any stock notes you want to save"></textarea>
       `).join('');
 
       usersTableBody.querySelectorAll('[data-copy-user-id]').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async event => {
+          event.stopPropagation();
           const userId = String(btn.dataset.copyUserId || '').trim();
           if (!userId) {
             showToast('User ID is missing');
@@ -982,6 +1384,13 @@ or any stock notes you want to save"></textarea>
             btn.textContent = originalText;
             btn.classList.remove('copied');
           }, 1600);
+        });
+      });
+      usersTableBody.querySelectorAll('tr').forEach((row, index) => {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => {
+          const user = filteredUsers[index];
+          if (user) openCustomerDrawer(user);
         });
       });
       return;
@@ -1006,6 +1415,12 @@ or any stock notes you want to save"></textarea>
         totalUsers: 0,
         totalRevenue: 0,
         todayOrders: 0,
+        bestSellingProduct: '',
+        repeatCustomerRate: 0,
+        referralConversion: 0,
+        failedOrders: 0,
+        averageDeliveryTime: '0h',
+        revenueByDay: [],
         byProduct: []
       };
 
@@ -1015,6 +1430,11 @@ or any stock notes you want to save"></textarea>
         <div class="stats-card"><div class="stats-label">Revenue</div><div class="stats-value">${formatAmount(metrics.totalRevenue)}</div><div class="stats-note">From saved orders</div></div>
         <div class="stats-card"><div class="stats-label">Users</div><div class="stats-value">${metrics.totalUsers}</div><div class="stats-note">Registered accounts</div></div>
         <div class="stats-card"><div class="stats-label">Today</div><div class="stats-value">${metrics.todayOrders}</div><div class="stats-note">Placed in last 24h</div></div>
+        <div class="stats-card"><div class="stats-label">Best Seller</div><div class="stats-value">${escapeHtml(metrics.bestSellingProduct || '—')}</div><div class="stats-note">Top product by orders</div></div>
+        <div class="stats-card"><div class="stats-label">Repeat Rate</div><div class="stats-value">${metrics.repeatCustomerRate}%</div><div class="stats-note">Customers with 2+ orders</div></div>
+        <div class="stats-card"><div class="stats-label">Referral Conversion</div><div class="stats-value">${metrics.referralConversion}%</div><div class="stats-note">Orders from referrals</div></div>
+        <div class="stats-card"><div class="stats-label">Failed Orders</div><div class="stats-value">${metrics.failedOrders}</div><div class="stats-note">Rejected or deleted by admin</div></div>
+        <div class="stats-card"><div class="stats-label">Avg Delivery</div><div class="stats-value">${metrics.averageDeliveryTime}</div><div class="stats-note">From order to fulfillment</div></div>
       `;
 
       if (!metrics.byProduct.length) {
@@ -1031,12 +1451,25 @@ or any stock notes you want to save"></textarea>
           <td>${item.delivered}</td>
         </tr>
       `).join('');
+      if (revenueByDayBody) {
+        revenueByDayBody.innerHTML = metrics.revenueByDay.length
+          ? metrics.revenueByDay.map(item => `
+            <tr>
+              <td>${escapeHtml(item.date)}</td>
+              <td>${item.orders}</td>
+              <td>${formatAmount(item.revenue)}</td>
+            </tr>
+          `).join('')
+          : `<tr><td colspan="3" class="empty">No daily revenue data yet.</td></tr>`;
+      }
+      renderAuditLog();
     }
 
     function renderStockProducts() {
       stockProductsList.innerHTML = Object.entries(PRODUCTS).map(([key, name]) => {
         const notes = state.stockMap[key]?.notes || '';
-        const summary = notes.trim() ? `${notes.trim().split('\n').length} line(s) saved` : 'No notes saved yet';
+        const { available, pending, readiness, stockState } = getProductStockSummary(key);
+        const summary = notes.trim() ? `${available} inventory entr${available === 1 ? 'y' : 'ies'} saved` : 'No notes saved yet';
         return `
           <div class="card" data-stock-key="${escapeHtml(key)}">
             <div class="card-top">
@@ -1044,9 +1477,12 @@ or any stock notes you want to save"></textarea>
                 <div class="card-title">${escapeHtml(name)}</div>
                 <div class="card-sub">${escapeHtml(summary)}</div>
               </div>
-              <span class="badge stock">Stock</span>
+              <span class="badge stock">${stockState === 'out' ? 'Out' : stockState === 'low' ? 'Low' : 'Ready'}</span>
             </div>
             <div class="meta-row"><span>Product Key</span><strong>${escapeHtml(key)}</strong></div>
+            <div class="stock-metric"><span>Available</span><strong>${available}</strong></div>
+            <div class="stock-metric"><span>Pending demand</span><strong>${pending}</strong></div>
+            <div class="stock-metric"><span>Fulfillment readiness</span><strong class="stock-state ${stockState}">${readiness}</strong></div>
           </div>
         `;
       }).join('');
@@ -1075,6 +1511,7 @@ or any stock notes you want to save"></textarea>
           const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
           return bTime - aTime;
         });
+      state.allOrders = [...state.pendingOrders, ...state.deliveredOrders.filter(order => !state.pendingOrders.some(item => item.id === order.id))];
       renderPendingOrders();
     }
 
@@ -1087,7 +1524,16 @@ or any stock notes you want to save"></textarea>
           const bTime = b.deliveredAt?.toMillis ? b.deliveredAt.toMillis() : 0;
           return bTime - aTime;
         });
+      state.allOrders = [...state.pendingOrders.filter(order => !state.deliveredOrders.some(item => item.id === order.id)), ...state.deliveredOrders];
       renderDeliveredOrders();
+    }
+
+    async function loadAuditLogs() {
+      const snap = await getDocs(collection(db, 'auditLogs'));
+      state.auditLogs = snap.docs
+        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+        .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+      renderAuditLog();
     }
 
     async function loadReferralRequests() {
@@ -1160,8 +1606,12 @@ or any stock notes you want to save"></textarea>
     async function loadStats() {
       const snap = await getDocs(collection(db, 'orders'));
       const orders = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      state.allOrders = orders.slice();
       const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
       const byProductMap = {};
+      const revenueByDayMap = {};
+      let totalDeliveryMs = 0;
+      let deliverySamples = 0;
 
       orders.forEach(order => {
         const key = order.product || 'unknown';
@@ -1178,7 +1628,24 @@ or any stock notes you want to save"></textarea>
         byProductMap[key].revenue += Number(order.amount || 0);
         if ((order.status || 'pending') === 'active') byProductMap[key].delivered += 1;
         else byProductMap[key].pending += 1;
+        const dayKey = new Date(toMillis(order.createdAt) || Date.now()).toLocaleDateString('en-CA');
+        if (!revenueByDayMap[dayKey]) revenueByDayMap[dayKey] = { date: dayKey, orders: 0, revenue: 0 };
+        revenueByDayMap[dayKey].orders += 1;
+        revenueByDayMap[dayKey].revenue += Number(order.amount || 0);
+        if (toMillis(order.deliveredAt) && toMillis(order.createdAt)) {
+          totalDeliveryMs += Math.max(0, toMillis(order.deliveredAt) - toMillis(order.createdAt));
+          deliverySamples += 1;
+        }
       });
+
+      const orderingUsers = state.users.filter(user => Number(user.orders || 0) > 0);
+      const repeatCustomerRate = orderingUsers.length
+        ? Math.round((orderingUsers.filter(user => Number(user.orders || 0) > 1).length / orderingUsers.length) * 100)
+        : 0;
+      const referralConversion = orders.length
+        ? Math.round((orders.filter(order => isReferredOrder(order)).length / orders.length) * 100)
+        : 0;
+      const byProduct = Object.values(byProductMap).sort((a, b) => b.orders - a.orders);
 
       state.metrics = {
         totalOrders: orders.length,
@@ -1187,14 +1654,28 @@ or any stock notes you want to save"></textarea>
         totalUsers: state.users.length,
         totalRevenue: orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0),
         todayOrders: orders.filter(order => (order.createdAt?.toMillis ? order.createdAt.toMillis() : 0) >= oneDayAgo).length,
-        byProduct: Object.values(byProductMap).sort((a, b) => b.orders - a.orders)
+        bestSellingProduct: byProduct[0]?.name || '',
+        repeatCustomerRate,
+        referralConversion,
+        failedOrders: state.auditLogs.filter(item => item.action === 'rejected' || item.action === 'deleted').length,
+        averageDeliveryTime: formatDuration(deliverySamples ? totalDeliveryMs / deliverySamples : 0),
+        revenueByDay: Object.values(revenueByDayMap).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10),
+        byProduct
       };
       renderStats();
     }
 
     async function refreshAll() {
-      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadUsers()]);
+      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadUsers(), loadAuditLogs()]);
       await loadStats();
+      const pendingProductFilter = document.getElementById('pendingProductFilter');
+      const deliveredProductFilter = document.getElementById('deliveredProductFilter');
+      [pendingProductFilter, deliveredProductFilter].forEach(select => {
+        if (!select) return;
+        const current = select.value;
+        select.innerHTML = `<option value="">All products</option>${Object.entries(PRODUCTS).map(([key, name]) => `<option value="${escapeHtml(key)}">${escapeHtml(name)}</option>`).join('')}`;
+        select.value = current;
+      });
     }
 
     async function saveStock() {
@@ -1223,8 +1704,10 @@ or any stock notes you want to save"></textarea>
         status: 'active',
         verificationStatus: 'approved',
         deliveryStatus: 'delivered',
+        approvedAt: serverTimestamp(),
         deliveredAt: serverTimestamp()
       });
+      await logAdminAction('approved', state.activeOrder, { summary: 'Approved and delivered from modal' });
       closeOrderModal();
       await refreshAll();
       showToast('Credentials provided to customer');
@@ -1235,8 +1718,10 @@ or any stock notes you want to save"></textarea>
       await updateDoc(doc(db, 'orders', state.activeOrder.id), {
         status: 'pending',
         verificationStatus: 'pending',
-        deliveryStatus: 'awaiting_verification'
+        deliveryStatus: 'awaiting_verification',
+        reopenedAt: serverTimestamp()
       });
+      await logAdminAction('reopened', state.activeOrder, { summary: 'Moved back to pending' });
       closeOrderModal();
       await refreshAll();
       showToast('Order moved back to pending');
@@ -1245,11 +1730,48 @@ or any stock notes you want to save"></textarea>
     async function rejectOrder() {
       if (!state.activeOrder) return;
       const uid = state.activeOrder.uid;
+      await logAdminAction('rejected', state.activeOrder, { summary: 'Rejected and deleted from admin panel' });
       await deleteDoc(doc(db, 'orders', state.activeOrder.id));
       await syncUserOrderSummary(uid);
       closeOrderModal();
       await refreshAll();
       showToast('Order deleted');
+    }
+
+    async function bulkUpdateOrders(panel, action) {
+      const selectedIds = Array.from(getSelectedSet(panel));
+      if (!selectedIds.length) {
+        showToast('Select at least one order');
+        return;
+      }
+      const orders = (panel === 'pending' ? state.pendingOrders : state.deliveredOrders).filter(order => selectedIds.includes(order.id));
+      for (const order of orders) {
+        if (action === 'approve' || action === 'deliver') {
+          await updateDoc(doc(db, 'orders', order.id), {
+            status: 'active',
+            verificationStatus: 'approved',
+            deliveryStatus: 'delivered',
+            credentials: order.credentials || state.stockMap[order.product]?.notes || '',
+            approvedAt: serverTimestamp(),
+            deliveredAt: serverTimestamp()
+          });
+          await logAdminAction(action === 'approve' ? 'approved' : 'delivered', order, { summary: 'Bulk action from admin panel' });
+        } else if (action === 'reopen') {
+          await updateDoc(doc(db, 'orders', order.id), {
+            status: 'pending',
+            verificationStatus: 'pending',
+            deliveryStatus: 'awaiting_verification',
+            reopenedAt: serverTimestamp()
+          });
+          await logAdminAction('reopened', order, { summary: 'Bulk reopen from admin panel' });
+        } else if (action === 'reject') {
+          await logAdminAction('rejected', order, { summary: 'Bulk reject from admin panel' });
+          await deleteDoc(doc(db, 'orders', order.id));
+        }
+      }
+      getSelectedSet(panel).clear();
+      await refreshAll();
+      showToast(`${selectedIds.length} order(s) updated`);
     }
 
     async function approveReferralRequest(requestId) {
@@ -1389,6 +1911,34 @@ or any stock notes you want to save"></textarea>
       updateSearchClearState(pendingOrderSearch, clearPendingSearch);
       renderPendingOrders();
     });
+    ['pendingProductFilter','pendingReferralFilter','pendingUserFilter','pendingDateFrom','pendingDateTo','pendingAmountMin','pendingSortSelect'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', event => {
+        const map = {
+          pendingProductFilter:'product',
+          pendingReferralFilter:'referral',
+          pendingUserFilter:'user',
+          pendingDateFrom:'dateFrom',
+          pendingDateTo:'dateTo',
+          pendingAmountMin:'amountMin',
+          pendingSortSelect:'sort'
+        };
+        state.pendingFilters[map[id]] = event.target.value;
+        renderPendingOrders();
+      });
+      document.getElementById(id)?.addEventListener('change', event => {
+        const map = {
+          pendingProductFilter:'product',
+          pendingReferralFilter:'referral',
+          pendingUserFilter:'user',
+          pendingDateFrom:'dateFrom',
+          pendingDateTo:'dateTo',
+          pendingAmountMin:'amountMin',
+          pendingSortSelect:'sort'
+        };
+        state.pendingFilters[map[id]] = event.target.value;
+        renderPendingOrders();
+      });
+    });
     clearPendingSearch.addEventListener('click', () => {
       pendingOrderSearch.value = '';
       state.pendingSearchTerm = '';
@@ -1400,6 +1950,34 @@ or any stock notes you want to save"></textarea>
       state.deliveredSearchTerm = deliveredOrderSearch.value.trim().toLowerCase();
       updateSearchClearState(deliveredOrderSearch, clearDeliveredSearch);
       renderDeliveredOrders();
+    });
+    ['deliveredProductFilter','deliveredReferralFilter','deliveredUserFilter','deliveredDateFrom','deliveredDateTo','deliveredAmountMin','deliveredSortSelect'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', event => {
+        const map = {
+          deliveredProductFilter:'product',
+          deliveredReferralFilter:'referral',
+          deliveredUserFilter:'user',
+          deliveredDateFrom:'dateFrom',
+          deliveredDateTo:'dateTo',
+          deliveredAmountMin:'amountMin',
+          deliveredSortSelect:'sort'
+        };
+        state.deliveredFilters[map[id]] = event.target.value;
+        renderDeliveredOrders();
+      });
+      document.getElementById(id)?.addEventListener('change', event => {
+        const map = {
+          deliveredProductFilter:'product',
+          deliveredReferralFilter:'referral',
+          deliveredUserFilter:'user',
+          deliveredDateFrom:'dateFrom',
+          deliveredDateTo:'dateTo',
+          deliveredAmountMin:'amountMin',
+          deliveredSortSelect:'sort'
+        };
+        state.deliveredFilters[map[id]] = event.target.value;
+        renderDeliveredOrders();
+      });
     });
     clearDeliveredSearch.addEventListener('click', () => {
       deliveredOrderSearch.value = '';
@@ -1427,9 +2005,44 @@ or any stock notes you want to save"></textarea>
     document.getElementById('rejectOrderBtn').addEventListener('click', rejectOrder);
     document.getElementById('saveStockBtn').addEventListener('click', saveStock);
     document.getElementById('clearStockBtn').addEventListener('click', () => { stockNotesInput.value = ''; });
+    document.getElementById('pendingSelectAllBtn')?.addEventListener('click', () => {
+      applyOrderFilters(state.pendingOrders, state.pendingSearchTerm, state.pendingFilters).forEach(order => state.selectedPendingIds.add(order.id));
+      renderPendingOrders();
+    });
+    document.getElementById('deliveredSelectAllBtn')?.addEventListener('click', () => {
+      applyOrderFilters(state.deliveredOrders, state.deliveredSearchTerm, state.deliveredFilters).forEach(order => state.selectedDeliveredIds.add(order.id));
+      renderDeliveredOrders();
+    });
+    document.getElementById('bulkApprovePendingBtn')?.addEventListener('click', () => bulkUpdateOrders('pending', 'approve'));
+    document.getElementById('bulkDeliveredPendingBtn')?.addEventListener('click', () => bulkUpdateOrders('pending', 'deliver'));
+    document.getElementById('bulkRejectPendingBtn')?.addEventListener('click', () => bulkUpdateOrders('pending', 'reject'));
+    document.getElementById('bulkExportPendingBtn')?.addEventListener('click', () => exportOrdersCsv(state.pendingOrders.filter(order => state.selectedPendingIds.has(order.id)), 'pending-orders.csv'));
+    document.getElementById('bulkReopenDeliveredBtn')?.addEventListener('click', () => bulkUpdateOrders('delivered', 'reopen'));
+    document.getElementById('bulkDeliveredAgainBtn')?.addEventListener('click', () => bulkUpdateOrders('delivered', 'deliver'));
+    document.getElementById('bulkExportDeliveredBtn')?.addEventListener('click', () => exportOrdersCsv(state.deliveredOrders.filter(order => state.selectedDeliveredIds.has(order.id)), 'delivered-orders.csv'));
+    document.getElementById('exportOrdersBtn')?.addEventListener('click', () => exportOrdersCsv(state.allOrders, 'orders.csv'));
+    document.getElementById('exportCustomersBtn')?.addEventListener('click', () => {
+      downloadCsv('customers.csv', [
+        ['User ID', 'Name', 'Email', 'Orders', 'Spent', 'Wallet Credit', 'Joined'],
+        ...state.users.map(user => [user.id, user.name || '', user.email || '', user.orders || 0, user.totalSpent || 0, user.walletCredit || 0, formatDate(user.createdAt)])
+      ]);
+    });
+    document.getElementById('exportRevenueBtn')?.addEventListener('click', () => {
+      downloadCsv('revenue.csv', [
+        ['Date', 'Orders', 'Revenue'],
+        ...((state.metrics?.revenueByDay) || []).map(item => [item.date, item.orders, item.revenue])
+      ]);
+    });
+    document.getElementById('exportReferralPayoutsBtn')?.addEventListener('click', () => {
+      downloadCsv('referral-payouts.csv', [
+        ['Referrer User ID', 'Purchaser User ID', 'Order ID', 'Credit Amount', 'Status', 'Created At'],
+        ...state.referralRequests.map(item => [item.referrerUserId || '', item.purchaserUserId || '', item.purchaserOrderId || '', item.creditAmount || 0, item.status || '', formatDate(item.createdAt)])
+      ]);
+    });
     document.getElementById('useStockNotesBtn').addEventListener('click', () => {
       orderCredentialInput.value = orderStockPreview.value;
     });
+    document.getElementById('closeCustomerDrawer')?.addEventListener('click', closeCustomerDrawer);
 
     orderModalBackdrop.addEventListener('click', event => {
       if (event.target === orderModalBackdrop) closeOrderModal();
@@ -1437,6 +2050,9 @@ or any stock notes you want to save"></textarea>
 
     stockModalBackdrop.addEventListener('click', event => {
       if (event.target === stockModalBackdrop) closeStockModal();
+    });
+    customerDrawerBackdrop?.addEventListener('click', event => {
+      if (event.target === customerDrawerBackdrop) closeCustomerDrawer();
     });
   </script>
 </body>
