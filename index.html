@@ -1261,9 +1261,17 @@ document.addEventListener('keydown', e => {
 .dash-stat-card:hover{border-color:rgba(124,109,250,0.3);transform:translateY(-3px);}
 .dash-stat-num{font-family:"Syne",sans-serif;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .dash-stat-label{font-size:0.68rem;color:var(--muted);margin-top:3px;letter-spacing:0.05em;}
+.dash-alert{display:none;align-items:flex-start;justify-content:space-between;gap:14px;background:linear-gradient(135deg,rgba(79,209,197,0.16),rgba(124,109,250,0.12));border:1px solid rgba(79,209,197,0.28);border-radius:16px;padding:16px 18px;margin-bottom:18px;box-shadow:0 16px 32px rgba(0,0,0,0.2)}
+.dash-alert.show{display:flex}
+.dash-alert-title{font-family:"Syne",sans-serif;font-size:0.98rem;margin-bottom:4px;color:var(--text)}
+.dash-alert-text{font-size:0.82rem;line-height:1.7;color:var(--text)}
+.dash-alert-text strong{color:var(--accent2)}
+.dash-alert-btn{border:none;border-radius:10px;padding:10px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;white-space:nowrap}
+.dash-alert-close{background:transparent;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:0 2px}
 .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.25s,transform 0.25s;flex-wrap:wrap;}
 .order-card:hover{border-color:rgba(124,109,250,0.3);transform:translateX(4px);}
 .order-card.clickable{cursor:pointer}
+.order-card.delivered-card{border-color:rgba(79,209,197,0.25);box-shadow:0 0 0 1px rgba(79,209,197,0.06) inset}
 .order-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
 .order-main{flex:1;min-width:0;}
 .order-name{font-weight:600;font-size:0.88rem;margin-bottom:3px;}
@@ -1273,6 +1281,7 @@ document.addEventListener('keydown', e => {
 .status-pending{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);color:#fbbf24;}
 .order-price{font-family:"Syne",sans-serif;font-weight:700;font-size:0.88rem;color:var(--accent);margin-left:10px;white-space:nowrap;}
 .order-hint{width:100%;font-size:0.72rem;color:var(--muted);margin-top:-2px}
+.order-received{width:100%;font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-top:-2px}
 .order-actions{width:100%;display:flex;justify-content:flex-end;margin-top:4px}
 .order-view-btn{border:none;border-radius:10px;padding:9px 12px;font-size:0.76rem;font-weight:700;cursor:pointer;background:rgba(124,109,250,0.12);border:1px solid rgba(124,109,250,0.25);color:#c9c3ff}
 .order-view-btn:hover{background:rgba(124,109,250,0.18)}
@@ -1683,6 +1692,14 @@ function firebaseError(code) {
       <button class="dash-close" onclick="closeDashboard()">✕</button>
     </div>
     <div class="dash-body">
+      <div class="dash-alert" id="dashDeliveryAlert">
+        <div style="flex:1">
+          <div class="dash-alert-title">Order Received</div>
+          <div class="dash-alert-text" id="dashDeliveryAlertText">Your approved order is ready. Open it to view credentials and delivery notes.</div>
+        </div>
+        <button class="dash-alert-btn" type="button" id="dashDeliveryAlertBtn">Open Now</button>
+        <button class="dash-alert-close" type="button" id="dashDeliveryAlertClose">✕</button>
+      </div>
 
       <div class="dash-section-title">Overview</div>
       <div class="dash-stats">
@@ -2516,6 +2533,43 @@ document.addEventListener('DOMContentLoaded', () => {
     return order.deliveryStatus || ((order.status || 'pending') === 'active' ? 'delivered' : 'awaiting verification');
   }
 
+  function getSeenDeliveredKey(uid) {
+    return `tw_seen_delivered_${uid || 'guest'}`;
+  }
+
+  function getSeenDelivered(uid) {
+    try {
+      return JSON.parse(localStorage.getItem(getSeenDeliveredKey(uid)) || '[]');
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function setSeenDelivered(uid, ids) {
+    localStorage.setItem(getSeenDeliveredKey(uid), JSON.stringify(ids));
+  }
+
+  function showDeliveryAlert(order) {
+    const alertEl = document.getElementById('dashDeliveryAlert');
+    const textEl = document.getElementById('dashDeliveryAlertText');
+    const openBtn = document.getElementById('dashDeliveryAlertBtn');
+    const closeBtn = document.getElementById('dashDeliveryAlertClose');
+    if (!alertEl || !textEl || !openBtn || !closeBtn || !order) return;
+
+    textEl.innerHTML = `Your order for <strong>${escapeHtml(order.productName || order.product || 'Product')}</strong> has been approved. Tap open now to view credentials instantly.`;
+    alertEl.classList.add('show');
+    openBtn.onclick = () => {
+      openOrderModalInternal(order);
+      alertEl.classList.remove('show');
+    };
+    closeBtn.onclick = () => alertEl.classList.remove('show');
+  }
+
+  function hideDeliveryAlert() {
+    const alertEl = document.getElementById('dashDeliveryAlert');
+    if (alertEl) alertEl.classList.remove('show');
+  }
+
   function closeOrderModalInternal() {
     const modal = document.getElementById('dashOrderModal');
     if (!modal) return;
@@ -2527,6 +2581,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('dashOrderModal');
     if (!modal) return;
 
+    hideDeliveryAlert();
     window.__dashOrderDetails = order;
     document.getElementById('dashOrderTitle').textContent = `${order.orderId || order.id || 'Order'} · ${order.productName || order.product || 'Product'}`;
     document.getElementById('dashOrderSubtitle').textContent = (order.status || 'pending') === 'active'
@@ -2620,9 +2675,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const hint = canOpen
         ? `<div class="order-hint">Approved orders open full details, credentials, and delivery notes.</div>`
         : `<div class="order-hint">Waiting for admin verification. Open this card anytime to check status.</div>`;
+      const receivedLine = status === 'active'
+        ? `<div class="order-received">Order Received · Credentials Ready</div>`
+        : '';
 
       return `
-        <div class="order-card clickable" data-order-card="${escapeHtml(order.id)}">
+        <div class="order-card clickable ${status === 'active' ? 'delivered-card' : ''}" data-order-card="${escapeHtml(order.id)}">
           <div class="order-icon" style="background:rgba(124,109,250,0.12)">${icons[order.product] || '📦'}</div>
           <div class="order-main">
             <div class="order-name">${escapeHtml(order.orderId || order.id || 'Order')} · ${escapeHtml(order.productName || order.product || 'Product')}</div>
@@ -2630,6 +2688,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <span class="order-status ${status === 'active' ? 'status-active' : 'status-pending'}">${status === 'active' ? '✓ Delivered' : '⏳ Pending'}</span>
           <span class="order-price">${formatAmount(order.amount)}</span>
+          ${receivedLine}
           ${hint}
           <div class="order-actions">
             <button class="order-view-btn" type="button" data-order-open="${escapeHtml(order.id)}">${canOpen ? 'View Credentials' : 'View Status'}</button>
@@ -2665,6 +2724,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const orders = await loadDashboardOrders(uid);
       const total = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
       const deliveredCount = orders.filter(order => (order.status || 'pending') === 'active').length;
+      const deliveredOrders = orders.filter(order => (order.status || 'pending') === 'active');
+      const seenDelivered = getSeenDelivered(uid);
+      const newlyDelivered = deliveredOrders.filter(order => !seenDelivered.includes(order.id));
       window.renderOrders(orders);
       const orderCountEl = document.getElementById('dashOrderCount');
       const spentEl = document.getElementById('dashSpent');
@@ -2674,6 +2736,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (deliveredEl) deliveredEl.textContent = String(deliveredCount);
       const deliveredLabel = document.querySelector('#dashActive + .dash-stat-label');
       if (deliveredLabel) deliveredLabel.textContent = 'Delivered Orders';
+      if (newlyDelivered.length) {
+        showDeliveryAlert(newlyDelivered[0]);
+        setSeenDelivered(uid, deliveredOrders.map(order => order.id));
+      } else if (deliveredOrders.length) {
+        hideDeliveryAlert();
+      } else {
+        hideDeliveryAlert();
+        setSeenDelivered(uid, []);
+      }
     } catch (error) {
       console.log('Dashboard final load failed', error);
     }
