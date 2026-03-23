@@ -2589,6 +2589,13 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(getSeenDeliveredKey(uid), JSON.stringify(ids));
   }
 
+  function markOrdersSeen(uid, orderIds) {
+    if (!uid || !orderIds.length) return;
+    const current = getSeenDelivered(uid);
+    const merged = [...new Set([...current, ...orderIds])];
+    setSeenDelivered(uid, merged);
+  }
+
   function updateSiteOrderSignals(deliveredOrders, unseenOrders) {
     const dot = document.getElementById('navOrderAlertDot');
     const banner = document.getElementById('siteOrderBanner');
@@ -2598,21 +2605,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!dot || !banner || !bannerText || !bannerBtn || !bannerClose) return;
 
-    if (!deliveredOrders.length) {
+    if (!deliveredOrders.length || !unseenOrders.length) {
       dot.classList.remove('show');
       banner.classList.remove('show');
       return;
     }
 
-    const alertCount = unseenOrders.length || deliveredOrders.length;
+    const alertCount = unseenOrders.length;
     dot.textContent = String(alertCount);
     dot.classList.add('show');
 
-    const latestOrder = unseenOrders[0] || deliveredOrders[0];
+    const latestOrder = unseenOrders[0];
     bannerText.innerHTML = `Order received for <strong>${escapeHtml(latestOrder.productName || latestOrder.product || 'your product')}</strong>. Your credentials are saved in the dashboard.`;
     banner.classList.add('show');
-    bannerBtn.onclick = () => window.openDashboard();
-    bannerClose.onclick = () => banner.classList.remove('show');
+    bannerBtn.onclick = () => {
+      markOrdersSeen(window._currentUserUid, unseenOrders.map(order => order.id));
+      banner.classList.remove('show');
+      dot.classList.remove('show');
+      window.openDashboard();
+    };
+    bannerClose.onclick = () => {
+      markOrdersSeen(window._currentUserUid, unseenOrders.map(order => order.id));
+      banner.classList.remove('show');
+      dot.classList.remove('show');
+    };
   }
 
   function showDeliveryAlert(order) {
@@ -2625,10 +2641,14 @@ document.addEventListener('DOMContentLoaded', () => {
     textEl.innerHTML = `Your order for <strong>${escapeHtml(order.productName || order.product || 'Product')}</strong> has been received and saved in your dashboard. Tap open now to view credentials and your delivery note anytime.`;
     alertEl.classList.add('show');
     openBtn.onclick = () => {
+      markOrdersSeen(window._currentUserUid, [order.id]);
       openOrderModalInternal(order);
       alertEl.classList.remove('show');
     };
-    closeBtn.onclick = () => alertEl.classList.remove('show');
+    closeBtn.onclick = () => {
+      markOrdersSeen(window._currentUserUid, [order.id]);
+      alertEl.classList.remove('show');
+    };
   }
 
   function hideDeliveryAlert() {
@@ -2843,7 +2863,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (newlyDelivered.length) {
         showDeliveryAlert(newlyDelivered[0]);
       } else if (deliveredOrders.length) {
-        showDeliveryAlert(deliveredOrders[0]);
+        hideDeliveryAlert();
       } else {
         hideDeliveryAlert();
         setSeenDelivered(uid, []);
