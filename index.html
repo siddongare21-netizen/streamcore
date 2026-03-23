@@ -1320,11 +1320,11 @@ document.addEventListener('keydown', e => {
 .latest-order-btn.ghost{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text)}
 .orders-page-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(22px);z-index:680;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .3s}
 .orders-page-backdrop.open{opacity:1;pointer-events:all}
-.orders-page-box{width:min(820px,100%);max-height:min(92vh,920px);background:#0d1120;border:1px solid rgba(124,109,250,0.18);border-radius:28px;overflow:hidden;display:flex;flex-direction:column}
+.orders-page-box{width:min(1120px,100%);height:min(92vh,920px);background:#0d1120;border:1px solid rgba(124,109,250,0.18);border-radius:28px;overflow:hidden;display:flex;flex-direction:column}
 .orders-page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 26px;border-bottom:1px solid var(--border);background:rgba(13,17,32,0.96)}
 .orders-page-title{font-family:"Syne",sans-serif;font-size:1.35rem;margin:0 0 6px}
 .orders-page-sub{margin:0;color:var(--muted);font-size:.84rem;line-height:1.6}
-.orders-page-body{padding:22px 26px 26px;overflow:auto}
+.orders-page-body{padding:22px 26px 26px;overflow:auto;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);gap:18px}
 .orders-list{display:grid;gap:14px}
 .orders-page-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:18px;padding:18px 20px;display:flex;align-items:flex-start;gap:14px;transition:border-color .2s,transform .2s}
 .orders-page-card:hover{border-color:rgba(124,109,250,0.34);transform:translateY(-2px)}
@@ -1332,6 +1332,7 @@ document.addEventListener('keydown', e => {
 .orders-page-main{flex:1;min-width:0}
 .orders-page-name{font-weight:700;font-size:.92rem;margin-bottom:6px}
 .orders-page-meta{font-size:.76rem;color:var(--muted);line-height:1.6}
+.orders-page-side{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:20px;padding:18px;position:sticky;top:0;align-self:start}
 .orders-page-side-empty{color:var(--muted);font-size:.86rem;line-height:1.7}
 .orders-side-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
 .orders-side-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:12px}
@@ -1340,6 +1341,11 @@ document.addEventListener('keydown', e => {
 .orders-side-block{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-top:12px}
 .orders-side-title{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);font-weight:700;margin-bottom:10px}
 .orders-side-pre{font-family:Consolas,monospace;font-size:.8rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.orders-copy-btn{border:none;border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;transition:transform .2s,box-shadow .25s,background .2s,opacity .2s}
+.orders-copy-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(124,109,250,0.28)}
+.orders-copy-btn.copied{background:linear-gradient(135deg,#10b981,#34d399);box-shadow:0 0 0 1px rgba(52,211,153,0.18),0 14px 28px rgba(16,185,129,0.2);animation:ordersCopyPulse .45s ease}
+.orders-copy-btn:disabled{opacity:.6;cursor:not-allowed;box-shadow:none}
+@keyframes ordersCopyPulse{0%{transform:scale(.96)}70%{transform:scale(1.04)}100%{transform:scale(1)}}
 .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.25s,transform 0.25s;flex-wrap:wrap;}
 .order-card:hover{border-color:rgba(124,109,250,0.3);transform:translateX(4px);}
 .order-card.clickable{cursor:pointer}
@@ -1873,6 +1879,9 @@ function firebaseError(code) {
     </div>
     <div class="orders-page-body">
       <div class="orders-list" id="ordersPageList"></div>
+      <div class="orders-page-side" id="ordersPageDetails">
+        <div class="orders-page-side-empty">Select an order to view credentials, delivery notes, and copy options.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2895,7 +2904,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderOrdersPage(orders, selectedId) {
     const listEl = document.getElementById('ordersPageList');
-    if (!listEl) return;
+    const detailsEl = document.getElementById('ordersPageDetails');
+    if (!listEl || !detailsEl) return;
     if (!orders.length) {
       listEl.innerHTML = `<div class="dash-empty"><div class="dash-empty-icon">📦</div>No orders yet.</div>`;
       return;
@@ -2926,13 +2936,62 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `).join('');
 
+    const credentials = String(activeOrder.credentials || '').trim();
+    const deliveryMessage = String(activeOrder.deliveryMessage || '').trim();
+    const status = activeOrder.status || 'pending';
+    const placedOn = activeOrder.createdAt ? formatDateTime(activeOrder.createdAt) : 'Just now';
+    const deliveredOn = activeOrder.deliveredAt ? formatDateTime(activeOrder.deliveredAt) : 'Not delivered yet';
+    detailsEl.innerHTML = `
+      <h3 class="orders-page-title" style="font-size:1.12rem;margin-bottom:6px">${escapeHtml(activeOrder.productName || activeOrder.product || 'Product')}</h3>
+      <p class="orders-page-sub">${escapeHtml(activeOrder.orderId || activeOrder.id || 'Order')}</p>
+      <div class="orders-side-grid">
+        <div class="orders-side-box"><div class="orders-side-label">Status</div><div class="orders-side-value">${escapeHtml(status)}</div></div>
+        <div class="orders-side-box"><div class="orders-side-label">Amount</div><div class="orders-side-value">${formatAmount(activeOrder.amount)}</div></div>
+        <div class="orders-side-box"><div class="orders-side-label">Placed On</div><div class="orders-side-value">${escapeHtml(placedOn)}</div></div>
+        <div class="orders-side-box"><div class="orders-side-label">Delivered On</div><div class="orders-side-value">${escapeHtml(deliveredOn)}</div></div>
+      </div>
+      <div class="orders-side-block">
+        <div class="orders-side-title">Credentials</div>
+        ${credentials ? `<div class="orders-side-pre">${escapeHtml(credentials)}</div>` : `<div class="orders-page-side-empty">Credentials will appear here after approval.</div>`}
+      </div>
+      ${deliveryMessage ? `<div class="orders-side-block"><div class="orders-side-title">Delivery Note</div><div class="dash-order-note">${escapeHtml(deliveryMessage)}</div></div>` : ''}
+      <div class="orders-side-block">
+        <div class="orders-side-title">Actions</div>
+        <button class="orders-copy-btn" type="button" id="ordersPageCopySelected"${credentials ? '' : ' disabled'}>${credentials ? 'Copy Credentials' : 'Credentials Pending'}</button>
+      </div>
+    `;
+
     listEl.querySelectorAll('[data-orders-page-open]').forEach(card => {
       card.addEventListener('click', () => renderOrdersPage(orders, card.dataset.ordersPageOpen));
+    });
+    document.getElementById('ordersPageCopySelected')?.addEventListener('click', async () => {
+      const copyBtn = document.getElementById('ordersPageCopySelected');
+      if (!copyBtn || !credentials) return;
+      const resetLabel = (label = 'Copy Credentials') => {
+        copyBtn.classList.remove('copied');
+        copyBtn.textContent = label;
+      };
+
+      try {
+        await navigator.clipboard.writeText(credentials);
+        copyBtn.classList.add('copied');
+        copyBtn.textContent = 'Copied!';
+        clearTimeout(window.__ordersCopyResetTimer);
+        window.__ordersCopyResetTimer = setTimeout(() => resetLabel(), 1600);
+      } catch (error) {
+        copyBtn.textContent = 'Copy Failed';
+        clearTimeout(window.__ordersCopyResetTimer);
+        window.__ordersCopyResetTimer = setTimeout(() => resetLabel(), 1600);
+      }
     });
   }
 
   function openOrdersPage(orders, selectedId) {
     renderOrdersPage(orders, selectedId);
+    if (!orders.length) {
+      const detailsEl = document.getElementById('ordersPageDetails');
+      if (detailsEl) detailsEl.innerHTML = `<div class="orders-page-side-empty">Place an order and it will appear here.</div>`;
+    }
     document.getElementById('ordersPageBackdrop')?.classList.add('open');
   }
 
