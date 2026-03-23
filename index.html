@@ -1260,15 +1260,19 @@ document.addEventListener('keydown', e => {
 .dash-stat-card:hover{border-color:rgba(124,109,250,0.3);transform:translateY(-3px);}
 .dash-stat-num{font-family:"Syne",sans-serif;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .dash-stat-label{font-size:0.68rem;color:var(--muted);margin-top:3px;letter-spacing:0.05em;}
-.order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:border-color 0.25s,transform 0.25s;}
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.25s,transform 0.25s;flex-wrap:wrap;}
 .order-card:hover{border-color:rgba(124,109,250,0.3);transform:translateX(4px);}
 .order-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.order-main{flex:1;min-width:0;}
 .order-name{font-weight:600;font-size:0.88rem;margin-bottom:3px;}
 .order-date{font-size:0.72rem;color:var(--muted);}
 .order-status{margin-left:auto;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;}
 .status-active{background:rgba(79,209,197,0.12);border:1px solid rgba(79,209,197,0.25);color:var(--accent2);}
 .status-pending{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);color:#fbbf24;}
 .order-price{font-family:"Syne",sans-serif;font-weight:700;font-size:0.88rem;color:var(--accent);margin-left:10px;white-space:nowrap;}
+.order-creds{width:100%;margin-top:4px;background:rgba(79,209,197,0.06);border:1px solid rgba(79,209,197,0.18);border-radius:10px;padding:10px 12px;}
+.order-creds-label{font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px;}
+.order-creds-text{font-family:Consolas,monospace;font-size:0.78rem;line-height:1.6;color:var(--text);white-space:pre-wrap;word-break:break-word;}
 .dash-empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:0.88rem;}
 .dash-empty .dash-empty-icon{font-size:2.2rem;margin-bottom:10px;opacity:0.4;}
 .dash-logout-btn{display:flex;align-items:center;gap:8px;background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.2);color:#f472b6;padding:11px 18px;border-radius:10px;font-family:"DM Sans",sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;transition:background 0.2s,transform 0.2s;width:100%;justify-content:center;margin-top:20px;}
@@ -1515,14 +1519,23 @@ window.openDashboard = async function() {
 
   // Load orders from Firestore
   try {
-    const q = query(collection(db,'orders'), where('uid','==',currentUser.uid), orderBy('createdAt','desc'));
+    const q = query(collection(db,'orders'), where('uid','==',currentUser.uid));
     const snap = await getDocs(q);
-    const orders = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const orders = snap.docs
+      .map(d => ({id:d.id,...d.data()}))
+      .sort((a,b) => {
+        const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return bTime - aTime;
+      });
     renderOrders(orders);
-    const total = orders.reduce((s,o)=>s+(o.amount||0),0);
-    document.getElementById('dashOrderCount').textContent = orders.length;
+    const total = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+    const pendingCount = orders.filter(order => (order.status || 'pending') === 'pending').length;
+    document.getElementById('dashOrderCount').textContent = String(orders.length);
     document.getElementById('dashSpent').textContent = '₹'+total;
     document.getElementById('dashActive').textContent = orders.filter(o=>o.status==='active').length;
+    document.getElementById('dashSpent').textContent = '₹' + total.toFixed(total % 1 === 0 ? 0 : 2);
+    document.getElementById('dashActive').textContent = String(pendingCount);
   } catch(e) {
     renderOrders([]);
     document.getElementById('dashOrderCount').textContent = '0';
@@ -1542,7 +1555,7 @@ function renderOrders(orders) {
     <div class="order-card">
       <div class="order-icon" style="background:rgba(124,109,250,0.12)">${icons[o.product]||'📦'}</div>
       <div>
-        <div class="order-name">${o.productName||o.product||'Order'}</div>
+        <div class="order-name">${o.orderId||o.id||'Order'} &middot; ${o.productName||o.product||'Product'}</div>
         <div class="order-date">${o.createdAt?.toDate ? o.createdAt.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
       </div>
       <span class="order-status ${o.status==='active'?'status-active':'status-pending'}">${o.status==='active'?'✓ Active':'⏳ Pending'}</span>
@@ -1656,7 +1669,7 @@ function firebaseError(code) {
         </div>
         <div class="dash-stat-card">
           <div class="dash-stat-num" id="dashActive">0</div>
-          <div class="dash-stat-label">Active</div>
+          <div class="dash-stat-label">Pending Orders</div>
         </div>
         <div class="dash-stat-card">
           <div class="dash-stat-num" id="dashSpent">₹0</div>
@@ -2322,6 +2335,99 @@ document.addEventListener('DOMContentLoaded', () => {
     syncReferralState({ uid: window._currentUserUid });
   }
 });
+</script>
+
+<script>
+(function() {
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  async function loadDashboardOrders(uid) {
+    const db = window._firebaseDb;
+    if (!db || !uid) return [];
+    const { collection, getDocs, query, where } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
+    return snap.docs
+      .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+      .sort((a, b) => {
+        const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return bTime - aTime;
+      });
+  }
+
+  renderOrders = function(orders) {
+    const el = document.getElementById('dashOrders');
+    if (!el) return;
+    if (!orders.length) {
+      el.innerHTML = `<div class="dash-empty"><div class="dash-empty-icon">📦</div>No orders yet.<br>Browse products and place your first order!</div>`;
+      return;
+    }
+
+    const icons = {
+      netflix: '🎬',
+      prime: '🎥',
+      spotify: '🎵',
+      youtube: '▶️',
+      capcut: '✂️',
+      nordvpn: '🔒',
+      canva: '🎨',
+      minecraft: '⛏️',
+      crunchyroll: '🍙',
+      combo: '🎁'
+    };
+
+    el.innerHTML = orders.map(order => {
+      const status = order.status || 'pending';
+      const amount = Number(order.amount || 0);
+      const credentials = String(order.credentials || '').trim();
+      const credentialsBlock = status === 'active' && credentials
+        ? `<div class="order-creds"><div class="order-creds-label">Credentials</div><div class="order-creds-text">${escapeHtml(credentials)}</div></div>`
+        : '';
+
+      return `
+        <div class="order-card">
+          <div class="order-icon" style="background:rgba(124,109,250,0.12)">${icons[order.product] || '📦'}</div>
+          <div class="order-main">
+            <div class="order-name">${escapeHtml(order.orderId || order.id || 'Order')} &middot; ${escapeHtml(order.productName || order.product || 'Product')}</div>
+            <div class="order-date">${order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : 'Just now'}</div>
+          </div>
+          <span class="order-status ${status === 'active' ? 'status-active' : 'status-pending'}">${status === 'active' ? '✓ Delivered' : '⏳ Pending'}</span>
+          <span class="order-price">₹${amount.toFixed(amount % 1 === 0 ? 0 : 2)}</span>
+          ${credentialsBlock}
+        </div>
+      `;
+    }).join('');
+  };
+
+  const _dashboardWithReferral = window.openDashboard;
+  window.openDashboard = async function() {
+    await _dashboardWithReferral();
+    const uid = window._currentUserUid;
+    if (!uid) return;
+
+    try {
+      const orders = await loadDashboardOrders(uid);
+      const total = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+      const pendingCount = orders.filter(order => (order.status || 'pending') === 'pending').length;
+      renderOrders(orders);
+      const orderCountEl = document.getElementById('dashOrderCount');
+      const spentEl = document.getElementById('dashSpent');
+      const pendingEl = document.getElementById('dashActive');
+      if (orderCountEl) orderCountEl.textContent = String(orders.length);
+      if (spentEl) spentEl.textContent = '₹' + total.toFixed(total % 1 === 0 ? 0 : 2);
+      if (pendingEl) pendingEl.textContent = String(pendingCount);
+    } catch (error) {
+      console.log('Dashboard override load failed', error);
+    }
+  };
+})();
 </script>
 
 </body>

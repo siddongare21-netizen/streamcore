@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#080b12;
+  --bg2:#0d1120;
+  --card:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.08);
+  --text:#e8ecf4;
+  --muted:#6b7a99;
+  --accent:#7c6dfa;
+  --accent2:#4fd1c5;
+  --danger:#ef4444;
+  --warning:#f59e0b;
+  --glow:rgba(124,109,250,0.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:radial-gradient(circle at top,rgba(124,109,250,0.12),transparent 30%),var(--bg);color:var(--text);font-family:"DM Sans",sans-serif}
+body{min-height:100vh}
+.hidden{display:none !important}
+.gate-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.gate-card{width:min(100%,480px);background:rgba(13,17,32,0.95);border:1px solid rgba(124,109,250,0.18);border-radius:28px;padding:36px 30px;box-shadow:0 30px 80px rgba(0,0,0,0.4),0 0 80px rgba(124,109,250,0.08);text-align:center}
+.gate-kicker{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;font-weight:700}
+.gate-title{font-family:"Syne",sans-serif;font-size:clamp(2rem,7vw,3.6rem);font-weight:800;line-height:1;margin:0 0 12px}
+.gate-sub{color:var(--muted);font-size:.95rem;line-height:1.7;margin:0 0 24px}
+.gate-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;color:var(--text);padding:15px 16px;font-size:1rem;outline:none}
+.gate-input:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.gate-btn{margin-top:14px;width:100%;border:none;border-radius:14px;padding:15px 16px;font-size:.98rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),#5b4de8);cursor:pointer;box-shadow:0 0 30px var(--glow)}
+.gate-msg{min-height:22px;margin-top:12px;font-size:.88rem;color:#fca5a5}
+
+.app{padding:24px}
+.shell{max-width:1240px;margin:0 auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+.title-wrap h1{font-family:"Syne",sans-serif;font-size:clamp(1.8rem,5vw,3rem);margin:0 0 8px}
+.title-wrap p{margin:0;color:var(--muted);font-size:.95rem}
+.header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tab-btn,.ghost-btn,.danger-btn,.save-btn,.primary-btn{border:none;border-radius:12px;padding:12px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif}
+.tab-btn{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border)}
+.tab-btn.active{background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;border-color:transparent;box-shadow:0 0 24px var(--glow)}
+.ghost-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text)}
+.primary-btn{background:linear-gradient(135deg,var(--accent2),#22c55e);color:#04110d}
+.danger-btn{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
+.save-btn{background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff}
+
+.panel{display:none}
+.panel.active{display:block}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.section-head h2{font-family:"Syne",sans-serif;font-size:1.05rem;margin:0}
+.section-head p{margin:0;color:var(--muted);font-size:.85rem}
+.stat-line{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.stat-chip{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--muted)}
+.stat-chip strong{color:var(--text)}
+
+.list-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:rgba(13,17,32,0.92);border:1px solid var(--border);border-radius:18px;padding:18px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+.card:hover{border-color:rgba(124,109,250,0.35);transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,0.25)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card-title{font-weight:700;font-size:.95rem;line-height:1.4}
+.card-sub{font-size:.82rem;color:var(--muted);line-height:1.5}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.badge.pending{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);color:#fcd34d}
+.badge.stock{background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.18);color:var(--accent2)}
+.meta-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.8rem;color:var(--muted);margin-top:10px}
+.empty{padding:44px 18px;border:1px dashed rgba(255,255,255,0.12);border-radius:18px;text-align:center;color:var(--muted);background:rgba(255,255,255,0.02)}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.76);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}
+.modal-backdrop.open{display:flex}
+.modal{width:min(100%,860px);max-height:92vh;overflow:auto;background:#0d1120;border:1px solid rgba(124,109,250,0.2);border-radius:24px;padding:22px}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.modal-title{font-family:"Syne",sans-serif;font-size:1.2rem;margin:0 0 6px}
+.modal-sub{margin:0;color:var(--muted);font-size:.84rem;line-height:1.6}
+.close-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);cursor:pointer}
+.editor-grid{display:grid;grid-template-columns:1.2fr .9fr;gap:16px}
+.editor-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:18px;padding:16px}
+.editor-card h3{margin:0 0 12px;font-size:.9rem;font-family:"Syne",sans-serif}
+.label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin:0 0 8px;letter-spacing:.08em;text-transform:uppercase}
+.textarea{width:100%;min-height:240px;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font:14px/1.6 Consolas,monospace;resize:vertical;outline:none}
+.textarea:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.mini-notes{min-height:180px}
+.info-list{display:grid;gap:10px}
+.info-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:.85rem}
+.info-row:last-child{border-bottom:none}
+.info-row span:first-child{color:var(--muted)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.inline-btn{margin-top:10px}
+.helper{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.6}
+.toast{position:fixed;right:18px;bottom:18px;background:#10182c;border:1px solid rgba(124,109,250,0.25);color:var(--text);padding:12px 14px;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.3);display:none;z-index:1200}
+.toast.show{display:block}
+
+@media(max-width:860px){
+  .editor-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .app{padding:16px}
+  .gate-card{padding:28px 20px}
+  .modal{padding:18px}
+  .modal-actions{justify-content:stretch}
+  .modal-actions button{width:100%}
+}
+</style>
+</head>
+<body>
+  <div class="gate-wrap" id="adminGate">
+    <div class="gate-card">
+      <div class="gate-kicker">Protected Access</div>
+      <h1 class="gate-title">ADMIN PANEL</h1>
+      <p class="gate-sub">Enter the admin password to manage pending orders, update stock notes, reject orders, or provide delivered credentials.</p>
+      <input class="gate-input" id="adminPassword" type="password" placeholder="Enter password" />
+      <button class="gate-btn" id="adminUnlockBtn">Open Admin Panel</button>
+      <div class="gate-msg" id="adminGateMsg"></div>
+    </div>
+  </div>
+
+  <div class="app hidden" id="adminApp">
+    <div class="shell">
+      <div class="header">
+        <div class="title-wrap">
+          <h1>Admin Panel</h1>
+          <p>Connected to the same order data as the customer store.</p>
+        </div>
+        <div class="header-actions">
+          <button class="tab-btn active" data-tab="pendingPanel">Pending Orders</button>
+          <button class="tab-btn" data-tab="stockPanel">Storage Stock</button>
+          <button class="ghost-btn" id="adminRefreshBtn">Refresh</button>
+        </div>
+      </div>
+
+      <section class="panel active" id="pendingPanel">
+        <div class="section-head">
+          <div>
+            <h2>Pending Orders</h2>
+            <p>Orders appear here right after the customer clicks `I've Paid — Send Screenshot`.</p>
+          </div>
+        </div>
+        <div class="stat-line">
+          <div class="stat-chip">Pending now: <strong id="pendingCountChip">0</strong></div>
+        </div>
+        <div class="list-grid" id="pendingOrdersList"></div>
+      </section>
+
+      <section class="panel" id="stockPanel">
+        <div class="section-head">
+          <div>
+            <h2>Storage Stock</h2>
+            <p>Click a product to open its note pad and keep your current stock or credentials there.</p>
+          </div>
+        </div>
+        <div class="list-grid" id="stockProductsList"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="orderModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="orderModalTitle">Pending Order</h2>
+          <p class="modal-sub" id="orderModalSub">Paste credentials after you verify the payment note / order ID.</p>
+        </div>
+        <button class="close-btn" type="button" id="closeOrderModal">✕</button>
+      </div>
+      <div class="editor-grid">
+        <div class="editor-card">
+          <h3>Provide Credentials</h3>
+          <label class="label" for="orderCredentialInput">Credentials for customer</label>
+          <textarea class="textarea" id="orderCredentialInput" placeholder="Paste the exact credentials you want to deliver to the customer here..."></textarea>
+          <p class="helper">When you click `Accept and Provide`, these credentials will be saved into the customer’s order in the main site and the order will leave the pending list.</p>
+        </div>
+        <div class="editor-card">
+          <h3>Order Details</h3>
+          <div class="info-list" id="orderInfoList"></div>
+          <label class="label" for="orderStockPreview" style="margin-top:14px">Saved stock notes for this product</label>
+          <textarea class="textarea mini-notes" id="orderStockPreview" readonly placeholder="No saved stock notes for this product yet."></textarea>
+          <button class="ghost-btn inline-btn" type="button" id="useStockNotesBtn">Use Stock Notes in Credentials</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="danger-btn" type="button" id="rejectOrderBtn">Reject and Delete</button>
+        <button class="save-btn" type="button" id="acceptOrderBtn">Accept and Provide</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="stockModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="stockModalTitle">Product Stock</h2>
+          <p class="modal-sub">Keep all available stock or notes here for this product.</p>
+        </div>
+        <button class="close-btn" type="button" id="closeStockModal">✕</button>
+      </div>
+      <div class="editor-card">
+        <label class="label" for="stockNotesInput">Stock notes</label>
+        <textarea class="textarea" id="stockNotesInput" placeholder="Example:
+email:pass
+profile pin
+backup mail
+or any stock notes you want to save"></textarea>
+        <p class="helper">This stays product-wise, so each product can have its own note pad.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="clearStockBtn">Clear</button>
+        <button class="save-btn" type="button" id="saveStockBtn">Save Stock Notes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="adminToast"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const ADMIN_PASSWORD = 'tanu31102008';
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfVEW4khM1v0aLomuV8XA47CUg-ukso_o",
+      authDomain: "streamox-bb339.firebaseapp.com",
+      projectId: "streamox-bb339",
+      storageBucket: "streamox-bb339.firebasestorage.app",
+      messagingSenderId: "668069095605",
+      appId: "1:668069095605:web:8eae47c6f8a160318f76fc",
+      measurementId: "G-F5CDVJZ4GD"
+    };
+
+    const PRODUCTS = {
+      netflix: 'Netflix Premium',
+      prime: 'Amazon Prime Video',
+      spotify: 'Spotify Premium',
+      youtube: 'YouTube Premium',
+      capcut: 'CapCut Pro',
+      nordvpn: 'NordVPN',
+      canva: 'Canva Pro',
+      minecraft: 'Minecraft',
+      crunchyroll: 'Crunchyroll Premium',
+      combo: 'Mega Combo Pack'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const state = {
+      pendingOrders: [],
+      stockMap: {},
+      activeOrder: null,
+      activeStockKey: null
+    };
+
+    const adminGate = document.getElementById('adminGate');
+    const adminApp = document.getElementById('adminApp');
+    const adminPassword = document.getElementById('adminPassword');
+    const adminGateMsg = document.getElementById('adminGateMsg');
+    const pendingOrdersList = document.getElementById('pendingOrdersList');
+    const stockProductsList = document.getElementById('stockProductsList');
+    const pendingCountChip = document.getElementById('pendingCountChip');
+    const orderModalBackdrop = document.getElementById('orderModalBackdrop');
+    const stockModalBackdrop = document.getElementById('stockModalBackdrop');
+    const orderModalTitle = document.getElementById('orderModalTitle');
+    const orderInfoList = document.getElementById('orderInfoList');
+    const orderCredentialInput = document.getElementById('orderCredentialInput');
+    const orderStockPreview = document.getElementById('orderStockPreview');
+    const stockModalTitle = document.getElementById('stockModalTitle');
+    const stockNotesInput = document.getElementById('stockNotesInput');
+    const toast = document.getElementById('adminToast');
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.__adminToastTimer);
+      window.__adminToastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatAmount(amount) {
+      const value = Number(amount || 0);
+      return '₹' + value.toFixed(value % 1 === 0 ? 0 : 2);
+    }
+
+    function formatDate(createdAt) {
+      return createdAt?.toDate
+        ? createdAt.toDate().toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'2-digit' })
+        : 'Just now';
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === tabId));
+      document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    }
+
+    function openOrderModal(order) {
+      state.activeOrder = order;
+      orderModalTitle.textContent = `${order.orderId || order.id} · ${order.productName || PRODUCTS[order.product] || order.product}`;
+      orderCredentialInput.value = order.credentials || '';
+      orderStockPreview.value = state.stockMap[order.product]?.notes || '';
+      orderInfoList.innerHTML = `
+        <div class="info-row"><span>Order ID</span><strong>${escapeHtml(order.orderId || order.id)}</strong></div>
+        <div class="info-row"><span>Product</span><strong>${escapeHtml(order.productName || PRODUCTS[order.product] || order.product)}</strong></div>
+        <div class="info-row"><span>Amount</span><strong>${formatAmount(order.amount)}</strong></div>
+        <div class="info-row"><span>Status</span><strong>${escapeHtml(order.status || 'pending')}</strong></div>
+        <div class="info-row"><span>Placed On</span><strong>${escapeHtml(formatDate(order.createdAt))}</strong></div>
+        <div class="info-row"><span>User ID</span><strong>${escapeHtml(order.uid || '—')}</strong></div>
+      `;
+      orderModalBackdrop.classList.add('open');
+    }
+
+    function closeOrderModal() {
+      state.activeOrder = null;
+      orderModalBackdrop.classList.remove('open');
+    }
+
+    function openStockModal(productKey) {
+      state.activeStockKey = productKey;
+      stockModalTitle.textContent = `${PRODUCTS[productKey] || productKey} Stock`;
+      stockNotesInput.value = state.stockMap[productKey]?.notes || '';
+      stockModalBackdrop.classList.add('open');
+    }
+
+    function closeStockModal() {
+      state.activeStockKey = null;
+      stockModalBackdrop.classList.remove('open');
+    }
+
+    function renderPendingOrders() {
+      pendingCountChip.textContent = String(state.pendingOrders.length);
+      if (!state.pendingOrders.length) {
+        pendingOrdersList.innerHTML = `<div class="empty">No pending orders right now.</div>`;
+        return;
+      }
+
+      pendingOrdersList.innerHTML = state.pendingOrders.map(order => `
+        <div class="card" data-order-id="${escapeHtml(order.id)}">
+          <div class="card-top">
+            <div>
+              <div class="card-title">${escapeHtml(order.orderId || order.id)}</div>
+              <div class="card-sub">${escapeHtml(order.productName || PRODUCTS[order.product] || order.product)}</div>
+            </div>
+            <span class="badge pending">Pending</span>
+          </div>
+          <div class="meta-row"><span>Amount</span><strong>${formatAmount(order.amount)}</strong></div>
+          <div class="meta-row"><span>Placed</span><strong>${escapeHtml(formatDate(order.createdAt))}</strong></div>
+        </div>
+      `).join('');
+
+      pendingOrdersList.querySelectorAll('[data-order-id]').forEach(card => {
+        card.addEventListener('click', () => {
+          const order = state.pendingOrders.find(item => item.id === card.dataset.orderId);
+          if (order) openOrderModal(order);
+        });
+      });
+    }
+
+    function renderStockProducts() {
+      stockProductsList.innerHTML = Object.entries(PRODUCTS).map(([key, name]) => {
+        const notes = state.stockMap[key]?.notes || '';
+        const summary = notes.trim() ? `${notes.trim().split('\n').length} line(s) saved` : 'No notes saved yet';
+        return `
+          <div class="card" data-stock-key="${escapeHtml(key)}">
+            <div class="card-top">
+              <div>
+                <div class="card-title">${escapeHtml(name)}</div>
+                <div class="card-sub">${escapeHtml(summary)}</div>
+              </div>
+              <span class="badge stock">Stock</span>
+            </div>
+            <div class="meta-row"><span>Product Key</span><strong>${escapeHtml(key)}</strong></div>
+          </div>
+        `;
+      }).join('');
+
+      stockProductsList.querySelectorAll('[data-stock-key]').forEach(card => {
+        card.addEventListener('click', () => openStockModal(card.dataset.stockKey));
+      });
+    }
+
+    async function loadStockMap() {
+      const snap = await getDocs(collection(db, 'stock'));
+      const stockMap = {};
+      snap.docs.forEach(docSnap => {
+        stockMap[docSnap.id] = { id: docSnap.id, ...docSnap.data() };
+      });
+      state.stockMap = stockMap;
+      renderStockProducts();
+    }
+
+    async function loadPendingOrders() {
+      const snap = await getDocs(query(collection(db, 'orders'), where('status', '==', 'pending')));
+      state.pendingOrders = snap.docs
+        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+        .sort((a, b) => {
+          const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return bTime - aTime;
+        });
+      renderPendingOrders();
+    }
+
+    async function refreshAll() {
+      await Promise.all([loadPendingOrders(), loadStockMap()]);
+    }
+
+    async function saveStock() {
+      if (!state.activeStockKey) return;
+      await setDoc(doc(db, 'stock', state.activeStockKey), {
+        productKey: state.activeStockKey,
+        productName: PRODUCTS[state.activeStockKey] || state.activeStockKey,
+        notes: stockNotesInput.value,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      await loadStockMap();
+      closeStockModal();
+      showToast('Stock notes saved');
+    }
+
+    async function acceptOrder() {
+      if (!state.activeOrder) return;
+      const credentials = orderCredentialInput.value.trim();
+      if (!credentials) {
+        showToast('Paste credentials first');
+        return;
+      }
+      await updateDoc(doc(db, 'orders', state.activeOrder.id), {
+        credentials,
+        status: 'active',
+        deliveredAt: serverTimestamp()
+      });
+      closeOrderModal();
+      await loadPendingOrders();
+      showToast('Credentials provided to customer');
+    }
+
+    async function rejectOrder() {
+      if (!state.activeOrder) return;
+      await deleteDoc(doc(db, 'orders', state.activeOrder.id));
+      closeOrderModal();
+      await loadPendingOrders();
+      showToast('Order deleted');
+    }
+
+    document.getElementById('adminUnlockBtn').addEventListener('click', async () => {
+      if (adminPassword.value !== ADMIN_PASSWORD) {
+        adminGateMsg.textContent = 'Wrong password';
+        return;
+      }
+      adminGateMsg.textContent = '';
+      adminGate.classList.add('hidden');
+      adminApp.classList.remove('hidden');
+      await refreshAll();
+    });
+
+    adminPassword.addEventListener('keydown', event => {
+      if (event.key === 'Enter') document.getElementById('adminUnlockBtn').click();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    document.getElementById('adminRefreshBtn').addEventListener('click', refreshAll);
+    document.getElementById('closeOrderModal').addEventListener('click', closeOrderModal);
+    document.getElementById('closeStockModal').addEventListener('click', closeStockModal);
+    document.getElementById('acceptOrderBtn').addEventListener('click', acceptOrder);
+    document.getElementById('rejectOrderBtn').addEventListener('click', rejectOrder);
+    document.getElementById('saveStockBtn').addEventListener('click', saveStock);
+    document.getElementById('clearStockBtn').addEventListener('click', () => { stockNotesInput.value = ''; });
+    document.getElementById('useStockNotesBtn').addEventListener('click', () => {
+      orderCredentialInput.value = orderStockPreview.value;
+    });
+
+    orderModalBackdrop.addEventListener('click', event => {
+      if (event.target === orderModalBackdrop) closeOrderModal();
+    });
+
+    stockModalBackdrop.addEventListener('click', event => {
+      if (event.target === stockModalBackdrop) closeStockModal();
+    });
+  </script>
+</body>
+</html>
