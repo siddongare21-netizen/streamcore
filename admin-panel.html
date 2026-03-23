@@ -152,30 +152,43 @@ tr:last-child td{border-bottom:none}
 .copy-user-btn{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--text);font-size:.74rem;font-weight:700;cursor:pointer;transition:.2s ease}
 .copy-user-btn:hover{border-color:rgba(124,109,250,0.35);background:rgba(124,109,250,0.08)}
 .copy-user-btn.copied{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.24);color:#86efac}
-.console-shell{background:rgba(13,17,32,0.92);border:1px solid var(--border);border-radius:18px;padding:18px;position:relative;overflow:hidden;box-shadow:0 18px 34px rgba(0,0,0,0.16)}
-.console-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
-.console-stat{background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;position:relative;overflow:hidden}
-.console-stat::after{content:"";position:absolute;inset:auto -22% -72% auto;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(124,109,250,0.18),transparent 68%);opacity:.55}
-.console-stat-label{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:#8ea0c5;margin-bottom:8px}
-.console-stat-value{font-family:"Syne",sans-serif;font-size:1.08rem;font-weight:700;color:#eff3ff}
-.console-stat-note{margin-top:6px;font-size:.78rem;color:var(--muted);line-height:1.5}
-.console-shortcuts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
-.console-chip{border:none;border-radius:999px;padding:9px 12px;background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.16);color:#c7fff8;font-size:.78rem;font-weight:700;cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
-.console-chip:hover{transform:translateY(-1px);border-color:rgba(124,109,250,0.28);background:rgba(124,109,250,0.12)}
-.console-log{background:#0a0f1d;border:1px solid rgba(255,255,255,0.06);border-radius:16px;min-height:320px;max-height:460px;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-.console-entry{border-radius:14px;padding:12px 14px;font-family:Consolas,monospace;font-size:.82rem;line-height:1.7;word-break:break-word}
-.console-entry.system{background:rgba(124,109,250,0.08);border:1px solid rgba(124,109,250,0.18);color:#d8d4ff}
-.console-entry.user{background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.18);color:#c7fff8;align-self:flex-end}
-.console-entry.error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.22);color:#fecaca}
+.console-shell{background:
+  radial-gradient(circle at top left,rgba(79,209,197,0.12),transparent 28%),
+  radial-gradient(circle at top right,rgba(124,109,250,0.16),transparent 34%),
+  linear-gradient(180deg,rgba(10,14,26,0.96),rgba(8,12,23,0.98));
+  border:1px solid rgba(124,109,250,0.16);border-radius:24px;padding:20px;position:relative;overflow:hidden;box-shadow:0 22px 44px rgba(0,0,0,0.22)}
+.console-shell::before{background:linear-gradient(90deg,transparent,rgba(79,209,197,0.28),rgba(124,109,250,0.34),transparent)}
+.console-shell::after{background:radial-gradient(circle,rgba(79,209,197,0.14),transparent 68%);opacity:.58}
+.console-topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
+.console-topbar-main{display:flex;align-items:center;gap:14px;min-width:0}
+.console-lights{display:flex;gap:8px;align-items:center}
+.console-light{width:11px;height:11px;border-radius:50%;box-shadow:0 0 14px currentColor}
+.console-light.live{color:#4fd1c5;background:#4fd1c5}
+.console-light.warn{color:#f59e0b;background:#f59e0b}
+.console-light.secure{color:#7c6dfa;background:#7c6dfa}
+.console-topbar-copy{min-width:0}
+.console-shell-kicker{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#7dd3fc;margin-bottom:4px}
+.console-shell-title{font-family:"Syne",sans-serif;font-size:1.2rem;font-weight:800;color:#f8fbff;line-height:1.1}
+.console-shell-sub{margin-top:4px;font-size:.82rem;color:#94a3c7;line-height:1.5}
+.console-theme-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:999px;background:rgba(124,109,250,0.12);border:1px solid rgba(124,109,250,0.24);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:#ddd6fe;white-space:nowrap}
+.console-stage{position:relative;border-radius:18px;padding:14px;background:rgba(4,7,15,0.72);border:1px solid rgba(255,255,255,0.06);box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+.console-stage::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(79,209,197,0.05),transparent 22%,transparent 78%,rgba(124,109,250,0.05));pointer-events:none}
+.console-log{position:relative;background:linear-gradient(180deg,#0a0f1d,#0b1021);border:1px solid rgba(124,109,250,0.14);border-radius:16px;min-height:320px;max-height:460px;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+.console-log::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,0.025) 0,rgba(255,255,255,0.025) 1px,transparent 1px,transparent 28px);pointer-events:none;opacity:.18}
+.console-entry{position:relative;border-radius:16px;padding:13px 15px;font-family:Consolas,monospace;font-size:.82rem;line-height:1.7;word-break:break-word;backdrop-filter:blur(4px)}
+.console-entry.system{background:linear-gradient(180deg,rgba(124,109,250,0.12),rgba(124,109,250,0.08));border:1px solid rgba(124,109,250,0.2);color:#ddd6fe;box-shadow:0 10px 20px rgba(40,20,90,0.12)}
+.console-entry.user{background:linear-gradient(180deg,rgba(79,209,197,0.14),rgba(79,209,197,0.08));border:1px solid rgba(79,209,197,0.22);color:#ccfbf1;align-self:flex-end;box-shadow:0 10px 20px rgba(10,80,80,0.12)}
+.console-entry.error{background:linear-gradient(180deg,rgba(239,68,68,0.15),rgba(239,68,68,0.09));border:1px solid rgba(239,68,68,0.22);color:#fecaca}
 .console-entry-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;font-family:"DM Sans",sans-serif}
 .console-entry-tag{display:inline-flex;align-items:center;justify-content:center;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,0.07);font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;color:#cbd5f5}
 .console-entry-time{font-size:.72rem;color:#90a1c3}
 .console-entry-body{white-space:pre-wrap}
-.console-row{display:flex;gap:10px;align-items:center;margin-top:14px;padding:12px;border-radius:16px;background:rgba(6,10,20,0.66);border:1px solid rgba(255,255,255,0.06);position:sticky;bottom:0;backdrop-filter:blur(8px)}
-.console-input{flex:1;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px 16px;font-size:.92rem;font-family:Consolas,monospace;outline:none}
-.console-input:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
-.console-help{margin-top:12px;color:var(--muted);font-size:.82rem;line-height:1.7}
-.console-help code{color:#d9ddff}
+.console-row{display:flex;gap:10px;align-items:center;margin-top:14px;padding:12px;border-radius:18px;background:linear-gradient(180deg,rgba(7,11,20,0.88),rgba(5,8,16,0.92));border:1px solid rgba(79,209,197,0.14);position:sticky;bottom:0;backdrop-filter:blur(10px);box-shadow:0 18px 34px rgba(0,0,0,0.18)}
+.console-prompt{display:inline-flex;align-items:center;justify-content:center;padding:13px 14px;border-radius:14px;background:rgba(79,209,197,0.1);border:1px solid rgba(79,209,197,0.18);color:#a7f3d0;font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.console-input{flex:1;background:rgba(9,13,24,0.96);border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px 16px;font-size:.92rem;font-family:Consolas,monospace;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+.console-input:focus{border-color:rgba(79,209,197,0.42);box-shadow:0 0 0 3px rgba(79,209,197,0.08),0 0 26px rgba(79,209,197,0.08)}
+.console-run-btn{min-width:124px;background:linear-gradient(135deg,#4fd1c5,#7c6dfa);border:none;color:#effffb;box-shadow:0 14px 28px rgba(79,209,197,0.16)}
+.console-run-btn:hover{transform:translateY(-1px);box-shadow:0 18px 30px rgba(79,209,197,0.2)}
 .helper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .input,.select{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font-size:.92rem;outline:none}
 .input:focus,.select:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
@@ -262,9 +275,12 @@ tr:last-child td{border-bottom:none}
   .modal-actions button{width:100%}
   .section-tools{width:100%}
   .search-shell{width:100%;min-width:0}
-  .console-summary{grid-template-columns:1fr}
+  .console-topbar{flex-direction:column;align-items:flex-start}
+  .console-topbar-main{width:100%}
+  .console-theme-pill{width:100%;justify-content:center}
   .console-row{flex-direction:column}
   .console-row > *{width:100%}
+  .console-prompt{justify-content:flex-start}
 }
 </style>
 </head>
@@ -378,38 +394,29 @@ tr:last-child td{border-bottom:none}
           </div>
         </div>
         <div class="console-shell">
-          <div class="console-summary">
-            <div class="console-stat">
-              <div class="console-stat-label">Wallet</div>
-              <div class="console-stat-value" id="consoleWalletValue">Credits and bans</div>
-              <div class="console-stat-note" id="consoleWalletNote">Handle wallet balance fixes and user access quickly.</div>
+          <div class="console-topbar">
+            <div class="console-topbar-main">
+              <div class="console-lights">
+                <span class="console-light live"></span>
+                <span class="console-light warn"></span>
+                <span class="console-light secure"></span>
+              </div>
+              <div class="console-topbar-copy">
+                <div class="console-shell-kicker">Secure Terminal</div>
+                <div class="console-shell-title">Nebula Command Console</div>
+                <div class="console-shell-sub">Clean command view only. Type <code>/help</code> any time to see every available command.</div>
+              </div>
             </div>
-            <div class="console-stat">
-              <div class="console-stat-label">Redeem</div>
-              <div class="console-stat-value" id="consoleRedeemValue">Bulk code tools</div>
-              <div class="console-stat-note" id="consoleRedeemNote">Generate, list, and delete redeem codes from the same feed.</div>
-            </div>
-            <div class="console-stat">
-              <div class="console-stat-label">Orders</div>
-              <div class="console-stat-value" id="consoleOrderValue">Resend delivery</div>
-              <div class="console-stat-note" id="consoleOrderNote">Push delivered credentials back into the customer dashboard flow.</div>
-            </div>
+            <div class="console-theme-pill">Neon Grid Theme</div>
           </div>
-          <div class="console-shortcuts">
-            <button class="console-chip" type="button" data-console-shortcut="/help">/help</button>
-            <button class="console-chip" type="button" data-console-shortcut="/list-redeemcodes">/list-redeemcodes</button>
-            <button class="console-chip" type="button" data-console-shortcut="/create-redeemcode 3 15">/create-redeemcode 3 15</button>
-            <button class="console-chip" type="button" data-console-shortcut="/delete-redeemcode TW-XXXX-XXXX">/delete-redeemcode</button>
-            <button class="console-chip" type="button" data-console-shortcut="/ban-user USER_ID">/ban-user</button>
-            <button class="console-chip" type="button" data-console-shortcut="/unban-user USER_ID">/unban-user</button>
-            <button class="console-chip" type="button" data-console-shortcut="/resend-order ORDER_ID">/resend-order</button>
+          <div class="console-stage">
+            <div class="console-log" id="adminConsoleLog"></div>
           </div>
-          <div class="console-log" id="adminConsoleLog"></div>
           <div class="console-row">
-            <input class="console-input" id="adminConsoleInput" type="text" placeholder="/create-redeemcode 5 15" autocomplete="off" />
-            <button class="save-btn" type="button" id="adminConsoleRunBtn">Run</button>
+            <div class="console-prompt">root@streamox</div>
+            <input class="console-input" id="adminConsoleInput" type="text" placeholder="Type /help or enter a command..." autocomplete="off" />
+            <button class="save-btn console-run-btn" type="button" id="adminConsoleRunBtn">Run Command</button>
           </div>
-          <div class="console-help">Supported commands: <code>/view-credits &lt;userid&gt;</code>, <code>/give-credits &lt;amount&gt; &lt;userid&gt;</code>, <code>/remove-credits &lt;userid&gt;</code>, <code>/remove-credits &lt;amount&gt; &lt;userid&gt;</code>, <code>/create-redeemcode &lt;count&gt; &lt;amount&gt;</code>, <code>/list-redeemcodes</code>, <code>/delete-redeemcode &lt;code&gt;</code>, <code>/ban-user &lt;userid&gt;</code>, <code>/unban-user &lt;userid&gt;</code>, <code>/resend-order &lt;orderid&gt;</code>.</div>
         </div>
       </section>
 
@@ -584,11 +591,6 @@ or any stock notes you want to save"></textarea>
       referralRequests: [],
       users: [],
       metrics: null,
-      redeemCodeStats: {
-        total: 0,
-        active: 0,
-        redeemed: 0
-      },
       stockMap: {},
       activeOrder: null,
       activeStockKey: null,
@@ -596,6 +598,8 @@ or any stock notes you want to save"></textarea>
       deliveredSearchTerm: '',
       usersSearchTerm: ''
     };
+    let adminSessionApproved = false;
+    let adminAuthBootstrapped = false;
 
     const adminGate = document.getElementById('adminGate');
     const adminApp = document.getElementById('adminApp');
@@ -627,12 +631,6 @@ or any stock notes you want to save"></textarea>
     const adminConsoleLog = document.getElementById('adminConsoleLog');
     const adminConsoleInput = document.getElementById('adminConsoleInput');
     const adminConsoleRunBtn = document.getElementById('adminConsoleRunBtn');
-    const consoleWalletValue = document.getElementById('consoleWalletValue');
-    const consoleWalletNote = document.getElementById('consoleWalletNote');
-    const consoleRedeemValue = document.getElementById('consoleRedeemValue');
-    const consoleRedeemNote = document.getElementById('consoleRedeemNote');
-    const consoleOrderValue = document.getElementById('consoleOrderValue');
-    const consoleOrderNote = document.getElementById('consoleOrderNote');
     const usersSearchInput = document.getElementById('usersSearchInput');
     const clearUsersSearch = document.getElementById('clearUsersSearch');
     const usersTableBody = document.getElementById('usersTableBody');
@@ -669,6 +667,10 @@ or any stock notes you want to save"></textarea>
     function closeAdminShell() {
       adminApp.classList.add('hidden');
       adminGate.classList.remove('hidden');
+      adminGate.classList.remove('unlocking', 'error');
+      adminPassword.classList.remove('is-error');
+      adminPassword.value = '';
+      adminGateMsg.textContent = '';
       document.body.classList.remove('admin-live');
       adminUnlockBtn.disabled = false;
       adminUnlockBtn.textContent = 'Open Admin Panel';
@@ -681,6 +683,7 @@ or any stock notes you want to save"></textarea>
       document.body.classList.add('admin-live');
       await refreshAll();
       seedConsole();
+      adminPassword.value = '';
       adminUnlockBtn.disabled = false;
       adminUnlockBtn.textContent = 'Open Admin Panel';
     }
@@ -881,8 +884,7 @@ or any stock notes you want to save"></textarea>
 
     function getConsoleHelpText() {
       return [
-        'Console ready.',
-        'Commands:',
+        'Available commands:',
         '/help',
         '/view-credits <userid>',
         '/give-credits <amount> <userid>',
@@ -921,15 +923,7 @@ or any stock notes you want to save"></textarea>
 
     function seedConsole() {
       if (!adminConsoleLog || adminConsoleLog.childElementCount) return;
-      appendConsoleEntry(getConsoleHelpText(), 'system');
-    }
-
-    function focusConsoleInput(template = '') {
-      if (!adminConsoleInput) return;
-      adminConsoleInput.value = template;
-      adminConsoleInput.focus();
-      const length = adminConsoleInput.value.length;
-      adminConsoleInput.setSelectionRange(length, length);
+      appendConsoleEntry('Secure shell ready.\nType /help to list every command.', 'system');
     }
 
     function parseConsoleAmount(value) {
@@ -1017,34 +1011,6 @@ or any stock notes you want to save"></textarea>
         .slice(0, limitCount);
     }
 
-    function renderConsoleSummary() {
-      const bannedUsers = state.users.filter(user => user.blocked).length;
-      const activeRedeemCodes = Number(state.redeemCodeStats?.active || 0);
-      const totalRedeemCodes = Number(state.redeemCodeStats?.total || 0);
-      const redeemedCodes = Number(state.redeemCodeStats?.redeemed || 0);
-
-      if (consoleWalletValue) {
-        consoleWalletValue.textContent = bannedUsers ? `${bannedUsers} banned user${bannedUsers === 1 ? '' : 's'}` : 'Credits and bans';
-      }
-      if (consoleWalletNote) {
-        consoleWalletNote.textContent = `Wallet fixes and access control across ${state.users.length} account${state.users.length === 1 ? '' : 's'}.`;
-      }
-      if (consoleRedeemValue) {
-        consoleRedeemValue.textContent = activeRedeemCodes ? `${activeRedeemCodes} active code${activeRedeemCodes === 1 ? '' : 's'}` : 'Bulk code tools';
-      }
-      if (consoleRedeemNote) {
-        consoleRedeemNote.textContent = totalRedeemCodes
-          ? `${redeemedCodes} redeemed, ${Math.max(0, totalRedeemCodes - redeemedCodes)} still usable right now.`
-          : 'Generate, list, and delete redeem codes from the same feed.';
-      }
-      if (consoleOrderValue) {
-        consoleOrderValue.textContent = state.deliveredOrders.length ? `${state.deliveredOrders.length} delivered order${state.deliveredOrders.length === 1 ? '' : 's'}` : 'Resend delivery';
-      }
-      if (consoleOrderNote) {
-        consoleOrderNote.textContent = `Pending: ${state.pendingOrders.length} | Referral approvals: ${state.referralRequests.length}.`;
-      }
-    }
-
     async function runConsoleCommand(rawCommand) {
       const commandLine = String(rawCommand || '').trim();
       if (!commandLine) return;
@@ -1128,7 +1094,6 @@ or any stock notes you want to save"></textarea>
           'system'
         );
         showToast(count === 1 ? 'Redeem code created' : `${count} redeem codes created`);
-        await loadRedeemCodeSummary();
         return;
       }
 
@@ -1160,7 +1125,6 @@ or any stock notes you want to save"></textarea>
         await deleteDoc(redeemRef);
         appendConsoleEntry(`Deleted redeem code ${code}.`, 'system');
         showToast('Redeem code deleted');
-        await loadRedeemCodeSummary();
         return;
       }
 
@@ -1379,7 +1343,6 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderPendingOrders();
-      renderConsoleSummary();
     }
 
     async function loadDeliveredOrders() {
@@ -1392,7 +1355,6 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderDeliveredOrders();
-      renderConsoleSummary();
     }
 
     async function loadReferralRequests() {
@@ -1405,19 +1367,6 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderReferralRequests();
-      renderConsoleSummary();
-    }
-
-    async function loadRedeemCodeSummary() {
-      const snap = await getDocs(collection(db, 'redeemCodes'));
-      state.redeemCodeStats = snap.docs.reduce((summary, docSnap) => {
-        const item = docSnap.data();
-        summary.total += 1;
-        if ((item.status || 'active') === 'redeemed') summary.redeemed += 1;
-        else summary.active += 1;
-        return summary;
-      }, { total: 0, active: 0, redeemed: 0 });
-      renderConsoleSummary();
     }
 
     async function syncUserOrderSummary(uid) {
@@ -1473,7 +1422,6 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderUsers();
-      renderConsoleSummary();
     }
 
     async function loadStats() {
@@ -1512,7 +1460,7 @@ or any stock notes you want to save"></textarea>
     }
 
     async function refreshAll() {
-      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadRedeemCodeSummary(), loadStockMap(), loadUsers()]);
+      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadUsers()]);
       await loadStats();
     }
 
@@ -1631,16 +1579,31 @@ or any stock notes you want to save"></textarea>
     }
 
     onAuthStateChanged(auth, async user => {
-      if (isAdminUser(user)) {
-        await openAdminShell();
+      if (!adminAuthBootstrapped) {
+        adminAuthBootstrapped = true;
+        if (user) {
+          try {
+            await signOut(auth);
+          } catch (error) {}
+        }
+        adminSessionApproved = false;
+        closeAdminShell();
         return;
       }
-      if (user && hasConfiguredAdminEmails()) {
+
+      if (!user) {
+        adminSessionApproved = false;
+        closeAdminShell();
+        return;
+      }
+
+      if (!adminSessionApproved || !isAdminUser(user)) {
         try {
           await signOut(auth);
         } catch (error) {}
+        adminSessionApproved = false;
+        closeAdminShell();
       }
-      closeAdminShell();
     });
 
     adminUnlockBtn.addEventListener('click', async () => {
@@ -1673,10 +1636,12 @@ or any stock notes you want to save"></textarea>
       adminUnlockBtn.textContent = 'Authorizing secure session';
 
       try {
+        adminSessionApproved = true;
         await signInAsConfiguredAdmin(adminPassword.value);
         await new Promise(resolve => setTimeout(resolve, 760));
         await openAdminShell();
       } catch (error) {
+        adminSessionApproved = false;
         adminGate.classList.remove('unlocking');
         adminGate.classList.add('error');
         adminPassword.classList.add('is-error');
@@ -1702,11 +1667,6 @@ or any stock notes you want to save"></textarea>
 
     document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-    });
-    document.querySelectorAll('[data-console-shortcut]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        focusConsoleInput(btn.dataset.consoleShortcut || '');
-      });
     });
 
     document.getElementById('adminRefreshBtn').addEventListener('click', refreshAll);
