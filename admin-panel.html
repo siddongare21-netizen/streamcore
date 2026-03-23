@@ -39,11 +39,12 @@ body{min-height:100vh}
 .title-wrap h1{font-family:"Syne",sans-serif;font-size:clamp(1.8rem,5vw,3rem);margin:0 0 8px}
 .title-wrap p{margin:0;color:var(--muted);font-size:.95rem}
 .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.tab-btn,.ghost-btn,.danger-btn,.save-btn,.primary-btn{border:none;border-radius:12px;padding:12px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif}
+.tab-btn,.ghost-btn,.danger-btn,.save-btn,.primary-btn,.success-btn{border:none;border-radius:12px;padding:12px 16px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:"DM Sans",sans-serif}
 .tab-btn{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border)}
 .tab-btn.active{background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;border-color:transparent;box-shadow:0 0 24px var(--glow)}
 .ghost-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text)}
 .primary-btn{background:linear-gradient(135deg,var(--accent2),#22c55e);color:#04110d}
+.success-btn{background:linear-gradient(135deg,#34d399,#10b981);color:#04110d}
 .danger-btn{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
 .save-btn{background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff}
 
@@ -65,8 +66,28 @@ body{min-height:100vh}
 .badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;font-size:.72rem;font-weight:700;white-space:nowrap}
 .badge.pending{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);color:#fcd34d}
 .badge.stock{background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.18);color:var(--accent2)}
+.badge.active{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.24);color:#86efac}
+.badge.cancelled{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.24);color:#fca5a5}
 .meta-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.8rem;color:var(--muted);margin-top:10px}
 .empty{padding:44px 18px;border:1px dashed rgba(255,255,255,0.12);border-radius:18px;text-align:center;color:var(--muted);background:rgba(255,255,255,0.02)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.stats-card{background:rgba(13,17,32,0.92);border:1px solid var(--border);border-radius:18px;padding:18px}
+.stats-label{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.stats-value{font-family:"Syne",sans-serif;font-size:2rem;font-weight:800;color:#8ab4ff;line-height:1}
+.stats-note{margin-top:10px;font-size:.82rem;color:var(--muted)}
+.table-wrap{background:rgba(13,17,32,0.92);border:1px solid var(--border);border-radius:18px;overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px 16px;text-align:left;font-size:.84rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+th{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;background:rgba(255,255,255,0.02)}
+tr:last-child td{border-bottom:none}
+.action-row{display:flex;flex-wrap:wrap;gap:8px}
+.mini-btn{border:none;border-radius:10px;padding:8px 12px;font-size:.78rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text)}
+.mini-btn:hover{border-color:rgba(124,109,250,0.35)}
+.helper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.input,.select{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font-size:.92rem;outline:none}
+.input:focus,.select:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:.8rem;color:var(--muted)}
 
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.76);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}
 .modal-backdrop.open{display:flex}
@@ -125,6 +146,9 @@ body{min-height:100vh}
         </div>
         <div class="header-actions">
           <button class="tab-btn active" data-tab="pendingPanel">Pending Orders</button>
+          <button class="tab-btn" data-tab="deliveredPanel">Delivered Orders</button>
+          <button class="tab-btn" data-tab="usersPanel">Users</button>
+          <button class="tab-btn" data-tab="statsPanel">Stats</button>
           <button class="tab-btn" data-tab="stockPanel">Storage Stock</button>
           <button class="ghost-btn" id="adminRefreshBtn">Refresh</button>
         </div>
@@ -141,6 +165,67 @@ body{min-height:100vh}
           <div class="stat-chip">Pending now: <strong id="pendingCountChip">0</strong></div>
         </div>
         <div class="list-grid" id="pendingOrdersList"></div>
+      </section>
+
+      <section class="panel" id="deliveredPanel">
+        <div class="section-head">
+          <div>
+            <h2>Delivered Orders</h2>
+            <p>Review approved orders, reopen one if needed, and verify what the customer received.</p>
+          </div>
+        </div>
+        <div class="stat-line">
+          <div class="stat-chip">Delivered: <strong id="deliveredCountChip">0</strong></div>
+        </div>
+        <div class="list-grid" id="deliveredOrdersList"></div>
+      </section>
+
+      <section class="panel" id="usersPanel">
+        <div class="section-head">
+          <div>
+            <h2>Users</h2>
+            <p>Quick view of who has signed up, how much they spent, and how many orders they placed.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Orders</th>
+                <th>Spent</th>
+                <th>Wallet</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" id="statsPanel">
+        <div class="section-head">
+          <div>
+            <h2>Stats</h2>
+            <p>Live order and revenue snapshot from the same Firestore collections the store uses.</p>
+          </div>
+        </div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Orders</th>
+                <th>Revenue</th>
+                <th>Pending</th>
+                <th>Delivered</th>
+              </tr>
+            </thead>
+            <tbody id="productStatsBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="panel" id="stockPanel">
@@ -170,16 +255,20 @@ body{min-height:100vh}
           <label class="label" for="orderCredentialInput">Credentials for customer</label>
           <textarea class="textarea" id="orderCredentialInput" placeholder="Paste the exact credentials you want to deliver to the customer here..."></textarea>
           <p class="helper">When you click `Accept and Provide`, these credentials will be saved into the customer’s order in the main site and the order will leave the pending list.</p>
+          <label class="label" for="orderDeliveryMessage" style="margin-top:14px">Delivery note for customer</label>
+          <textarea class="textarea mini-notes" id="orderDeliveryMessage" placeholder="Example: Use profile 2 only. Don’t change password. Reach out on WhatsApp if you need replacement."></textarea>
         </div>
         <div class="editor-card">
           <h3>Order Details</h3>
           <div class="info-list" id="orderInfoList"></div>
+          <div class="pill-row" id="orderStatusPills"></div>
           <label class="label" for="orderStockPreview" style="margin-top:14px">Saved stock notes for this product</label>
           <textarea class="textarea mini-notes" id="orderStockPreview" readonly placeholder="No saved stock notes for this product yet."></textarea>
           <button class="ghost-btn inline-btn" type="button" id="useStockNotesBtn">Use Stock Notes in Credentials</button>
         </div>
       </div>
       <div class="modal-actions">
+        <button class="ghost-btn" type="button" id="reopenOrderBtn">Move Back To Pending</button>
         <button class="danger-btn" type="button" id="rejectOrderBtn">Reject and Delete</button>
         <button class="save-btn" type="button" id="acceptOrderBtn">Accept and Provide</button>
       </div>
@@ -246,6 +335,9 @@ or any stock notes you want to save"></textarea>
 
     const state = {
       pendingOrders: [],
+      deliveredOrders: [],
+      users: [],
+      metrics: null,
       stockMap: {},
       activeOrder: null,
       activeStockKey: null
@@ -258,15 +350,22 @@ or any stock notes you want to save"></textarea>
     const pendingOrdersList = document.getElementById('pendingOrdersList');
     const stockProductsList = document.getElementById('stockProductsList');
     const pendingCountChip = document.getElementById('pendingCountChip');
+    const deliveredCountChip = document.getElementById('deliveredCountChip');
     const orderModalBackdrop = document.getElementById('orderModalBackdrop');
     const stockModalBackdrop = document.getElementById('stockModalBackdrop');
     const orderModalTitle = document.getElementById('orderModalTitle');
     const orderInfoList = document.getElementById('orderInfoList');
+    const orderStatusPills = document.getElementById('orderStatusPills');
     const orderCredentialInput = document.getElementById('orderCredentialInput');
+    const orderDeliveryMessage = document.getElementById('orderDeliveryMessage');
     const orderStockPreview = document.getElementById('orderStockPreview');
     const stockModalTitle = document.getElementById('stockModalTitle');
     const stockNotesInput = document.getElementById('stockNotesInput');
     const toast = document.getElementById('adminToast');
+    const deliveredOrdersList = document.getElementById('deliveredOrdersList');
+    const usersTableBody = document.getElementById('usersTableBody');
+    const statsGrid = document.getElementById('statsGrid');
+    const productStatsBody = document.getElementById('productStatsBody');
 
     function showToast(message) {
       toast.textContent = message;
@@ -304,15 +403,25 @@ or any stock notes you want to save"></textarea>
       state.activeOrder = order;
       orderModalTitle.textContent = `${order.orderId || order.id} · ${order.productName || PRODUCTS[order.product] || order.product}`;
       orderCredentialInput.value = order.credentials || '';
+      orderDeliveryMessage.value = order.deliveryMessage || '';
       orderStockPreview.value = state.stockMap[order.product]?.notes || '';
       orderInfoList.innerHTML = `
         <div class="info-row"><span>Order ID</span><strong>${escapeHtml(order.orderId || order.id)}</strong></div>
         <div class="info-row"><span>Product</span><strong>${escapeHtml(order.productName || PRODUCTS[order.product] || order.product)}</strong></div>
         <div class="info-row"><span>Amount</span><strong>${formatAmount(order.amount)}</strong></div>
         <div class="info-row"><span>Status</span><strong>${escapeHtml(order.status || 'pending')}</strong></div>
+        <div class="info-row"><span>Verification</span><strong>${escapeHtml(order.verificationStatus || (order.status === 'active' ? 'approved' : 'pending'))}</strong></div>
+        <div class="info-row"><span>Delivery</span><strong>${escapeHtml(order.deliveryStatus || (order.status === 'active' ? 'delivered' : 'awaiting verification'))}</strong></div>
         <div class="info-row"><span>Placed On</span><strong>${escapeHtml(formatDate(order.createdAt))}</strong></div>
+        <div class="info-row"><span>Delivered On</span><strong>${escapeHtml(order.deliveredAt ? formatDate(order.deliveredAt) : '—')}</strong></div>
         <div class="info-row"><span>User ID</span><strong>${escapeHtml(order.uid || '—')}</strong></div>
       `;
+      orderStatusPills.innerHTML = `
+        <div class="pill">Status: <strong>${escapeHtml(order.status || 'pending')}</strong></div>
+        <div class="pill">Verification: <strong>${escapeHtml(order.verificationStatus || (order.status === 'active' ? 'approved' : 'pending'))}</strong></div>
+        <div class="pill">Delivery: <strong>${escapeHtml(order.deliveryStatus || (order.status === 'active' ? 'delivered' : 'awaiting verification'))}</strong></div>
+      `;
+      document.getElementById('acceptOrderBtn').textContent = order.status === 'active' ? 'Update Delivery' : 'Accept and Provide';
       orderModalBackdrop.classList.add('open');
     }
 
@@ -362,6 +471,88 @@ or any stock notes you want to save"></textarea>
       });
     }
 
+    function renderDeliveredOrders() {
+      deliveredCountChip.textContent = String(state.deliveredOrders.length);
+      if (!state.deliveredOrders.length) {
+        deliveredOrdersList.innerHTML = `<div class="empty">No delivered orders yet.</div>`;
+        return;
+      }
+
+      deliveredOrdersList.innerHTML = state.deliveredOrders.map(order => `
+        <div class="card" data-delivered-id="${escapeHtml(order.id)}">
+          <div class="card-top">
+            <div>
+              <div class="card-title">${escapeHtml(order.orderId || order.id)}</div>
+              <div class="card-sub">${escapeHtml(order.productName || PRODUCTS[order.product] || order.product)}</div>
+            </div>
+            <span class="badge active">Delivered</span>
+          </div>
+          <div class="meta-row"><span>Amount</span><strong>${formatAmount(order.amount)}</strong></div>
+          <div class="meta-row"><span>Delivered</span><strong>${escapeHtml(order.deliveredAt ? formatDate(order.deliveredAt) : '—')}</strong></div>
+        </div>
+      `).join('');
+
+      deliveredOrdersList.querySelectorAll('[data-delivered-id]').forEach(card => {
+        card.addEventListener('click', () => {
+          const order = state.deliveredOrders.find(item => item.id === card.dataset.deliveredId);
+          if (order) openOrderModal(order);
+        });
+      });
+    }
+
+    function renderUsers() {
+      if (!state.users.length) {
+        usersTableBody.innerHTML = `<tr><td colspan="6" class="empty">No users found.</td></tr>`;
+        return;
+      }
+
+      usersTableBody.innerHTML = state.users.map(user => `
+        <tr>
+          <td>${escapeHtml(user.name || 'User')}</td>
+          <td>${escapeHtml(user.email || '—')}</td>
+          <td>${escapeHtml(String(user.orders || 0))}</td>
+          <td>${formatAmount(user.totalSpent || 0)}</td>
+          <td>${formatAmount(user.walletCredit || 0)}</td>
+          <td>${escapeHtml(formatDate(user.createdAt))}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderStats() {
+      const metrics = state.metrics || {
+        totalOrders: 0,
+        pendingOrders: 0,
+        deliveredOrders: 0,
+        totalUsers: 0,
+        totalRevenue: 0,
+        todayOrders: 0,
+        byProduct: []
+      };
+
+      statsGrid.innerHTML = `
+        <div class="stats-card"><div class="stats-label">Total Orders</div><div class="stats-value">${metrics.totalOrders}</div><div class="stats-note">All-time orders</div></div>
+        <div class="stats-card"><div class="stats-label">Pending</div><div class="stats-value">${metrics.pendingOrders}</div><div class="stats-note">Need review</div></div>
+        <div class="stats-card"><div class="stats-label">Revenue</div><div class="stats-value">${formatAmount(metrics.totalRevenue)}</div><div class="stats-note">From saved orders</div></div>
+        <div class="stats-card"><div class="stats-label">Users</div><div class="stats-value">${metrics.totalUsers}</div><div class="stats-note">Registered accounts</div></div>
+        <div class="stats-card"><div class="stats-label">Today</div><div class="stats-value">${metrics.todayOrders}</div><div class="stats-note">Placed in last 24h</div></div>
+      `;
+
+      if (!metrics.byProduct.length) {
+        productStatsBody.innerHTML = `<tr><td colspan="5" class="empty">No order data yet.</td></tr>`;
+        return;
+      }
+
+      productStatsBody.innerHTML = metrics.byProduct.map(item => `
+        <tr>
+          <td>${escapeHtml(item.name)}</td>
+          <td>${item.orders}</td>
+          <td>${formatAmount(item.revenue)}</td>
+          <td>${item.pending}</td>
+          <td>${item.delivered}</td>
+        </tr>
+      `).join('');
+    }
+
     function renderStockProducts() {
       stockProductsList.innerHTML = Object.entries(PRODUCTS).map(([key, name]) => {
         const notes = state.stockMap[key]?.notes || '';
@@ -407,8 +598,68 @@ or any stock notes you want to save"></textarea>
       renderPendingOrders();
     }
 
+    async function loadDeliveredOrders() {
+      const snap = await getDocs(query(collection(db, 'orders'), where('status', '==', 'active')));
+      state.deliveredOrders = snap.docs
+        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+        .sort((a, b) => {
+          const aTime = a.deliveredAt?.toMillis ? a.deliveredAt.toMillis() : 0;
+          const bTime = b.deliveredAt?.toMillis ? b.deliveredAt.toMillis() : 0;
+          return bTime - aTime;
+        });
+      renderDeliveredOrders();
+    }
+
+    async function loadUsers() {
+      const snap = await getDocs(collection(db, 'users'));
+      state.users = snap.docs
+        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+        .sort((a, b) => {
+          const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return bTime - aTime;
+        });
+      renderUsers();
+    }
+
+    async function loadStats() {
+      const snap = await getDocs(collection(db, 'orders'));
+      const orders = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+      const byProductMap = {};
+
+      orders.forEach(order => {
+        const key = order.product || 'unknown';
+        if (!byProductMap[key]) {
+          byProductMap[key] = {
+            name: order.productName || PRODUCTS[key] || key,
+            orders: 0,
+            revenue: 0,
+            pending: 0,
+            delivered: 0
+          };
+        }
+        byProductMap[key].orders += 1;
+        byProductMap[key].revenue += Number(order.amount || 0);
+        if ((order.status || 'pending') === 'active') byProductMap[key].delivered += 1;
+        else byProductMap[key].pending += 1;
+      });
+
+      state.metrics = {
+        totalOrders: orders.length,
+        pendingOrders: orders.filter(order => (order.status || 'pending') === 'pending').length,
+        deliveredOrders: orders.filter(order => order.status === 'active').length,
+        totalUsers: state.users.length,
+        totalRevenue: orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0),
+        todayOrders: orders.filter(order => (order.createdAt?.toMillis ? order.createdAt.toMillis() : 0) >= oneDayAgo).length,
+        byProduct: Object.values(byProductMap).sort((a, b) => b.orders - a.orders)
+      };
+      renderStats();
+    }
+
     async function refreshAll() {
-      await Promise.all([loadPendingOrders(), loadStockMap()]);
+      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadStockMap(), loadUsers()]);
+      await loadStats();
     }
 
     async function saveStock() {
@@ -433,19 +684,34 @@ or any stock notes you want to save"></textarea>
       }
       await updateDoc(doc(db, 'orders', state.activeOrder.id), {
         credentials,
+        deliveryMessage: orderDeliveryMessage.value.trim(),
         status: 'active',
+        verificationStatus: 'approved',
+        deliveryStatus: 'delivered',
         deliveredAt: serverTimestamp()
       });
       closeOrderModal();
-      await loadPendingOrders();
+      await refreshAll();
       showToast('Credentials provided to customer');
+    }
+
+    async function reopenOrder() {
+      if (!state.activeOrder) return;
+      await updateDoc(doc(db, 'orders', state.activeOrder.id), {
+        status: 'pending',
+        verificationStatus: 'pending',
+        deliveryStatus: 'awaiting_verification'
+      });
+      closeOrderModal();
+      await refreshAll();
+      showToast('Order moved back to pending');
     }
 
     async function rejectOrder() {
       if (!state.activeOrder) return;
       await deleteDoc(doc(db, 'orders', state.activeOrder.id));
       closeOrderModal();
-      await loadPendingOrders();
+      await refreshAll();
       showToast('Order deleted');
     }
 
@@ -472,6 +738,7 @@ or any stock notes you want to save"></textarea>
     document.getElementById('closeOrderModal').addEventListener('click', closeOrderModal);
     document.getElementById('closeStockModal').addEventListener('click', closeStockModal);
     document.getElementById('acceptOrderBtn').addEventListener('click', acceptOrder);
+    document.getElementById('reopenOrderBtn').addEventListener('click', reopenOrder);
     document.getElementById('rejectOrderBtn').addEventListener('click', rejectOrder);
     document.getElementById('saveStockBtn').addEventListener('click', saveStock);
     document.getElementById('clearStockBtn').addEventListener('click', () => { stockNotesInput.value = ''; });

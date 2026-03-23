@@ -253,6 +253,7 @@ footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-c
   .step-arrow{flex-direction:column;transform:none;padding:4px 0;}
   .arrow-line{display:block;width:2px;height:28px;margin:0 auto;}
   .steps-flow .step-card{width:100%;}.arrow-head{transform:rotate(90deg);}
+  .dash-order-grid{grid-template-columns:1fr;}
 }
 
 /* ══ UPI CHECKOUT MODAL ══ */
@@ -1262,6 +1263,7 @@ document.addEventListener('keydown', e => {
 .dash-stat-label{font-size:0.68rem;color:var(--muted);margin-top:3px;letter-spacing:0.05em;}
 .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.25s,transform 0.25s;flex-wrap:wrap;}
 .order-card:hover{border-color:rgba(124,109,250,0.3);transform:translateX(4px);}
+.order-card.clickable{cursor:pointer}
 .order-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
 .order-main{flex:1;min-width:0;}
 .order-name{font-weight:600;font-size:0.88rem;margin-bottom:3px;}
@@ -1270,9 +1272,30 @@ document.addEventListener('keydown', e => {
 .status-active{background:rgba(79,209,197,0.12);border:1px solid rgba(79,209,197,0.25);color:var(--accent2);}
 .status-pending{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);color:#fbbf24;}
 .order-price{font-family:"Syne",sans-serif;font-weight:700;font-size:0.88rem;color:var(--accent);margin-left:10px;white-space:nowrap;}
+.order-hint{width:100%;font-size:0.72rem;color:var(--muted);margin-top:-2px}
+.order-actions{width:100%;display:flex;justify-content:flex-end;margin-top:4px}
+.order-view-btn{border:none;border-radius:10px;padding:9px 12px;font-size:0.76rem;font-weight:700;cursor:pointer;background:rgba(124,109,250,0.12);border:1px solid rgba(124,109,250,0.25);color:#c9c3ff}
+.order-view-btn:hover{background:rgba(124,109,250,0.18)}
 .order-creds{width:100%;margin-top:4px;background:rgba(79,209,197,0.06);border:1px solid rgba(79,209,197,0.18);border-radius:10px;padding:10px 12px;}
 .order-creds-label{font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px;}
 .order-creds-text{font-family:Consolas,monospace;font-size:0.78rem;line-height:1.6;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+.dash-order-modal{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(18px);z-index:650;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.dash-order-modal.open{opacity:1;pointer-events:all}
+.dash-order-box{width:100%;max-width:620px;max-height:90vh;overflow:auto;background:#0d1120;border:1px solid rgba(124,109,250,0.2);border-radius:24px;padding:24px}
+.dash-order-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.dash-order-title{font-family:"Syne",sans-serif;font-size:1.15rem;margin:0 0 6px}
+.dash-order-sub{margin:0;color:var(--muted);font-size:.82rem;line-height:1.6}
+.dash-order-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.dash-order-info{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px}
+.dash-order-info-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.dash-order-info-value{font-size:.88rem;font-weight:600;line-height:1.5;word-break:break-word}
+.dash-order-block{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:12px}
+.dash-order-block-title{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;font-weight:700}
+.dash-order-pre{font-family:Consolas,monospace;font-size:.82rem;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+.dash-order-note{font-size:.82rem;line-height:1.7;color:var(--muted)}
+.dash-pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.dash-pill{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:.74rem;color:var(--muted)}
+.dash-copy-btn{border:none;border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--accent),#5b4de8);color:#fff;margin-top:12px}
 .dash-empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:0.88rem;}
 .dash-empty .dash-empty-icon{font-size:2.2rem;margin-bottom:10px;opacity:0.4;}
 .dash-logout-btn{display:flex;align-items:center;gap:8px;background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.2);color:#f472b6;padding:11px 18px;border-radius:10px;font-family:"DM Sans",sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;transition:background 0.2s,transform 0.2s;width:100%;justify-content:center;margin-top:20px;}
@@ -1716,6 +1739,33 @@ function firebaseError(code) {
   </div>
 </div>
 
+<div class="dash-order-modal" id="dashOrderModal" onclick="closeDashOrderModal(event)">
+  <div class="dash-order-box">
+    <div class="dash-order-head">
+      <div>
+        <h3 class="dash-order-title" id="dashOrderTitle">Order Details</h3>
+        <p class="dash-order-sub" id="dashOrderSubtitle">Track approval, delivery, and credentials here.</p>
+      </div>
+      <button class="dash-close" type="button" onclick="closeDashOrderModal()">✕</button>
+    </div>
+    <div class="dash-pill-row" id="dashOrderPills"></div>
+    <div class="dash-order-grid" id="dashOrderGrid"></div>
+    <div class="dash-order-block" id="dashCredentialsBlock" style="display:none">
+      <div class="dash-order-block-title">Delivered Credentials</div>
+      <div class="dash-order-pre" id="dashOrderCredentials"></div>
+      <button class="dash-copy-btn" type="button" onclick="copyDashCredentials()">Copy Credentials</button>
+    </div>
+    <div class="dash-order-block" id="dashDeliveryNoteBlock" style="display:none">
+      <div class="dash-order-block-title">Delivery Note</div>
+      <div class="dash-order-note" id="dashOrderDeliveryNote"></div>
+    </div>
+    <div class="dash-order-block">
+      <div class="dash-order-block-title">What This Means</div>
+      <div class="dash-order-note" id="dashOrderHelpText"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== AUTH SYSTEM JS ===================== -->
 <script>
 function openAuthModal() {
@@ -1823,9 +1873,12 @@ window.coPaid = function() {
         discount: 0,
         discountCode: '',
         status: 'pending',
+        verificationStatus: 'pending',
+        deliveryStatus: 'awaiting_verification',
         referredBy: ref || '',
         createdAt: serverTimestamp(),
-        credentials: ''
+        credentials: '',
+        deliveryMessage: ''
       });
     } catch(e) { console.log('Order save error', e); }
   }
@@ -2265,12 +2318,15 @@ window.coPaid = async function() {
           discount: pricing.creditUsed,
           discountSource: pricing.creditUsed > 0 ? 'referral_credit' : '',
           status: 'pending',
+          verificationStatus: 'pending',
+          deliveryStatus: 'awaiting_verification',
           referredBy: userData.referredBy || '',
           referredByUid: userData.referredByUid || '',
           referralCreditAwarded: rewardGranted,
           referralCreditAmount: rewardGranted ? REF_CREDIT : 0,
           createdAt: serverTimestamp(),
-          credentials: ''
+          credentials: '',
+          deliveryMessage: ''
         });
 
         const updatedWallet = Math.max(0, (Number(userData.walletCredit) || 0) - pricing.creditUsed);
@@ -2427,6 +2483,217 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Dashboard override load failed', error);
     }
   };
+})();
+</script>
+
+<script>
+(function() {
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function formatAmount(value) {
+    const amount = Number(value || 0);
+    return '₹' + amount.toFixed(amount % 1 === 0 ? 0 : 2);
+  }
+
+  function formatDateTime(ts) {
+    return ts?.toDate
+      ? ts.toDate().toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'2-digit' })
+      : 'Not available yet';
+  }
+
+  function getVerificationLabel(order) {
+    return order.verificationStatus || ((order.status || 'pending') === 'active' ? 'approved' : 'pending');
+  }
+
+  function getDeliveryLabel(order) {
+    return order.deliveryStatus || ((order.status || 'pending') === 'active' ? 'delivered' : 'awaiting verification');
+  }
+
+  function closeOrderModalInternal() {
+    const modal = document.getElementById('dashOrderModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    window.__dashOrderDetails = null;
+  }
+
+  function openOrderModalInternal(order) {
+    const modal = document.getElementById('dashOrderModal');
+    if (!modal) return;
+
+    window.__dashOrderDetails = order;
+    document.getElementById('dashOrderTitle').textContent = `${order.orderId || order.id || 'Order'} · ${order.productName || order.product || 'Product'}`;
+    document.getElementById('dashOrderSubtitle').textContent = (order.status || 'pending') === 'active'
+      ? 'Your payment has been approved and the order has been delivered.'
+      : 'Your payment screenshot is waiting for admin verification.';
+    document.getElementById('dashOrderPills').innerHTML = `
+      <div class="dash-pill">Verification: ${escapeHtml(getVerificationLabel(order))}</div>
+      <div class="dash-pill">Delivery: ${escapeHtml(getDeliveryLabel(order))}</div>
+      <div class="dash-pill">Status: ${escapeHtml(order.status || 'pending')}</div>
+    `;
+
+    const deliveredOn = order.deliveredAt ? formatDateTime(order.deliveredAt) : 'Not delivered yet';
+    document.getElementById('dashOrderGrid').innerHTML = `
+      <div class="dash-order-info"><div class="dash-order-info-label">Order ID</div><div class="dash-order-info-value">${escapeHtml(order.orderId || order.id || 'Order')}</div></div>
+      <div class="dash-order-info"><div class="dash-order-info-label">Product</div><div class="dash-order-info-value">${escapeHtml(order.productName || order.product || 'Product')}</div></div>
+      <div class="dash-order-info"><div class="dash-order-info-label">Amount Paid</div><div class="dash-order-info-value">${formatAmount(order.amount)}</div></div>
+      <div class="dash-order-info"><div class="dash-order-info-label">Placed On</div><div class="dash-order-info-value">${formatDateTime(order.createdAt)}</div></div>
+      <div class="dash-order-info"><div class="dash-order-info-label">Verification</div><div class="dash-order-info-value">${escapeHtml(getVerificationLabel(order))}</div></div>
+      <div class="dash-order-info"><div class="dash-order-info-label">Delivered On</div><div class="dash-order-info-value">${escapeHtml(deliveredOn)}</div></div>
+    `;
+
+    const credentials = String(order.credentials || '').trim();
+    const credentialsBlock = document.getElementById('dashCredentialsBlock');
+    if (credentials) {
+      credentialsBlock.style.display = 'block';
+      document.getElementById('dashOrderCredentials').textContent = credentials;
+    } else {
+      credentialsBlock.style.display = 'none';
+      document.getElementById('dashOrderCredentials').textContent = '';
+    }
+
+    const deliveryMessage = String(order.deliveryMessage || '').trim();
+    const deliveryNoteBlock = document.getElementById('dashDeliveryNoteBlock');
+    if (deliveryMessage) {
+      deliveryNoteBlock.style.display = 'block';
+      document.getElementById('dashOrderDeliveryNote').textContent = deliveryMessage;
+    } else {
+      deliveryNoteBlock.style.display = 'none';
+      document.getElementById('dashOrderDeliveryNote').textContent = '';
+    }
+
+    document.getElementById('dashOrderHelpText').textContent = (order.status || 'pending') === 'active'
+      ? 'This order is approved. You can see the delivered credentials above. If anything is missing or not working, use the WhatsApp support button in your dashboard.'
+      : 'This order is still pending review. Once the admin approves it, this same card will show Delivered and your credentials will appear here.';
+
+    modal.classList.add('open');
+  }
+
+  async function loadDashboardOrders(uid) {
+    const db = window._firebaseDb;
+    if (!db || !uid) return [];
+    const { collection, getDocs, query, where } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
+    return snap.docs
+      .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+      .sort((a, b) => {
+        const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return bTime - aTime;
+      });
+  }
+
+  window.renderOrders = function(orders) {
+    const el = document.getElementById('dashOrders');
+    if (!el) return;
+    if (!orders.length) {
+      el.innerHTML = `<div class="dash-empty"><div class="dash-empty-icon">📦</div>No orders yet.<br>Browse products and place your first order!</div>`;
+      return;
+    }
+
+    const icons = {
+      netflix: '🎬',
+      prime: '🎥',
+      spotify: '🎵',
+      youtube: '▶️',
+      capcut: '✂️',
+      nordvpn: '🔒',
+      canva: '🎨',
+      minecraft: '⛏️',
+      crunchyroll: '🍙',
+      combo: '🎁'
+    };
+
+    el.innerHTML = orders.map(order => {
+      const status = order.status || 'pending';
+      const credentials = String(order.credentials || '').trim();
+      const canOpen = status === 'active' || Boolean(credentials);
+      const credentialsBlock = status === 'active' && credentials
+        ? `<div class="order-creds"><div class="order-creds-label">Credentials</div><div class="order-creds-text">${escapeHtml(credentials)}</div></div>`
+        : '';
+      const hint = canOpen
+        ? `<div class="order-hint">Approved orders open full details, credentials, and delivery notes.</div>`
+        : `<div class="order-hint">Waiting for admin verification. Open this card anytime to check status.</div>`;
+
+      return `
+        <div class="order-card clickable" data-order-card="${escapeHtml(order.id)}">
+          <div class="order-icon" style="background:rgba(124,109,250,0.12)">${icons[order.product] || '📦'}</div>
+          <div class="order-main">
+            <div class="order-name">${escapeHtml(order.orderId || order.id || 'Order')} · ${escapeHtml(order.productName || order.product || 'Product')}</div>
+            <div class="order-date">${order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : 'Just now'}</div>
+          </div>
+          <span class="order-status ${status === 'active' ? 'status-active' : 'status-pending'}">${status === 'active' ? '✓ Delivered' : '⏳ Pending'}</span>
+          <span class="order-price">${formatAmount(order.amount)}</span>
+          ${hint}
+          <div class="order-actions">
+            <button class="order-view-btn" type="button" data-order-open="${escapeHtml(order.id)}">${canOpen ? 'View Credentials' : 'View Status'}</button>
+          </div>
+          ${credentialsBlock}
+        </div>
+      `;
+    }).join('');
+
+    const openById = id => {
+      const order = orders.find(item => item.id === id);
+      if (order) openOrderModalInternal(order);
+    };
+
+    el.querySelectorAll('[data-order-card]').forEach(card => {
+      card.addEventListener('click', () => openById(card.dataset.orderCard));
+    });
+    el.querySelectorAll('[data-order-open]').forEach(btn => {
+      btn.addEventListener('click', event => {
+        event.stopPropagation();
+        openById(btn.dataset.orderOpen);
+      });
+    });
+  };
+
+  const previousOpenDashboard = window.openDashboard;
+  window.openDashboard = async function() {
+    await previousOpenDashboard();
+    const uid = window._currentUserUid;
+    if (!uid) return;
+
+    try {
+      const orders = await loadDashboardOrders(uid);
+      const total = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+      const deliveredCount = orders.filter(order => (order.status || 'pending') === 'active').length;
+      window.renderOrders(orders);
+      const orderCountEl = document.getElementById('dashOrderCount');
+      const spentEl = document.getElementById('dashSpent');
+      const deliveredEl = document.getElementById('dashActive');
+      if (orderCountEl) orderCountEl.textContent = String(orders.length);
+      if (spentEl) spentEl.textContent = formatAmount(total);
+      if (deliveredEl) deliveredEl.textContent = String(deliveredCount);
+      const deliveredLabel = document.querySelector('#dashActive + .dash-stat-label');
+      if (deliveredLabel) deliveredLabel.textContent = 'Delivered Orders';
+    } catch (error) {
+      console.log('Dashboard final load failed', error);
+    }
+  };
+
+  window.closeDashOrderModal = function(event) {
+    if (event && event.target !== document.getElementById('dashOrderModal')) return;
+    closeOrderModalInternal();
+  };
+
+  window.copyDashCredentials = function() {
+    const order = window.__dashOrderDetails || {};
+    const text = String(order.credentials || '').trim();
+    if (!text) return;
+    navigator.clipboard.writeText(text).catch(() => {});
+  };
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeOrderModalInternal();
+  });
 })();
 </script>
 
