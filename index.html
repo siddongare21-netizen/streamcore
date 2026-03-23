@@ -34,9 +34,9 @@ nav.scrolled{padding:12px 5%;}
 .nav-cta:hover{box-shadow:0 0 40px var(--glow);transform:translateY(-2px)!important;}
 .nav-cta::after{display:none!important;}
 .nav-account-wrap{position:relative;display:flex;align-items:center}
-.nav-orders-btn{display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background .2s,border-color .2s,transform .2s}
-.nav-orders-btn.show{display:inline-flex}
-.nav-orders-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(124,109,250,0.3);transform:translateY(-1px)}
+.nav-orders-btn,.nav-redeem-btn{display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background .2s,border-color .2s,transform .2s}
+.nav-orders-btn.show,.nav-redeem-btn.show{display:inline-flex}
+.nav-orders-btn:hover,.nav-redeem-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(124,109,250,0.3);transform:translateY(-1px)}
 .nav-account-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:10px;font-weight:600;font-size:0.86rem;cursor:pointer;font-family:"DM Sans",sans-serif;transition:background .2s,border-color .2s,transform .2s}
 .nav-account-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(124,109,250,0.3);transform:translateY(-1px)}
 .nav-alert-dot{position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:linear-gradient(135deg,#34d399,#10b981);color:#04110d;font-size:.68rem;font-weight:800;display:none;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(8,11,18,0.92)}
@@ -48,6 +48,19 @@ nav.scrolled{padding:12px 5%;}
 .site-order-text strong{color:var(--accent2)}
 .site-order-btn{border:none;border-radius:10px;padding:10px 14px;font-size:.78rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.14);color:#fff;white-space:nowrap}
 .site-order-close{background:transparent;border:none;color:var(--muted);font-size:1rem;cursor:pointer}
+.redeem-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(18px);z-index:690;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.redeem-backdrop.open{opacity:1;pointer-events:all}
+.redeem-box{width:min(100%,420px);background:#0d1120;border:1px solid rgba(124,109,250,0.2);border-radius:24px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,0.35)}
+.redeem-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px}
+.redeem-title{font-family:"Syne",sans-serif;font-size:1.2rem;margin:0 0 6px}
+.redeem-sub{color:var(--muted);font-size:.84rem;line-height:1.7;margin:0 0 18px}
+.redeem-input{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px 16px;font-size:.96rem;letter-spacing:.05em;text-transform:uppercase;outline:none}
+.redeem-input:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
+.redeem-msg{min-height:22px;margin-top:10px;font-size:.82rem;color:var(--muted)}
+.redeem-msg.success{color:#86efac}
+.redeem-msg.error{color:#fca5a5}
+.redeem-submit{width:100%;margin-top:14px;border:none;border-radius:14px;padding:13px 16px;font-size:.92rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),#5b4de8);cursor:pointer;box-shadow:0 0 24px rgba(124,109,250,0.2)}
+.redeem-submit:disabled{opacity:.65;cursor:not-allowed;box-shadow:none}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 5% 80px;position:relative;overflow:hidden;}
@@ -260,7 +273,7 @@ footer{border-top:1px solid var(--border);padding:48px 5%;display:flex;justify-c
   nav .nav-links{display:none;}
   nav{padding:14px 5%;}
   .nav-right{margin-left:auto;}
-  .nav-orders-btn{padding:8px 11px;font-size:0.76rem}
+  .nav-orders-btn,.nav-redeem-btn{padding:8px 11px;font-size:0.76rem}
   .nav-account-btn{padding:8px 12px;font-size:0.78rem;}
   .site-order-banner{top:68px;align-items:flex-start}
   footer{flex-direction:column;text-align:center;}
@@ -497,6 +510,7 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeCatalog(); })
 <nav>
   <a href="#" class="logo">TW STORE</a>
   <div class="nav-right">
+    <button id="navRedeemBtn" class="nav-redeem-btn">🎟 Redeem</button>
     <button id="navOrdersBtn" class="nav-orders-btn">📦 Orders</button>
     <ul class="nav-links">
       <li><a href="#products">Shop</a></li>
@@ -1484,6 +1498,7 @@ onAuthStateChanged(auth, async user => {
     btn.textContent = '👤 ' + name.split(' ')[0];
     btn.classList.add('logged-in');
     btn.onclick = openDashboard;
+    document.getElementById('navRedeemBtn')?.classList.add('show');
     document.getElementById('navOrdersBtn')?.classList.add('show');
     if(window.updateRefUI) updateRefUI(user);
     if (window._syncHomepageOrders) window._syncHomepageOrders();
@@ -1492,6 +1507,7 @@ onAuthStateChanged(auth, async user => {
     btn.textContent = '👤 Login';
     btn.classList.remove('logged-in');
     btn.onclick = openAuthModal;
+    document.getElementById('navRedeemBtn')?.classList.remove('show');
     document.getElementById('navOrdersBtn')?.classList.remove('show');
     if(window.updateRefUI) updateRefUI(null);
     const dot = document.getElementById('navOrderAlertDot');
@@ -1899,6 +1915,21 @@ function firebaseError(code) {
   </div>
 </div>
 
+<div class="redeem-backdrop" id="redeemBackdrop" onclick="closeRedeemModal(event)">
+  <div class="redeem-box">
+    <div class="redeem-head">
+      <div>
+        <h3 class="redeem-title">Redeem Code</h3>
+        <p class="redeem-sub">Enter a unique redeem code to add wallet credit to your account and use it for discount during checkout.</p>
+      </div>
+      <button class="dash-close" type="button" onclick="closeRedeemModal()">✕</button>
+    </div>
+    <input class="redeem-input" id="redeemCodeInput" type="text" placeholder="ENTER REDEEM CODE" autocomplete="off" />
+    <div class="redeem-msg" id="redeemCodeMsg"></div>
+    <button class="redeem-submit" type="button" id="redeemCodeBtn">Apply Redeem Code</button>
+  </div>
+</div>
+
 <!-- ===================== AUTH SYSTEM JS ===================== -->
 <script>
 function openAuthModal() {
@@ -2153,6 +2184,10 @@ function getRefLink(value) {
   return url.toString();
 }
 
+function normalizeRedeemCode(value) {
+  return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+}
+
 function formatINR(amount) {
   const numeric = Number(amount) || 0;
   return '₹' + numeric.toFixed(Number.isInteger(numeric) ? 0 : 2);
@@ -2179,6 +2214,13 @@ function setText(id, value) {
 function setHtml(id, value) {
   const el = document.getElementById(id);
   if (el) el.innerHTML = value;
+}
+
+function setRedeemMessage(message, type) {
+  const el = document.getElementById('redeemCodeMsg');
+  if (!el) return;
+  el.textContent = message || '';
+  el.className = 'redeem-msg' + (type ? ' ' + type : '');
 }
 
 async function getReferralFirestore() {
@@ -2381,6 +2423,102 @@ window.shareRef = function(platform) {
   };
   window.open(urls[platform] || urls.whatsapp, '_blank');
 };
+
+window.openRedeemModal = function() {
+  if (!window._currentUserUid) {
+    if (typeof openAuthModal === 'function') openAuthModal();
+    return;
+  }
+  const backdrop = document.getElementById('redeemBackdrop');
+  const input = document.getElementById('redeemCodeInput');
+  if (!backdrop) return;
+  if (input) input.value = '';
+  setRedeemMessage('', '');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => input?.focus(), 40);
+};
+
+window.closeRedeemModal = function(event) {
+  const backdrop = document.getElementById('redeemBackdrop');
+  if (!backdrop) return;
+  if (event && event.target !== backdrop) return;
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+async function applyRedeemCode() {
+  const db = window._firebaseDb;
+  const uid = window._currentUserUid;
+  const input = document.getElementById('redeemCodeInput');
+  const button = document.getElementById('redeemCodeBtn');
+  const code = normalizeRedeemCode(input?.value);
+
+  if (!uid) {
+    setRedeemMessage('Please log in first.', 'error');
+    if (typeof openAuthModal === 'function') openAuthModal();
+    return;
+  }
+  if (!db) {
+    setRedeemMessage('Database is not ready. Try again.', 'error');
+    return;
+  }
+  if (!code) {
+    setRedeemMessage('Enter a valid redeem code.', 'error');
+    input?.focus();
+    return;
+  }
+
+  try {
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Applying...';
+    }
+
+    const { doc, runTransaction, serverTimestamp } = await getReferralFirestore();
+    const redeemedAmount = await runTransaction(db, async transaction => {
+      const redeemRef = doc(db, 'redeemCodes', code);
+      const userRef = doc(db, 'users', uid);
+      const redeemSnap = await transaction.get(redeemRef);
+      if (!redeemSnap.exists()) throw new Error('This redeem code is invalid.');
+
+      const redeemData = redeemSnap.data();
+      if ((redeemData.status || 'active') !== 'active') throw new Error('This redeem code has already been used.');
+
+      const amount = Math.max(0, Number(redeemData.amount || 0));
+      if (!amount) throw new Error('This redeem code is not valid anymore.');
+
+      const userSnap = await transaction.get(userRef);
+      const userData = userSnap.exists() ? userSnap.data() : {};
+      const currentWallet = Math.max(0, Number(userData.walletCredit || 0));
+      const lifetimeRedeemCredit = Math.max(0, Number(userData.lifetimeRedeemCredit || 0));
+
+      transaction.set(userRef, {
+        walletCredit: currentWallet + amount,
+        lifetimeRedeemCredit: lifetimeRedeemCredit + amount,
+        lastRedeemedCode: code
+      }, { merge: true });
+      transaction.set(redeemRef, {
+        status: 'redeemed',
+        redeemedBy: uid,
+        redeemedAt: serverTimestamp()
+      }, { merge: true });
+
+      return amount;
+    });
+
+    setRedeemMessage(`Redeemed ${formatINR(redeemedAmount)} successfully.`, 'success');
+    if (input) input.value = '';
+    await syncReferralState(REFERRAL_STATE.user || { uid });
+  } catch (error) {
+    setRedeemMessage(error?.message || 'Could not redeem this code.', 'error');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Apply Redeem Code';
+    }
+  }
+}
 
 window.updateRefUI = function(user) {
   syncReferralState(user);
@@ -3162,6 +3300,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.key === 'Escape') {
       closeOrderModalInternal();
       window.closeOrdersPage();
+      window.closeRedeemModal();
     }
   });
 
@@ -3185,6 +3324,31 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (typeof openAuthModal === 'function') {
         openAuthModal();
       }
+    };
+  }
+
+  const redeemCodeInput = document.getElementById('redeemCodeInput');
+  const redeemCodeBtn = document.getElementById('redeemCodeBtn');
+  const navRedeemBtn = document.getElementById('navRedeemBtn');
+  if (redeemCodeBtn) redeemCodeBtn.onclick = applyRedeemCode;
+  if (redeemCodeInput) {
+    redeemCodeInput.addEventListener('input', () => {
+      redeemCodeInput.value = normalizeRedeemCode(redeemCodeInput.value);
+    });
+    redeemCodeInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        applyRedeemCode();
+      }
+    });
+  }
+  if (navRedeemBtn) {
+    navRedeemBtn.onclick = () => {
+      if (!window._currentUserUid) {
+        if (typeof openAuthModal === 'function') openAuthModal();
+        return;
+      }
+      window.openRedeemModal();
     };
   }
 
