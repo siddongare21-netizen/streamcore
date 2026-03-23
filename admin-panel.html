@@ -53,6 +53,15 @@ body{min-height:100vh}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
 .section-head h2{font-family:"Syne",sans-serif;font-size:1.05rem;margin:0}
 .section-head p{margin:0;color:var(--muted);font-size:.85rem}
+.section-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-shell{display:flex;align-items:center;gap:10px;min-width:min(100%,390px);padding:8px 10px 8px 14px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));border:1px solid rgba(255,255,255,0.09);box-shadow:0 14px 34px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.04)}
+.search-shell:focus-within{border-color:rgba(124,109,250,0.42);box-shadow:0 18px 40px rgba(0,0,0,0.22),0 0 0 3px rgba(124,109,250,0.1)}
+.search-icon{font-size:1rem;color:#8ea0c5;line-height:1}
+.search-input{flex:1;min-width:180px;background:transparent;border:none;outline:none;color:var(--text);font-size:.92rem;font-family:"DM Sans",sans-serif}
+.search-input::placeholder{color:#7081a2}
+.search-clear{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;border:1px solid transparent;background:rgba(255,255,255,0.04);color:#97a8c8;cursor:pointer;transition:.2s ease}
+.search-clear:hover{border-color:rgba(255,255,255,0.1);color:var(--text);background:rgba(255,255,255,0.07)}
+.search-clear.hidden{display:none !important}
 .stat-line{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .stat-chip{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:.8rem;color:var(--muted)}
 .stat-chip strong{color:var(--text)}
@@ -124,6 +133,8 @@ tr:last-child td{border-bottom:none}
   .modal{padding:18px}
   .modal-actions{justify-content:stretch}
   .modal-actions button{width:100%}
+  .section-tools{width:100%}
+  .search-shell{width:100%;min-width:0}
 }
 </style>
 </head>
@@ -163,6 +174,13 @@ tr:last-child td{border-bottom:none}
             <h2>Pending Orders</h2>
             <p>Orders appear here right after the customer clicks `I've Paid — Send Screenshot`.</p>
           </div>
+          <div class="section-tools">
+            <label class="search-shell" for="pendingOrderSearch">
+              <span class="search-icon">⌕</span>
+              <input class="search-input" id="pendingOrderSearch" type="search" placeholder="Search order ID, product, user..." autocomplete="off" />
+              <button class="search-clear hidden" id="clearPendingSearch" type="button" aria-label="Clear pending order search">✕</button>
+            </label>
+          </div>
         </div>
         <div class="stat-line">
           <div class="stat-chip">Pending now: <strong id="pendingCountChip">0</strong></div>
@@ -175,6 +193,13 @@ tr:last-child td{border-bottom:none}
           <div>
             <h2>Delivered Orders</h2>
             <p>Review approved orders, reopen one if needed, and verify what the customer received.</p>
+          </div>
+          <div class="section-tools">
+            <label class="search-shell" for="deliveredOrderSearch">
+              <span class="search-icon">⌕</span>
+              <input class="search-input" id="deliveredOrderSearch" type="search" placeholder="Search order ID, product, user..." autocomplete="off" />
+              <button class="search-clear hidden" id="clearDeliveredSearch" type="button" aria-label="Clear delivered order search">✕</button>
+            </label>
           </div>
         </div>
         <div class="stat-line">
@@ -369,7 +394,9 @@ or any stock notes you want to save"></textarea>
       metrics: null,
       stockMap: {},
       activeOrder: null,
-      activeStockKey: null
+      activeStockKey: null,
+      pendingSearchTerm: '',
+      deliveredSearchTerm: ''
     };
 
     const adminGate = document.getElementById('adminGate');
@@ -377,6 +404,8 @@ or any stock notes you want to save"></textarea>
     const adminPassword = document.getElementById('adminPassword');
     const adminGateMsg = document.getElementById('adminGateMsg');
     const pendingOrdersList = document.getElementById('pendingOrdersList');
+    const pendingOrderSearch = document.getElementById('pendingOrderSearch');
+    const clearPendingSearch = document.getElementById('clearPendingSearch');
     const stockProductsList = document.getElementById('stockProductsList');
     const pendingCountChip = document.getElementById('pendingCountChip');
     const deliveredCountChip = document.getElementById('deliveredCountChip');
@@ -392,6 +421,8 @@ or any stock notes you want to save"></textarea>
     const stockNotesInput = document.getElementById('stockNotesInput');
     const toast = document.getElementById('adminToast');
     const deliveredOrdersList = document.getElementById('deliveredOrdersList');
+    const deliveredOrderSearch = document.getElementById('deliveredOrderSearch');
+    const clearDeliveredSearch = document.getElementById('clearDeliveredSearch');
     const referralRequestsBody = document.getElementById('referralRequestsBody');
     const referralApprovalCountChip = document.getElementById('referralApprovalCountChip');
     const usersTableBody = document.getElementById('usersTableBody');
@@ -428,6 +459,25 @@ or any stock notes you want to save"></textarea>
     function switchTab(tabId) {
       document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === tabId));
       document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    }
+
+    function orderMatchesSearch(order, searchTerm) {
+      if (!searchTerm) return true;
+      const haystack = [
+        order.orderId,
+        order.id,
+        order.productName,
+        PRODUCTS[order.product] || order.product,
+        order.uid,
+        order.email,
+        order.status,
+        order.amount
+      ].map(value => String(value || '').toLowerCase()).join(' ');
+      return haystack.includes(searchTerm);
+    }
+
+    function updateSearchClearState(input, button) {
+      button.classList.toggle('hidden', !input.value.trim());
     }
 
     function openOrderModal(order) {
@@ -474,13 +524,18 @@ or any stock notes you want to save"></textarea>
     }
 
     function renderPendingOrders() {
-      pendingCountChip.textContent = String(state.pendingOrders.length);
+      const filteredOrders = state.pendingOrders.filter(order => orderMatchesSearch(order, state.pendingSearchTerm));
+      pendingCountChip.textContent = String(filteredOrders.length);
       if (!state.pendingOrders.length) {
         pendingOrdersList.innerHTML = `<div class="empty">No pending orders right now.</div>`;
         return;
       }
+      if (!filteredOrders.length) {
+        pendingOrdersList.innerHTML = `<div class="empty">No pending orders matched "${escapeHtml(state.pendingSearchTerm)}". Try an order ID, product name, or user ID.</div>`;
+        return;
+      }
 
-      pendingOrdersList.innerHTML = state.pendingOrders.map(order => `
+      pendingOrdersList.innerHTML = filteredOrders.map(order => `
         <div class="card" data-order-id="${escapeHtml(order.id)}">
           <div class="card-top">
             <div>
@@ -496,20 +551,25 @@ or any stock notes you want to save"></textarea>
 
       pendingOrdersList.querySelectorAll('[data-order-id]').forEach(card => {
         card.addEventListener('click', () => {
-          const order = state.pendingOrders.find(item => item.id === card.dataset.orderId);
+          const order = filteredOrders.find(item => item.id === card.dataset.orderId);
           if (order) openOrderModal(order);
         });
       });
     }
 
     function renderDeliveredOrders() {
-      deliveredCountChip.textContent = String(state.deliveredOrders.length);
+      const filteredOrders = state.deliveredOrders.filter(order => orderMatchesSearch(order, state.deliveredSearchTerm));
+      deliveredCountChip.textContent = String(filteredOrders.length);
       if (!state.deliveredOrders.length) {
         deliveredOrdersList.innerHTML = `<div class="empty">No delivered orders yet.</div>`;
         return;
       }
+      if (!filteredOrders.length) {
+        deliveredOrdersList.innerHTML = `<div class="empty">No delivered orders matched "${escapeHtml(state.deliveredSearchTerm)}". Try an order ID, product name, or user ID.</div>`;
+        return;
+      }
 
-      deliveredOrdersList.innerHTML = state.deliveredOrders.map(order => `
+      deliveredOrdersList.innerHTML = filteredOrders.map(order => `
         <div class="card" data-delivered-id="${escapeHtml(order.id)}">
           <div class="card-top">
             <div>
@@ -525,7 +585,7 @@ or any stock notes you want to save"></textarea>
 
       deliveredOrdersList.querySelectorAll('[data-delivered-id]').forEach(card => {
         card.addEventListener('click', () => {
-          const order = state.deliveredOrders.find(item => item.id === card.dataset.deliveredId);
+          const order = filteredOrders.find(item => item.id === card.dataset.deliveredId);
           if (order) openOrderModal(order);
         });
       });
@@ -910,6 +970,30 @@ or any stock notes you want to save"></textarea>
     });
 
     document.getElementById('adminRefreshBtn').addEventListener('click', refreshAll);
+    pendingOrderSearch.addEventListener('input', () => {
+      state.pendingSearchTerm = pendingOrderSearch.value.trim().toLowerCase();
+      updateSearchClearState(pendingOrderSearch, clearPendingSearch);
+      renderPendingOrders();
+    });
+    clearPendingSearch.addEventListener('click', () => {
+      pendingOrderSearch.value = '';
+      state.pendingSearchTerm = '';
+      updateSearchClearState(pendingOrderSearch, clearPendingSearch);
+      renderPendingOrders();
+      pendingOrderSearch.focus();
+    });
+    deliveredOrderSearch.addEventListener('input', () => {
+      state.deliveredSearchTerm = deliveredOrderSearch.value.trim().toLowerCase();
+      updateSearchClearState(deliveredOrderSearch, clearDeliveredSearch);
+      renderDeliveredOrders();
+    });
+    clearDeliveredSearch.addEventListener('click', () => {
+      deliveredOrderSearch.value = '';
+      state.deliveredSearchTerm = '';
+      updateSearchClearState(deliveredOrderSearch, clearDeliveredSearch);
+      renderDeliveredOrders();
+      deliveredOrderSearch.focus();
+    });
     document.getElementById('closeOrderModal').addEventListener('click', closeOrderModal);
     document.getElementById('closeStockModal').addEventListener('click', closeStockModal);
     document.getElementById('acceptOrderBtn').addEventListener('click', acceptOrder);
