@@ -1324,8 +1324,8 @@ document.addEventListener('keydown', e => {
 .orders-page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 26px;border-bottom:1px solid var(--border);background:rgba(13,17,32,0.96)}
 .orders-page-title{font-family:"Syne",sans-serif;font-size:1.35rem;margin:0 0 6px}
 .orders-page-sub{margin:0;color:var(--muted);font-size:.84rem;line-height:1.6}
-.orders-page-body{padding:22px 26px 26px;overflow:auto;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);gap:18px}
-.orders-list{display:grid;gap:14px}
+.orders-page-body{padding:22px 26px 26px;overflow:auto;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);gap:18px;align-items:start}
+.orders-list{display:grid;gap:14px;align-content:start}
 .orders-page-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:18px;padding:18px 20px;display:flex;align-items:flex-start;gap:14px;transition:border-color .2s,transform .2s}
 .orders-page-card:hover{border-color:rgba(124,109,250,0.34);transform:translateY(-2px)}
 .orders-page-card.active{border-color:rgba(79,209,197,0.28);box-shadow:0 0 0 1px rgba(79,209,197,0.08) inset}
@@ -1662,6 +1662,10 @@ window.openDashboard = async function() {
 };
 
 function renderOrders(orders) {
+  if (typeof window.renderOrders === 'function' && window.renderOrders !== renderOrders) {
+    window.renderOrders(orders);
+    return;
+  }
   const el = document.getElementById('dashOrders');
   if (!orders.length) {
     el.innerHTML = `<div class="dash-empty"><div class="dash-empty-icon">📦</div>No orders yet.<br>Browse products and place your first order!</div>`;
@@ -2539,6 +2543,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderOrders = function(orders) {
+    if (typeof window.renderOrders === 'function' && window.renderOrders !== renderOrders) {
+      window.renderOrders(orders);
+      return;
+    }
     const el = document.getElementById('dashOrders');
     if (!el) return;
     if (!orders.length) {
