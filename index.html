@@ -1453,7 +1453,8 @@ async function ensureUserReferralDefaults(user, baseData = {}) {
     referralRewardGranted: false,
     referralRewardPending: false,
     referralRewardRejected: false,
-    referralApprovalRequestId: ''
+    referralApprovalRequestId: '',
+    blocked: false
   };
   const upsertReferralCodeDoc = async code => {
     const normalizedCode = normalizeRefCode(code || defaults.referralCode) || defaults.referralCode;
@@ -1560,7 +1561,8 @@ window.doRegister = async function() {
       referralRewardGranted: false,
       referralRewardPending: false,
       referralRewardRejected: false,
-      referralApprovalRequestId: ''
+      referralApprovalRequestId: '',
+      blocked: false
     });
     showMsg('Account created! Welcome 🎉', 'success');
     setTimeout(() => {
@@ -1632,7 +1634,8 @@ window.doGoogle = async function() {
         referralRewardGranted: false,
         referralRewardPending: false,
         referralRewardRejected: false,
-        referralApprovalRequestId: ''
+        referralApprovalRequestId: '',
+        blocked: false
       });
     } else {
       await ensureUserReferralDefaults(user, {
@@ -2262,6 +2265,24 @@ async function fetchUserReferralData(uid) {
   return snap.exists() ? snap.data() : null;
 }
 
+function isBlockedUserData(userData) {
+  return !!(userData && userData.blocked);
+}
+
+async function refreshCurrentUserData(uid) {
+  const targetUid = uid || window._currentUserUid;
+  if (!targetUid) return null;
+  const userData = await fetchUserReferralData(targetUid);
+  if (userData) {
+    renderReferralUiForUser(REFERRAL_STATE.user || { uid: targetUid }, userData);
+  }
+  return userData;
+}
+
+function showBlockedAccountNotice() {
+  window.alert('Your account is blocked from placing new orders or redeeming codes right now. Please contact WhatsApp support.');
+}
+
 async function bindPendingReferralToUser(user, userData) {
   const db = window._firebaseDb;
   const pendingCode = getPendingReferralCode();
@@ -2318,7 +2339,8 @@ async function syncReferralState(user) {
         referralRewardGranted: false,
         referralRewardPending: false,
         referralRewardRejected: false,
-        referralApprovalRequestId: ''
+        referralApprovalRequestId: '',
+        blocked: false
       };
     }
 
@@ -2391,9 +2413,14 @@ window.shareRef = function(platform) {
   window.open(urls[platform] || urls.whatsapp, '_blank');
 };
 
-window.openRedeemModal = function() {
+window.openRedeemModal = async function() {
   if (!window._currentUserUid) {
     if (typeof openAuthModal === 'function') openAuthModal();
+    return;
+  }
+  const latestUserData = await refreshCurrentUserData(window._currentUserUid);
+  if (isBlockedUserData(latestUserData || REFERRAL_STATE.userData)) {
+    showBlockedAccountNotice();
     return;
   }
   const backdrop = document.getElementById('redeemBackdrop');
@@ -2457,6 +2484,7 @@ async function applyRedeemCode() {
 
       const userSnap = await transaction.get(userRef);
       const userData = userSnap.exists() ? userSnap.data() : {};
+      if (userData.blocked) throw new Error('Your account is blocked from redeeming codes right now.');
       const currentWallet = Math.max(0, Number(userData.walletCredit || 0));
       const lifetimeRedeemCredit = Math.max(0, Number(userData.lifetimeRedeemCredit || 0));
 
@@ -2502,7 +2530,14 @@ window.getCheckoutUPIInfo = function() {
 };
 
 const _baseOpenCheckout = window.openCheckout;
-window.openCheckout = function(key) {
+window.openCheckout = async function(key) {
+  if (window._currentUserUid) {
+    const latestUserData = await refreshCurrentUserData(window._currentUserUid);
+    if (isBlockedUserData(latestUserData || REFERRAL_STATE.userData)) {
+      showBlockedAccountNotice();
+      return;
+    }
+  }
   _baseOpenCheckout(key);
   renderCheckoutCreditInfo();
   if (REFERRAL_STATE.user || window._currentUserUid) {
@@ -2526,6 +2561,7 @@ window.coPaid = async function() {
   let userData = REFERRAL_STATE.userData || null;
   let referralRequestCreated = false;
   let referralRequestId = '';
+  let orderSaved = false;
 
   window._savingReferralOrder = true;
 
@@ -2537,6 +2573,7 @@ window.coPaid = async function() {
       await runTransaction(db, async transaction => {
         const userSnap = await transaction.get(userRef);
         userData = userSnap.exists() ? userSnap.data() : (userData || {});
+        if (userData.blocked) throw new Error('Your account is blocked from placing new orders right now.');
         pricing = getWalletPricing(userData.walletCredit || 0, baseAmount);
 
         const existingOrder = await transaction.get(orderRef);
@@ -2611,12 +2648,18 @@ window.coPaid = async function() {
       });
 
       renderReferralUiForUser(REFERRAL_STATE.user || { uid }, userData);
+      orderSaved = true;
     }
   } catch (e) {
     console.log('Order save error', e);
+    if (String(e?.message || '').toLowerCase().includes('blocked')) {
+      showBlockedAccountNotice();
+    }
   } finally {
     window._savingReferralOrder = false;
   }
+
+  if (!orderSaved) return;
 
   const message = [
     `Hi! I just placed an order for *${product.name}*.`,
@@ -2789,6 +2832,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return `tw_seen_delivered_${uid || 'guest'}`;
   }
 
+  function getOrderSignalKey(order) {
+    const signalSource = order?.deliverySignalAt || order?.resentAt || order?.deliveredAt;
+    const signalValue = signalSource?.toMillis ? signalSource.toMillis() : String(signalSource || '');
+    return `${order?.id || order?.orderId || 'order'}:${signalValue || 'base'}`;
+  }
+
   function getSeenDelivered(uid) {
     try {
       return JSON.parse(localStorage.getItem(getSeenDeliveredKey(uid)) || '[]');
@@ -2801,10 +2850,10 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(getSeenDeliveredKey(uid), JSON.stringify(ids));
   }
 
-  function markOrdersSeen(uid, orderIds) {
-    if (!uid || !orderIds.length) return;
+  function markOrdersSeen(uid, orderSignalKeys) {
+    if (!uid || !orderSignalKeys.length) return;
     const current = getSeenDelivered(uid);
-    const merged = [...new Set([...current, ...orderIds])];
+    const merged = [...new Set([...current, ...orderSignalKeys])];
     setSeenDelivered(uid, merged);
   }
 
@@ -2831,13 +2880,13 @@ document.addEventListener('DOMContentLoaded', () => {
     bannerText.innerHTML = `Order received for <strong>${escapeHtml(latestOrder.productName || latestOrder.product || 'your product')}</strong>. Your credentials are saved in the dashboard.`;
     banner.classList.add('show');
     bannerBtn.onclick = () => {
-      markOrdersSeen(window._currentUserUid, unseenOrders.map(order => order.id));
+      markOrdersSeen(window._currentUserUid, unseenOrders.map(getOrderSignalKey));
       banner.classList.remove('show');
       dot.classList.remove('show');
       window.openDashboard();
     };
     bannerClose.onclick = () => {
-      markOrdersSeen(window._currentUserUid, unseenOrders.map(order => order.id));
+      markOrdersSeen(window._currentUserUid, unseenOrders.map(getOrderSignalKey));
       banner.classList.remove('show');
       dot.classList.remove('show');
     };
@@ -2853,12 +2902,12 @@ document.addEventListener('DOMContentLoaded', () => {
     textEl.innerHTML = `Your order for <strong>${escapeHtml(order.productName || order.product || 'Product')}</strong> has been received and saved in your dashboard. Tap open now to view credentials and your delivery note anytime.`;
     alertEl.classList.add('show');
     openBtn.onclick = () => {
-      markOrdersSeen(window._currentUserUid, [order.id]);
+      markOrdersSeen(window._currentUserUid, [getOrderSignalKey(order)]);
       openOrderModalInternal(order);
       alertEl.classList.remove('show');
     };
     closeBtn.onclick = () => {
-      markOrdersSeen(window._currentUserUid, [order.id]);
+      markOrdersSeen(window._currentUserUid, [getOrderSignalKey(order)]);
       alertEl.classList.remove('show');
     };
   }
@@ -2912,8 +2961,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const uid = window._currentUserUid;
     if (uid && (order.status || 'pending') === 'active') {
       const seen = getSeenDelivered(uid);
-      if (!seen.includes(order.id)) {
-        seen.push(order.id);
+      const signalKey = getOrderSignalKey(order);
+      if (!seen.includes(order.id) && !seen.includes(signalKey)) {
+        seen.push(signalKey);
         setSeenDelivered(uid, seen);
       }
     }
@@ -3210,7 +3260,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const deliveredCount = orders.filter(order => (order.status || 'pending') === 'active').length;
       const deliveredOrders = orders.filter(order => (order.status || 'pending') === 'active');
       const seenDelivered = getSeenDelivered(uid);
-      const newlyDelivered = deliveredOrders.filter(order => !seenDelivered.includes(order.id));
+      const newlyDelivered = deliveredOrders.filter(order => !seenDelivered.includes(order.id) && !seenDelivered.includes(getOrderSignalKey(order)));
       window.renderOrders(orders);
       updateSiteOrderSignals(deliveredOrders, newlyDelivered);
       const orderCountEl = document.getElementById('dashOrderCount');

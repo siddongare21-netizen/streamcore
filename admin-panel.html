@@ -144,6 +144,7 @@ tr:last-child td{border-bottom:none}
 .mini-btn.approve{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.24);color:#86efac}
 .mini-btn.reject{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.24);color:#fca5a5}
 .user-name-cell{display:flex;flex-direction:column;gap:8px;min-width:240px}
+.user-name-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .user-name{font-weight:700;color:var(--text);line-height:1.4}
 .user-id-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .user-id-label{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -152,15 +153,29 @@ tr:last-child td{border-bottom:none}
 .copy-user-btn:hover{border-color:rgba(124,109,250,0.35);background:rgba(124,109,250,0.08)}
 .copy-user-btn.copied{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.24);color:#86efac}
 .console-shell{background:rgba(13,17,32,0.92);border:1px solid var(--border);border-radius:18px;padding:18px;position:relative;overflow:hidden;box-shadow:0 18px 34px rgba(0,0,0,0.16)}
-.console-log{background:#0a0f1d;border:1px solid rgba(255,255,255,0.06);border-radius:16px;min-height:320px;max-height:460px;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-.console-entry{border-radius:14px;padding:12px 14px;font-family:Consolas,monospace;font-size:.82rem;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.console-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.console-stat{background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px;position:relative;overflow:hidden}
+.console-stat::after{content:"";position:absolute;inset:auto -22% -72% auto;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(124,109,250,0.18),transparent 68%);opacity:.55}
+.console-stat-label{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:#8ea0c5;margin-bottom:8px}
+.console-stat-value{font-family:"Syne",sans-serif;font-size:1.08rem;font-weight:700;color:#eff3ff}
+.console-stat-note{margin-top:6px;font-size:.78rem;color:var(--muted);line-height:1.5}
+.console-shortcuts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.console-chip{border:none;border-radius:999px;padding:9px 12px;background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.16);color:#c7fff8;font-size:.78rem;font-weight:700;cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
+.console-chip:hover{transform:translateY(-1px);border-color:rgba(124,109,250,0.28);background:rgba(124,109,250,0.12)}
+.console-log{background:#0a0f1d;border:1px solid rgba(255,255,255,0.06);border-radius:16px;min-height:320px;max-height:460px;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.console-entry{border-radius:14px;padding:12px 14px;font-family:Consolas,monospace;font-size:.82rem;line-height:1.7;word-break:break-word}
 .console-entry.system{background:rgba(124,109,250,0.08);border:1px solid rgba(124,109,250,0.18);color:#d8d4ff}
 .console-entry.user{background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.18);color:#c7fff8;align-self:flex-end}
 .console-entry.error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.22);color:#fecaca}
-.console-row{display:flex;gap:10px;align-items:center;margin-top:14px}
+.console-entry-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;font-family:"DM Sans",sans-serif}
+.console-entry-tag{display:inline-flex;align-items:center;justify-content:center;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,0.07);font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;color:#cbd5f5}
+.console-entry-time{font-size:.72rem;color:#90a1c3}
+.console-entry-body{white-space:pre-wrap}
+.console-row{display:flex;gap:10px;align-items:center;margin-top:14px;padding:12px;border-radius:16px;background:rgba(6,10,20,0.66);border:1px solid rgba(255,255,255,0.06);position:sticky;bottom:0;backdrop-filter:blur(8px)}
 .console-input{flex:1;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px 16px;font-size:.92rem;font-family:Consolas,monospace;outline:none}
 .console-input:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
-.console-help{margin-top:14px;color:var(--muted);font-size:.82rem;line-height:1.7}
+.console-help{margin-top:12px;color:var(--muted);font-size:.82rem;line-height:1.7}
+.console-help code{color:#d9ddff}
 .helper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .input,.select{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font-size:.92rem;outline:none}
 .input:focus,.select:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
@@ -247,6 +262,9 @@ tr:last-child td{border-bottom:none}
   .modal-actions button{width:100%}
   .section-tools{width:100%}
   .search-shell{width:100%;min-width:0}
+  .console-summary{grid-template-columns:1fr}
+  .console-row{flex-direction:column}
+  .console-row > *{width:100%}
 }
 </style>
 </head>
@@ -356,16 +374,42 @@ tr:last-child td{border-bottom:none}
         <div class="section-head">
           <div>
             <h2>Admin Console</h2>
-            <p>Run wallet-credit and redeem-code commands from one place.</p>
+            <p>Run wallet, redeem, user-ban, and resend commands from one place.</p>
           </div>
         </div>
         <div class="console-shell">
+          <div class="console-summary">
+            <div class="console-stat">
+              <div class="console-stat-label">Wallet</div>
+              <div class="console-stat-value" id="consoleWalletValue">Credits and bans</div>
+              <div class="console-stat-note" id="consoleWalletNote">Handle wallet balance fixes and user access quickly.</div>
+            </div>
+            <div class="console-stat">
+              <div class="console-stat-label">Redeem</div>
+              <div class="console-stat-value" id="consoleRedeemValue">Bulk code tools</div>
+              <div class="console-stat-note" id="consoleRedeemNote">Generate, list, and delete redeem codes from the same feed.</div>
+            </div>
+            <div class="console-stat">
+              <div class="console-stat-label">Orders</div>
+              <div class="console-stat-value" id="consoleOrderValue">Resend delivery</div>
+              <div class="console-stat-note" id="consoleOrderNote">Push delivered credentials back into the customer dashboard flow.</div>
+            </div>
+          </div>
+          <div class="console-shortcuts">
+            <button class="console-chip" type="button" data-console-shortcut="/help">/help</button>
+            <button class="console-chip" type="button" data-console-shortcut="/list-redeemcodes">/list-redeemcodes</button>
+            <button class="console-chip" type="button" data-console-shortcut="/create-redeemcode 3 15">/create-redeemcode 3 15</button>
+            <button class="console-chip" type="button" data-console-shortcut="/delete-redeemcode TW-XXXX-XXXX">/delete-redeemcode</button>
+            <button class="console-chip" type="button" data-console-shortcut="/ban-user USER_ID">/ban-user</button>
+            <button class="console-chip" type="button" data-console-shortcut="/unban-user USER_ID">/unban-user</button>
+            <button class="console-chip" type="button" data-console-shortcut="/resend-order ORDER_ID">/resend-order</button>
+          </div>
           <div class="console-log" id="adminConsoleLog"></div>
           <div class="console-row">
-            <input class="console-input" id="adminConsoleInput" type="text" placeholder="/help" autocomplete="off" />
+            <input class="console-input" id="adminConsoleInput" type="text" placeholder="/create-redeemcode 5 15" autocomplete="off" />
             <button class="save-btn" type="button" id="adminConsoleRunBtn">Run</button>
           </div>
-          <div class="console-help">Supported commands: `/view-credits &lt;userid&gt;`, `/give-credits &lt;amount&gt; &lt;userid&gt;`, `/remove-credits &lt;userid&gt;`, `/remove-credits &lt;amount&gt; &lt;userid&gt;`, `/create-redeemcode &lt;amount&gt;`.</div>
+          <div class="console-help">Supported commands: <code>/view-credits &lt;userid&gt;</code>, <code>/give-credits &lt;amount&gt; &lt;userid&gt;</code>, <code>/remove-credits &lt;userid&gt;</code>, <code>/remove-credits &lt;amount&gt; &lt;userid&gt;</code>, <code>/create-redeemcode &lt;count&gt; &lt;amount&gt;</code>, <code>/list-redeemcodes</code>, <code>/delete-redeemcode &lt;code&gt;</code>, <code>/ban-user &lt;userid&gt;</code>, <code>/unban-user &lt;userid&gt;</code>, <code>/resend-order &lt;orderid&gt;</code>.</div>
         </div>
       </section>
 
@@ -540,6 +584,11 @@ or any stock notes you want to save"></textarea>
       referralRequests: [],
       users: [],
       metrics: null,
+      redeemCodeStats: {
+        total: 0,
+        active: 0,
+        redeemed: 0
+      },
       stockMap: {},
       activeOrder: null,
       activeStockKey: null,
@@ -578,6 +627,12 @@ or any stock notes you want to save"></textarea>
     const adminConsoleLog = document.getElementById('adminConsoleLog');
     const adminConsoleInput = document.getElementById('adminConsoleInput');
     const adminConsoleRunBtn = document.getElementById('adminConsoleRunBtn');
+    const consoleWalletValue = document.getElementById('consoleWalletValue');
+    const consoleWalletNote = document.getElementById('consoleWalletNote');
+    const consoleRedeemValue = document.getElementById('consoleRedeemValue');
+    const consoleRedeemNote = document.getElementById('consoleRedeemNote');
+    const consoleOrderValue = document.getElementById('consoleOrderValue');
+    const consoleOrderNote = document.getElementById('consoleOrderNote');
     const usersSearchInput = document.getElementById('usersSearchInput');
     const clearUsersSearch = document.getElementById('clearUsersSearch');
     const usersTableBody = document.getElementById('usersTableBody');
@@ -824,21 +879,57 @@ or any stock notes you want to save"></textarea>
       });
     }
 
+    function getConsoleHelpText() {
+      return [
+        'Console ready.',
+        'Commands:',
+        '/help',
+        '/view-credits <userid>',
+        '/give-credits <amount> <userid>',
+        '/remove-credits <userid>',
+        '/remove-credits <amount> <userid>',
+        '/create-redeemcode <count> <amount>',
+        '/list-redeemcodes [count]',
+        '/delete-redeemcode <code>',
+        '/ban-user <userid>',
+        '/unban-user <userid>',
+        '/resend-order <orderid>'
+      ].join('\n');
+    }
+
+    function getConsoleToneLabel(tone) {
+      if (tone === 'user') return 'Command';
+      if (tone === 'error') return 'Error';
+      return 'System';
+    }
+
     function appendConsoleEntry(text, tone = 'system') {
       if (!adminConsoleLog) return;
       const entry = document.createElement('div');
+      const time = new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
       entry.className = `console-entry ${tone}`;
-      entry.textContent = text;
+      entry.innerHTML = `
+        <div class="console-entry-meta">
+          <span class="console-entry-tag">${escapeHtml(getConsoleToneLabel(tone))}</span>
+          <span class="console-entry-time">${escapeHtml(time)}</span>
+        </div>
+        <div class="console-entry-body">${escapeHtml(text)}</div>
+      `;
       adminConsoleLog.appendChild(entry);
       adminConsoleLog.scrollTop = adminConsoleLog.scrollHeight;
     }
 
     function seedConsole() {
       if (!adminConsoleLog || adminConsoleLog.childElementCount) return;
-      appendConsoleEntry(
-        'Console ready.\nCommands:\n/help\n/view-credits <userid>\n/give-credits <amount> <userid>\n/remove-credits <userid>\n/remove-credits <amount> <userid>\n/create-redeemcode <amount>',
-        'system'
-      );
+      appendConsoleEntry(getConsoleHelpText(), 'system');
+    }
+
+    function focusConsoleInput(template = '') {
+      if (!adminConsoleInput) return;
+      adminConsoleInput.value = template;
+      adminConsoleInput.focus();
+      const length = adminConsoleInput.value.length;
+      adminConsoleInput.setSelectionRange(length, length);
     }
 
     function parseConsoleAmount(value) {
@@ -847,6 +938,21 @@ or any stock notes you want to save"></textarea>
         throw new Error('Enter a valid positive amount.');
       }
       return Number(amount.toFixed(2));
+    }
+
+    function parseConsoleCount(value, max = 25) {
+      const count = Number(value);
+      if (!Number.isInteger(count) || count <= 0) {
+        throw new Error('Enter a valid positive whole number.');
+      }
+      if (count > max) {
+        throw new Error(`Keep bulk generation to ${max} codes or fewer at once.`);
+      }
+      return count;
+    }
+
+    function normalizeConsoleCode(value) {
+      return String(value || '').trim().toUpperCase();
     }
 
     function buildRedeemCode() {
@@ -873,6 +979,72 @@ or any stock notes you want to save"></textarea>
       return { userId: trimmedId, userRef, userSnap };
     }
 
+    async function loadOrderOrThrow(orderId) {
+      const trimmedId = String(orderId || '').trim();
+      if (!trimmedId) throw new Error('Order ID is required.');
+
+      let orderRef = doc(db, 'orders', trimmedId);
+      let orderSnap = await getDoc(orderRef);
+
+      if (!orderSnap.exists()) {
+        const orderMatchSnap = await getDocs(query(collection(db, 'orders'), where('orderId', '==', trimmedId)));
+        const orderDoc = orderMatchSnap.docs[0];
+        if (!orderDoc) throw new Error(`Order not found: ${trimmedId}`);
+        orderRef = doc(db, 'orders', orderDoc.id);
+        orderSnap = orderDoc;
+      }
+
+      return {
+        orderId: trimmedId,
+        orderRef,
+        orderSnap,
+        orderData: orderSnap.data()
+      };
+    }
+
+    async function listRedeemCodes(limitCount = 20) {
+      const snap = await getDocs(collection(db, 'redeemCodes'));
+      return snap.docs
+        .map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }))
+        .sort((a, b) => {
+          const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return bTime - aTime;
+        })
+        .slice(0, limitCount);
+    }
+
+    function renderConsoleSummary() {
+      const bannedUsers = state.users.filter(user => user.blocked).length;
+      const activeRedeemCodes = Number(state.redeemCodeStats?.active || 0);
+      const totalRedeemCodes = Number(state.redeemCodeStats?.total || 0);
+      const redeemedCodes = Number(state.redeemCodeStats?.redeemed || 0);
+
+      if (consoleWalletValue) {
+        consoleWalletValue.textContent = bannedUsers ? `${bannedUsers} banned user${bannedUsers === 1 ? '' : 's'}` : 'Credits and bans';
+      }
+      if (consoleWalletNote) {
+        consoleWalletNote.textContent = `Wallet fixes and access control across ${state.users.length} account${state.users.length === 1 ? '' : 's'}.`;
+      }
+      if (consoleRedeemValue) {
+        consoleRedeemValue.textContent = activeRedeemCodes ? `${activeRedeemCodes} active code${activeRedeemCodes === 1 ? '' : 's'}` : 'Bulk code tools';
+      }
+      if (consoleRedeemNote) {
+        consoleRedeemNote.textContent = totalRedeemCodes
+          ? `${redeemedCodes} redeemed, ${Math.max(0, totalRedeemCodes - redeemedCodes)} still usable right now.`
+          : 'Generate, list, and delete redeem codes from the same feed.';
+      }
+      if (consoleOrderValue) {
+        consoleOrderValue.textContent = state.deliveredOrders.length ? `${state.deliveredOrders.length} delivered order${state.deliveredOrders.length === 1 ? '' : 's'}` : 'Resend delivery';
+      }
+      if (consoleOrderNote) {
+        consoleOrderNote.textContent = `Pending: ${state.pendingOrders.length} | Referral approvals: ${state.referralRequests.length}.`;
+      }
+    }
+
     async function runConsoleCommand(rawCommand) {
       const commandLine = String(rawCommand || '').trim();
       if (!commandLine) return;
@@ -882,10 +1054,7 @@ or any stock notes you want to save"></textarea>
       const normalizedCommand = command.toLowerCase();
 
       if (normalizedCommand === '/help') {
-        appendConsoleEntry(
-          'Commands:\n/view-credits <userid>\n/give-credits <amount> <userid>\n/remove-credits <userid>\n/remove-credits <amount> <userid>\n/create-redeemcode <amount>',
-          'system'
-        );
+        appendConsoleEntry(getConsoleHelpText(), 'system');
         return;
       }
 
@@ -907,7 +1076,7 @@ or any stock notes you want to save"></textarea>
           updatedAt: serverTimestamp()
         }, { merge: true });
         const updatedSnap = await getDoc(userRef);
-        appendConsoleEntry(`Added ${formatAmount(amount)} to ${userId}. New balance: ${formatAmount(updatedSnap.data().walletCredit || 0)}`, 'system');
+        appendConsoleEntry(`Added ${formatAmount(amount)} to ${userId}.\nNew balance: ${formatAmount(updatedSnap.data().walletCredit || 0)}`, 'system');
         await loadUsers();
         return;
       }
@@ -928,8 +1097,8 @@ or any stock notes you want to save"></textarea>
         }, { merge: true });
         appendConsoleEntry(
           removeAll
-            ? `Removed all credits from ${userId}. New balance: ${formatAmount(nextWallet)}`
-            : `Removed ${formatAmount(amount)} from ${userId}. New balance: ${formatAmount(nextWallet)}`,
+            ? `Removed all credits from ${userId}.\nNew balance: ${formatAmount(nextWallet)}`
+            : `Removed ${formatAmount(amount)} from ${userId}.\nNew balance: ${formatAmount(nextWallet)}`,
           'system'
         );
         await loadUsers();
@@ -937,18 +1106,117 @@ or any stock notes you want to save"></textarea>
       }
 
       if (normalizedCommand === '/create-redeemcode') {
-        if (args.length !== 1) throw new Error('Usage: /create-redeemcode <amount>');
-        const amount = parseConsoleAmount(args[0]);
-        const code = await createUniqueRedeemCode();
-        await setDoc(doc(db, 'redeemCodes', code), {
-          code,
-          amount,
-          status: 'active',
-          createdAt: serverTimestamp(),
-          createdBy: 'admin-console'
+        if (args.length !== 2) throw new Error('Usage: /create-redeemcode <count> <amount>');
+        const count = parseConsoleCount(args[0]);
+        const amount = parseConsoleAmount(args[1]);
+        const codes = [];
+
+        for (let index = 0; index < count; index += 1) {
+          const code = await createUniqueRedeemCode();
+          await setDoc(doc(db, 'redeemCodes', code), {
+            code,
+            amount,
+            status: 'active',
+            createdAt: serverTimestamp(),
+            createdBy: 'admin-console'
+          }, { merge: true });
+          codes.push(code);
+        }
+
+        appendConsoleEntry(
+          `Created ${count} redeem code(s) worth ${formatAmount(amount)} each.\n${codes.join('\n')}`,
+          'system'
+        );
+        showToast(count === 1 ? 'Redeem code created' : `${count} redeem codes created`);
+        await loadRedeemCodeSummary();
+        return;
+      }
+
+      if (normalizedCommand === '/list-redeemcodes') {
+        const count = args.length ? parseConsoleCount(args[0], 50) : 20;
+        const codes = await listRedeemCodes(count);
+        if (!codes.length) {
+          appendConsoleEntry('No redeem codes found.', 'system');
+          return;
+        }
+        appendConsoleEntry(
+          `Showing ${codes.length} redeem code(s):\n${codes.map((item, index) => {
+            const status = String(item.status || 'active');
+            const redeemedBy = item.redeemedBy ? ` | redeemed by ${item.redeemedBy}` : '';
+            return `${index + 1}. ${item.code || item.id} | ${formatAmount(item.amount || 0)} | ${status}${redeemedBy}`;
+          }).join('\n')}`,
+          'system'
+        );
+        return;
+      }
+
+      if (normalizedCommand === '/delete-redeemcode') {
+        if (args.length !== 1) throw new Error('Usage: /delete-redeemcode <code>');
+        const code = normalizeConsoleCode(args[0]);
+        if (!code) throw new Error('Redeem code is required.');
+        const redeemRef = doc(db, 'redeemCodes', code);
+        const redeemSnap = await getDoc(redeemRef);
+        if (!redeemSnap.exists()) throw new Error(`Redeem code not found: ${code}`);
+        await deleteDoc(redeemRef);
+        appendConsoleEntry(`Deleted redeem code ${code}.`, 'system');
+        showToast('Redeem code deleted');
+        await loadRedeemCodeSummary();
+        return;
+      }
+
+      if (normalizedCommand === '/ban-user') {
+        if (args.length !== 1) throw new Error('Usage: /ban-user <userid>');
+        const { userId, userRef, userSnap } = await loadUserOrThrow(args[0]);
+        if (userSnap.data()?.blocked) {
+          appendConsoleEntry(`${userId} is already banned.`, 'system');
+          return;
+        }
+        await setDoc(userRef, {
+          blocked: true,
+          blockedAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
         }, { merge: true });
-        appendConsoleEntry(`Redeem code created.\nCode: ${code}\nAmount: ${formatAmount(amount)}`, 'system');
-        showToast('Redeem code created');
+        appendConsoleEntry(`${userId} is now banned from redeeming and placing new orders.`, 'system');
+        showToast('User banned');
+        await loadUsers();
+        return;
+      }
+
+      if (normalizedCommand === '/unban-user') {
+        if (args.length !== 1) throw new Error('Usage: /unban-user <userid>');
+        const { userId, userRef, userSnap } = await loadUserOrThrow(args[0]);
+        if (!userSnap.data()?.blocked) {
+          appendConsoleEntry(`${userId} is already active.`, 'system');
+          return;
+        }
+        await setDoc(userRef, {
+          blocked: false,
+          blockedAt: null,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        appendConsoleEntry(`${userId} is active again and can use checkout normally.`, 'system');
+        showToast('User unbanned');
+        await loadUsers();
+        return;
+      }
+
+      if (normalizedCommand === '/resend-order') {
+        if (args.length !== 1) throw new Error('Usage: /resend-order <orderid>');
+        const { orderId, orderRef, orderData } = await loadOrderOrThrow(args[0]);
+        if ((orderData.status || 'pending') !== 'active') {
+          throw new Error('Only delivered orders can be resent.');
+        }
+        await setDoc(orderRef, {
+          deliverySignalAt: serverTimestamp(),
+          resentAt: serverTimestamp(),
+          deliveryResendCount: increment(1)
+        }, { merge: true });
+        appendConsoleEntry(
+          `Resent delivery signal for ${orderId}.\nCustomer: ${orderData.uid || '-'}\nCredentials saved: ${orderData.credentials ? 'yes' : 'no'}`,
+          'system'
+        );
+        showToast('Order resent to customer');
+        await Promise.all([loadDeliveredOrders(), loadUsers(), loadStats()]);
         return;
       }
 
@@ -988,7 +1256,10 @@ or any stock notes you want to save"></textarea>
         <tr>
           <td>
             <div class="user-name-cell">
-              <div class="user-name">${escapeHtml(user.name || 'User')}</div>
+              <div class="user-name-head">
+                <div class="user-name">${escapeHtml(user.name || 'User')}</div>
+                ${user.blocked ? '<span class="badge cancelled">Banned</span>' : ''}
+              </div>
               <div class="user-id-row">
                 <span class="user-id-label">User ID</span>
                 <code class="user-id-text">${escapeHtml(user.id || '-')}</code>
@@ -996,7 +1267,7 @@ or any stock notes you want to save"></textarea>
               </div>
             </div>
           </td>
-          <td>${escapeHtml(user.email || 'â€”')}</td>
+          <td>${escapeHtml(user.email || '-')}</td>
           <td>${escapeHtml(String(user.orders || 0))}</td>
           <td>${formatAmount(user.totalSpent || 0)}</td>
           <td>${formatAmount(user.walletCredit || 0)}</td>
@@ -1028,18 +1299,6 @@ or any stock notes you want to save"></textarea>
           }, 1600);
         });
       });
-      return;
-
-      usersTableBody.innerHTML = state.users.map(user => `
-        <tr>
-          <td>${escapeHtml(user.name || 'User')}</td>
-          <td>${escapeHtml(user.email || '—')}</td>
-          <td>${escapeHtml(String(user.orders || 0))}</td>
-          <td>${formatAmount(user.totalSpent || 0)}</td>
-          <td>${formatAmount(user.walletCredit || 0)}</td>
-          <td>${escapeHtml(formatDate(user.createdAt))}</td>
-        </tr>
-      `).join('');
     }
 
     function renderStats() {
@@ -1120,6 +1379,7 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderPendingOrders();
+      renderConsoleSummary();
     }
 
     async function loadDeliveredOrders() {
@@ -1132,6 +1392,7 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderDeliveredOrders();
+      renderConsoleSummary();
     }
 
     async function loadReferralRequests() {
@@ -1144,6 +1405,19 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderReferralRequests();
+      renderConsoleSummary();
+    }
+
+    async function loadRedeemCodeSummary() {
+      const snap = await getDocs(collection(db, 'redeemCodes'));
+      state.redeemCodeStats = snap.docs.reduce((summary, docSnap) => {
+        const item = docSnap.data();
+        summary.total += 1;
+        if ((item.status || 'active') === 'redeemed') summary.redeemed += 1;
+        else summary.active += 1;
+        return summary;
+      }, { total: 0, active: 0, redeemed: 0 });
+      renderConsoleSummary();
     }
 
     async function syncUserOrderSummary(uid) {
@@ -1199,6 +1473,7 @@ or any stock notes you want to save"></textarea>
           return bTime - aTime;
         });
       renderUsers();
+      renderConsoleSummary();
     }
 
     async function loadStats() {
@@ -1237,7 +1512,7 @@ or any stock notes you want to save"></textarea>
     }
 
     async function refreshAll() {
-      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadUsers()]);
+      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadRedeemCodeSummary(), loadStockMap(), loadUsers()]);
       await loadStats();
     }
 
@@ -1267,7 +1542,8 @@ or any stock notes you want to save"></textarea>
         status: 'active',
         verificationStatus: 'approved',
         deliveryStatus: 'delivered',
-        deliveredAt: serverTimestamp()
+        deliveredAt: serverTimestamp(),
+        deliverySignalAt: serverTimestamp()
       });
       closeOrderModal();
       await refreshAll();
@@ -1426,6 +1702,11 @@ or any stock notes you want to save"></textarea>
 
     document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    document.querySelectorAll('[data-console-shortcut]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        focusConsoleInput(btn.dataset.consoleShortcut || '');
+      });
     });
 
     document.getElementById('adminRefreshBtn').addEventListener('click', refreshAll);
