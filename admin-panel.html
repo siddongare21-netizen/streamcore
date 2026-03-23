@@ -610,10 +610,53 @@ or any stock notes you want to save"></textarea>
       renderDeliveredOrders();
     }
 
+    async function syncUserOrderSummary(uid) {
+      if (!uid) return;
+      const userRef = doc(db, 'users', uid);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) return;
+
+      const orderSnap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
+      const summary = orderSnap.docs.reduce((acc, docSnap) => {
+        const order = docSnap.data();
+        acc.orders += 1;
+        acc.totalSpent += Number(order.amount || 0);
+        return acc;
+      }, { orders: 0, totalSpent: 0 });
+
+      await setDoc(userRef, {
+        orders: summary.orders,
+        totalSpent: summary.totalSpent
+      }, { merge: true });
+    }
+
     async function loadUsers() {
-      const snap = await getDocs(collection(db, 'users'));
-      state.users = snap.docs
-        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+      const [userSnap, orderSnap] = await Promise.all([
+        getDocs(collection(db, 'users')),
+        getDocs(collection(db, 'orders'))
+      ]);
+      const orderSummaryByUid = {};
+
+      orderSnap.docs.forEach(docSnap => {
+        const order = docSnap.data();
+        if (!order.uid) return;
+        if (!orderSummaryByUid[order.uid]) {
+          orderSummaryByUid[order.uid] = { orders: 0, totalSpent: 0 };
+        }
+        orderSummaryByUid[order.uid].orders += 1;
+        orderSummaryByUid[order.uid].totalSpent += Number(order.amount || 0);
+      });
+
+      state.users = userSnap.docs
+        .map(docSnap => {
+          const data = { id: docSnap.id, ...docSnap.data() };
+          const summary = orderSummaryByUid[docSnap.id] || { orders: 0, totalSpent: 0 };
+          return {
+            ...data,
+            orders: summary.orders,
+            totalSpent: summary.totalSpent
+          };
+        })
         .sort((a, b) => {
           const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
           const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
@@ -709,7 +752,9 @@ or any stock notes you want to save"></textarea>
 
     async function rejectOrder() {
       if (!state.activeOrder) return;
+      const uid = state.activeOrder.uid;
       await deleteDoc(doc(db, 'orders', state.activeOrder.id));
+      await syncUserOrderSummary(uid);
       closeOrderModal();
       await refreshAll();
       showToast('Order deleted');
