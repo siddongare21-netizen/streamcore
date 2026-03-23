@@ -83,6 +83,8 @@ tr:last-child td{border-bottom:none}
 .action-row{display:flex;flex-wrap:wrap;gap:8px}
 .mini-btn{border:none;border-radius:10px;padding:8px 12px;font-size:.78rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text)}
 .mini-btn:hover{border-color:rgba(124,109,250,0.35)}
+.mini-btn.approve{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.24);color:#86efac}
+.mini-btn.reject{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.24);color:#fca5a5}
 .helper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .input,.select{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font-size:.92rem;outline:none}
 .input:focus,.select:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
@@ -147,6 +149,7 @@ tr:last-child td{border-bottom:none}
         <div class="header-actions">
           <button class="tab-btn active" data-tab="pendingPanel">Pending Orders</button>
           <button class="tab-btn" data-tab="deliveredPanel">Delivered Orders</button>
+          <button class="tab-btn" data-tab="referralPanel">Referral Approval</button>
           <button class="tab-btn" data-tab="usersPanel">Users</button>
           <button class="tab-btn" data-tab="statsPanel">Stats</button>
           <button class="tab-btn" data-tab="stockPanel">Storage Stock</button>
@@ -178,6 +181,31 @@ tr:last-child td{border-bottom:none}
           <div class="stat-chip">Delivered: <strong id="deliveredCountChip">0</strong></div>
         </div>
         <div class="list-grid" id="deliveredOrdersList"></div>
+      </section>
+
+      <section class="panel" id="referralPanel">
+        <div class="section-head">
+          <div>
+            <h2>Referral Approval</h2>
+            <p>Approve referral credits manually after a referred purchaser places an order.</p>
+          </div>
+        </div>
+        <div class="stat-line">
+          <div class="stat-chip">Pending approvals: <strong id="referralApprovalCountChip">0</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Referral User ID</th>
+                <th>Purchaser User ID</th>
+                <th>Purchaser Order ID</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="referralRequestsBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="panel" id="usersPanel">
@@ -304,7 +332,7 @@ or any stock notes you want to save"></textarea>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, deleteDoc, doc, getDoc, getDocs, increment, query, serverTimestamp, setDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const ADMIN_PASSWORD = 'tanu31102008';
     const firebaseConfig = {
@@ -336,6 +364,7 @@ or any stock notes you want to save"></textarea>
     const state = {
       pendingOrders: [],
       deliveredOrders: [],
+      referralRequests: [],
       users: [],
       metrics: null,
       stockMap: {},
@@ -363,6 +392,8 @@ or any stock notes you want to save"></textarea>
     const stockNotesInput = document.getElementById('stockNotesInput');
     const toast = document.getElementById('adminToast');
     const deliveredOrdersList = document.getElementById('deliveredOrdersList');
+    const referralRequestsBody = document.getElementById('referralRequestsBody');
+    const referralApprovalCountChip = document.getElementById('referralApprovalCountChip');
     const usersTableBody = document.getElementById('usersTableBody');
     const statsGrid = document.getElementById('statsGrid');
     const productStatsBody = document.getElementById('productStatsBody');
@@ -500,6 +531,35 @@ or any stock notes you want to save"></textarea>
       });
     }
 
+    function renderReferralRequests() {
+      referralApprovalCountChip.textContent = String(state.referralRequests.length);
+      if (!state.referralRequests.length) {
+        referralRequestsBody.innerHTML = `<tr><td colspan="4" class="empty">No referral approvals waiting right now.</td></tr>`;
+        return;
+      }
+
+      referralRequestsBody.innerHTML = state.referralRequests.map(request => `
+        <tr>
+          <td>${escapeHtml(request.referrerUserId || '—')}</td>
+          <td>${escapeHtml(request.purchaserUserId || '—')}</td>
+          <td>${escapeHtml(request.purchaserOrderId || '—')}</td>
+          <td>
+            <div class="action-row">
+              <button class="mini-btn approve" type="button" data-referral-approve="${escapeHtml(request.id)}">Approve and Provide Credit</button>
+              <button class="mini-btn reject" type="button" data-referral-reject="${escapeHtml(request.id)}">Delete and Reject</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      referralRequestsBody.querySelectorAll('[data-referral-approve]').forEach(btn => {
+        btn.addEventListener('click', () => approveReferralRequest(btn.dataset.referralApprove));
+      });
+      referralRequestsBody.querySelectorAll('[data-referral-reject]').forEach(btn => {
+        btn.addEventListener('click', () => rejectReferralRequest(btn.dataset.referralReject));
+      });
+    }
+
     function renderUsers() {
       if (!state.users.length) {
         usersTableBody.innerHTML = `<tr><td colspan="6" class="empty">No users found.</td></tr>`;
@@ -610,6 +670,18 @@ or any stock notes you want to save"></textarea>
       renderDeliveredOrders();
     }
 
+    async function loadReferralRequests() {
+      const snap = await getDocs(query(collection(db, 'referralApprovals'), where('status', '==', 'pending')));
+      state.referralRequests = snap.docs
+        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+        .sort((a, b) => {
+          const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return bTime - aTime;
+        });
+      renderReferralRequests();
+    }
+
     async function syncUserOrderSummary(uid) {
       if (!uid) return;
       const userRef = doc(db, 'users', uid);
@@ -701,7 +773,7 @@ or any stock notes you want to save"></textarea>
     }
 
     async function refreshAll() {
-      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadStockMap(), loadUsers()]);
+      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadUsers()]);
       await loadStats();
     }
 
@@ -758,6 +830,64 @@ or any stock notes you want to save"></textarea>
       closeOrderModal();
       await refreshAll();
       showToast('Order deleted');
+    }
+
+    async function approveReferralRequest(requestId) {
+      const request = state.referralRequests.find(item => item.id === requestId);
+      if (!request) return;
+
+      const creditAmount = Number(request.creditAmount || 15);
+      await setDoc(doc(db, 'users', request.referrerUserId), {
+        walletCredit: increment(creditAmount),
+        lifetimeReferralCredit: increment(creditAmount),
+        referralOrderCount: increment(1)
+      }, { merge: true });
+
+      await setDoc(doc(db, 'users', request.purchaserUserId), {
+        referralRewardGranted: true,
+        referralRewardPending: false,
+        referralRewardRejected: false,
+        referralApprovalRequestId: ''
+      }, { merge: true });
+
+      await setDoc(doc(db, 'orders', request.purchaserOrderId), {
+        referralCreditAwarded: true,
+        referralCreditAmount: creditAmount,
+        referralApprovalStatus: 'approved',
+        referralApprovalRequestId: request.id,
+        referralApprovedAt: serverTimestamp()
+      }, { merge: true });
+
+      await setDoc(doc(db, 'referralApprovals', request.id), {
+        status: 'approved',
+        approvedAt: serverTimestamp()
+      }, { merge: true });
+
+      await refreshAll();
+      showToast('Referral credit approved');
+    }
+
+    async function rejectReferralRequest(requestId) {
+      const request = state.referralRequests.find(item => item.id === requestId);
+      if (!request) return;
+
+      await setDoc(doc(db, 'users', request.purchaserUserId), {
+        referralRewardPending: false,
+        referralRewardRejected: true,
+        referralApprovalRequestId: ''
+      }, { merge: true });
+
+      await setDoc(doc(db, 'orders', request.purchaserOrderId), {
+        referralCreditAwarded: false,
+        referralCreditAmount: 0,
+        referralApprovalStatus: 'rejected',
+        referralApprovalRequestId: '',
+        referralApprovedAt: null
+      }, { merge: true });
+
+      await deleteDoc(doc(db, 'referralApprovals', request.id));
+      await refreshAll();
+      showToast('Referral request rejected');
     }
 
     document.getElementById('adminUnlockBtn').addEventListener('click', async () => {

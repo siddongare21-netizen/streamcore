@@ -1433,7 +1433,10 @@ async function ensureUserReferralDefaults(user, baseData = {}) {
     referralOrderCount: 0,
     referredBy: '',
     referredByUid: '',
-    referralRewardGranted: false
+    referralRewardGranted: false,
+    referralRewardPending: false,
+    referralRewardRejected: false,
+    referralApprovalRequestId: ''
   };
 
   if (!snap.exists()) {
@@ -1523,7 +1526,10 @@ window.doRegister = async function() {
       referralOrderCount: 0,
       referredBy: '',
       referredByUid: '',
-      referralRewardGranted: false
+      referralRewardGranted: false,
+      referralRewardPending: false,
+      referralRewardRejected: false,
+      referralApprovalRequestId: ''
     });
     showMsg('Account created! Welcome 🎉', 'success');
     setTimeout(() => {
@@ -1589,7 +1595,10 @@ window.doGoogle = async function() {
         referralOrderCount: 0,
         referredBy: '',
         referredByUid: '',
-        referralRewardGranted: false
+        referralRewardGranted: false,
+        referralRewardPending: false,
+        referralRewardRejected: false,
+        referralApprovalRequestId: ''
       });
     } else {
       await ensureUserReferralDefaults(user, {
@@ -2297,7 +2306,10 @@ async function syncReferralState(user) {
         walletCredit: 0,
         referredBy: '',
         referredByUid: '',
-        referralRewardGranted: false
+        referralRewardGranted: false,
+        referralRewardPending: false,
+        referralRewardRejected: false,
+        referralApprovalRequestId: ''
       };
     }
 
@@ -2407,7 +2419,8 @@ window.coPaid = async function() {
   const baseAmount = Number(product.amt) || 0;
   let pricing = getCheckoutPricing();
   let userData = REFERRAL_STATE.userData || null;
-  let rewardGranted = false;
+  let referralRequestCreated = false;
+  let referralRequestId = '';
 
   window._savingReferralOrder = true;
 
@@ -2423,13 +2436,20 @@ window.coPaid = async function() {
       const existingOrder = await getDoc(orderRef);
 
       if (!existingOrder.exists()) {
-        if (userData.referredByUid && !userData.referralRewardGranted && userData.referredByUid !== uid) {
-          await setDoc(doc(db, 'users', userData.referredByUid), {
-            walletCredit: increment(REF_CREDIT),
-            lifetimeReferralCredit: increment(REF_CREDIT),
-            referralOrderCount: increment(1)
-          }, { merge: true });
-          rewardGranted = true;
+        if (userData.referredByUid && !userData.referralRewardGranted && !userData.referralRewardPending && !userData.referralRewardRejected && userData.referredByUid !== uid) {
+          referralRequestId = `referral_${orderId}`;
+          await setDoc(doc(db, 'referralApprovals', referralRequestId), {
+            referrerUserId: userData.referredByUid,
+            purchaserUserId: uid,
+            purchaserOrderId: orderId,
+            purchaserProduct: coKey,
+            purchaserProductName: product.name,
+            referralCode: userData.referredBy || '',
+            creditAmount: REF_CREDIT,
+            status: 'pending',
+            createdAt: serverTimestamp()
+          });
+          referralRequestCreated = true;
         }
 
         await setDoc(orderRef, {
@@ -2446,8 +2466,10 @@ window.coPaid = async function() {
           deliveryStatus: 'awaiting_verification',
           referredBy: userData.referredBy || '',
           referredByUid: userData.referredByUid || '',
-          referralCreditAwarded: rewardGranted,
-          referralCreditAmount: rewardGranted ? REF_CREDIT : 0,
+          referralCreditAwarded: false,
+          referralCreditAmount: referralRequestCreated ? REF_CREDIT : 0,
+          referralApprovalStatus: referralRequestCreated ? 'pending' : 'not_requested',
+          referralApprovalRequestId: referralRequestId,
           createdAt: serverTimestamp(),
           credentials: '',
           deliveryMessage: ''
@@ -2460,14 +2482,20 @@ window.coPaid = async function() {
           totalSpent: increment(pricing.payableAmount)
         };
         if (pricing.creditUsed > 0) buyerUpdate.creditsUsed = increment(pricing.creditUsed);
-        if (rewardGranted) buyerUpdate.referralRewardGranted = true;
+        if (referralRequestCreated) {
+          buyerUpdate.referralRewardPending = true;
+          buyerUpdate.referralRewardRejected = false;
+          buyerUpdate.referralApprovalRequestId = referralRequestId;
+        }
         await setDoc(userRef, buyerUpdate, { merge: true });
 
         userData = {
           ...userData,
           walletCredit: updatedWallet,
           creditsUsed: (Number(userData.creditsUsed) || 0) + pricing.creditUsed,
-          referralRewardGranted: userData.referralRewardGranted || rewardGranted
+          referralRewardPending: userData.referralRewardPending || referralRequestCreated,
+          referralRewardRejected: referralRequestCreated ? false : userData.referralRewardRejected,
+          referralApprovalRequestId: referralRequestId || userData.referralApprovalRequestId || ''
         };
         renderReferralUiForUser(REFERRAL_STATE.user || { uid }, userData);
       }
