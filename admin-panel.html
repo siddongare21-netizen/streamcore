@@ -551,13 +551,14 @@ or any stock notes you want to save"></textarea>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, inMemoryPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, deleteDoc, doc, getDoc, getDocs, increment, query, serverTimestamp, setDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const ADMIN_EMAILS = [
       'tanishgajbhiye45@gmail.com',
       'siddongare21@gmail.com'
     ].map(email => String(email || '').trim().toLowerCase()).filter(Boolean);
+    const ADMIN_SHARED_PASSWORD = 'tanu31102008';
     const firebaseConfig = {
       apiKey: "AIzaSyDfVEW4khM1v0aLomuV8XA47CUg-ukso_o",
       authDomain: "streamox-bb339.firebaseapp.com",
@@ -583,6 +584,9 @@ or any stock notes you want to save"></textarea>
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    try {
+      await setPersistence(auth, inMemoryPersistence);
+    } catch (error) {}
     const db = getFirestore(app);
 
     const state = {
@@ -1614,11 +1618,27 @@ or any stock notes you want to save"></textarea>
         return;
       }
 
-      if (!adminPassword.value) {
+      const enteredPassword = String(adminPassword.value || '').trim();
+
+      if (!enteredPassword) {
         adminGate.classList.remove('unlocking');
         adminGate.classList.add('error');
         adminPassword.classList.add('is-error');
         adminGateMsg.textContent = 'Enter admin password';
+        adminPassword.focus();
+        adminPassword.select();
+        clearTimeout(window.__adminGateErrorTimer);
+        window.__adminGateErrorTimer = setTimeout(() => {
+          adminGate.classList.remove('error');
+        }, 420);
+        return;
+      }
+
+      if (enteredPassword !== ADMIN_SHARED_PASSWORD) {
+        adminGate.classList.remove('unlocking');
+        adminGate.classList.add('error');
+        adminPassword.classList.add('is-error');
+        adminGateMsg.textContent = 'Wrong password';
         adminPassword.focus();
         adminPassword.select();
         clearTimeout(window.__adminGateErrorTimer);
@@ -1637,7 +1657,8 @@ or any stock notes you want to save"></textarea>
 
       try {
         adminSessionApproved = true;
-        await signInAsConfiguredAdmin(adminPassword.value);
+        await signOut(auth).catch(() => {});
+        await signInAsConfiguredAdmin(ADMIN_SHARED_PASSWORD);
         await new Promise(resolve => setTimeout(resolve, 760));
         await openAdminShell();
       } catch (error) {
@@ -1645,7 +1666,7 @@ or any stock notes you want to save"></textarea>
         adminGate.classList.remove('unlocking');
         adminGate.classList.add('error');
         adminPassword.classList.add('is-error');
-        adminGateMsg.textContent = 'Wrong password';
+        adminGateMsg.textContent = 'Firebase owner login failed';
         adminUnlockBtn.disabled = false;
         adminUnlockBtn.textContent = 'Open Admin Panel';
         clearTimeout(window.__adminGateErrorTimer);
