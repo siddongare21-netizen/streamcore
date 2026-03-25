@@ -190,6 +190,11 @@ tr:last-child td{border-bottom:none}
 .console-run-btn{min-width:124px;background:linear-gradient(135deg,#4fd1c5,#7c6dfa);border:none;color:#effffb;box-shadow:0 14px 28px rgba(79,209,197,0.16)}
 .console-run-btn:hover{transform:translateY(-1px);box-shadow:0 18px 30px rgba(79,209,197,0.2)}
 .helper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.notes-shell{display:grid;gap:16px}
+.notes-meta{display:flex;flex-wrap:wrap;gap:10px}
+.notes-meta-chip{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:.8rem;color:var(--muted)}
+.notes-meta-chip strong{color:var(--text);font-weight:700}
+.notes-textarea{min-height:360px}
 .input,.select{width:100%;background:#0a0f1d;border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:var(--text);padding:14px;font-size:.92rem;outline:none}
 .input:focus,.select:focus{border-color:rgba(124,109,250,0.45);box-shadow:0 0 0 3px rgba(124,109,250,0.1)}
 .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -296,6 +301,7 @@ tr:last-child td{border-bottom:none}
       <div class="gate-kicker">Exclusive Login Page</div>
       <h1 class="gate-title">ADMIN PANEL</h1>
       <p class="gate-sub"></p>
+      <input class="gate-input" id="adminEmail" type="email" placeholder="Enter owner email" autocomplete="username" />
       <input class="gate-input" id="adminPassword" type="password" placeholder="Enter password" />
       <button class="gate-btn" id="adminUnlockBtn">Open Admin Panel</button>
       <div class="gate-msg" id="adminGateMsg"></div>
@@ -317,6 +323,7 @@ tr:last-child td{border-bottom:none}
           <button class="tab-btn" data-tab="usersPanel">Users</button>
           <button class="tab-btn" data-tab="statsPanel">Stats</button>
           <button class="tab-btn" data-tab="stockPanel">Storage Stock</button>
+          <button class="tab-btn" data-tab="notesPanel">Notes</button>
           <button class="ghost-btn" id="adminRefreshBtn">Refresh</button>
         </div>
       </div>
@@ -484,6 +491,30 @@ tr:last-child td{border-bottom:none}
         </div>
         <div class="list-grid" id="stockProductsList"></div>
       </section>
+
+      <section class="panel" id="notesPanel">
+        <div class="section-head">
+          <div>
+            <h2>Shared Notes</h2>
+            <p>One shared note pad for both owners. Anything saved here is visible to the other owner too.</p>
+          </div>
+        </div>
+        <div class="notes-shell">
+          <div class="notes-meta">
+            <div class="notes-meta-chip">Last updated: <strong id="sharedNotesUpdatedAt">Not saved yet</strong></div>
+            <div class="notes-meta-chip">Updated by: <strong id="sharedNotesUpdatedBy">No one yet</strong></div>
+          </div>
+          <div class="editor-card">
+            <label class="label" for="sharedAdminNotesInput">Owner notes</label>
+            <textarea class="textarea notes-textarea" id="sharedAdminNotesInput" placeholder="Write anything both owners should remember here..."></textarea>
+            <p class="helper">Use this for reminders, payment notes, stock reminders, or anything you want both owners to see.</p>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" id="clearSharedNotesBtn">Clear</button>
+            <button class="save-btn" type="button" id="saveSharedNotesBtn">Save Shared Notes</button>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -581,6 +612,7 @@ or any stock notes you want to save"></textarea>
       crunchyroll: 'Crunchyroll Premium',
       combo: 'Mega Combo Pack'
     };
+    const SHARED_ADMIN_NOTES_DOC = '__admin_shared_notes__';
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -596,6 +628,7 @@ or any stock notes you want to save"></textarea>
       users: [],
       metrics: null,
       stockMap: {},
+      sharedNotes: null,
       activeOrder: null,
       activeStockKey: null,
       pendingSearchTerm: '',
@@ -607,6 +640,7 @@ or any stock notes you want to save"></textarea>
 
     const adminGate = document.getElementById('adminGate');
     const adminApp = document.getElementById('adminApp');
+    const adminEmailInput = document.getElementById('adminEmail');
     const adminPassword = document.getElementById('adminPassword');
     const adminGateMsg = document.getElementById('adminGateMsg');
     const adminUnlockBtn = document.getElementById('adminUnlockBtn');
@@ -640,6 +674,11 @@ or any stock notes you want to save"></textarea>
     const usersTableBody = document.getElementById('usersTableBody');
     const statsGrid = document.getElementById('statsGrid');
     const productStatsBody = document.getElementById('productStatsBody');
+    const sharedAdminNotesInput = document.getElementById('sharedAdminNotesInput');
+    const sharedNotesUpdatedAt = document.getElementById('sharedNotesUpdatedAt');
+    const sharedNotesUpdatedBy = document.getElementById('sharedNotesUpdatedBy');
+    const saveSharedNotesBtn = document.getElementById('saveSharedNotesBtn');
+    const clearSharedNotesBtn = document.getElementById('clearSharedNotesBtn');
 
     function showToast(message) {
       toast.textContent = message;
@@ -656,16 +695,12 @@ or any stock notes you want to save"></textarea>
       return !!user && !!user.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
     }
 
-    async function signInAsConfiguredAdmin(password) {
-      let lastError = null;
-      for (const email of ADMIN_EMAILS) {
-        try {
-          return await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-          lastError = error;
-        }
+    async function signInAsConfiguredAdmin(email, password) {
+      const normalizedEmail = String(email || '').trim().toLowerCase();
+      if (!ADMIN_EMAILS.includes(normalizedEmail)) {
+        throw new Error('Use one of the allowed owner emails.');
       }
-      throw lastError || new Error('No admin email is configured.');
+      return signInWithEmailAndPassword(auth, normalizedEmail, password);
     }
 
     function closeAdminShell() {
@@ -673,6 +708,8 @@ or any stock notes you want to save"></textarea>
       adminGate.classList.remove('hidden');
       adminGate.classList.remove('unlocking', 'error');
       adminPassword.classList.remove('is-error');
+      adminEmailInput?.classList.remove('is-error');
+      if (adminEmailInput) adminEmailInput.value = '';
       adminPassword.value = '';
       adminGateMsg.textContent = '';
       document.body.classList.remove('admin-live');
@@ -687,6 +724,7 @@ or any stock notes you want to save"></textarea>
       document.body.classList.add('admin-live');
       await refreshAll();
       seedConsole();
+      if (adminEmailInput) adminEmailInput.value = '';
       adminPassword.value = '';
       adminUnlockBtn.disabled = false;
       adminUnlockBtn.textContent = 'Open Admin Panel';
@@ -1327,6 +1365,13 @@ or any stock notes you want to save"></textarea>
       });
     }
 
+    function renderSharedNotes() {
+      const shared = state.sharedNotes || {};
+      if (sharedAdminNotesInput) sharedAdminNotesInput.value = shared.notes || '';
+      if (sharedNotesUpdatedAt) sharedNotesUpdatedAt.textContent = shared.updatedAt ? formatDate(shared.updatedAt) : 'Not saved yet';
+      if (sharedNotesUpdatedBy) sharedNotesUpdatedBy.textContent = shared.updatedBy || 'No one yet';
+    }
+
     async function loadStockMap() {
       const snap = await getDocs(collection(db, 'stock'));
       const stockMap = {};
@@ -1335,6 +1380,12 @@ or any stock notes you want to save"></textarea>
       });
       state.stockMap = stockMap;
       renderStockProducts();
+    }
+
+    async function loadSharedNotes() {
+      const notesSnap = await getDoc(doc(db, 'stock', SHARED_ADMIN_NOTES_DOC));
+      state.sharedNotes = notesSnap.exists() ? { id: notesSnap.id, ...notesSnap.data() } : null;
+      renderSharedNotes();
     }
 
     async function loadPendingOrders() {
@@ -1464,7 +1515,7 @@ or any stock notes you want to save"></textarea>
     }
 
     async function refreshAll() {
-      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadUsers()]);
+      await Promise.all([loadPendingOrders(), loadDeliveredOrders(), loadReferralRequests(), loadStockMap(), loadSharedNotes(), loadUsers()]);
       await loadStats();
     }
 
@@ -1479,6 +1530,17 @@ or any stock notes you want to save"></textarea>
       await loadStockMap();
       closeStockModal();
       showToast('Stock notes saved');
+    }
+
+    async function saveSharedNotes() {
+      const notes = String(sharedAdminNotesInput?.value || '');
+      await setDoc(doc(db, 'stock', SHARED_ADMIN_NOTES_DOC), {
+        notes,
+        updatedAt: serverTimestamp(),
+        updatedBy: auth.currentUser?.email || 'owner'
+      }, { merge: true });
+      await loadSharedNotes();
+      showToast('Shared notes saved');
     }
 
     async function acceptOrder() {
@@ -1618,7 +1680,36 @@ or any stock notes you want to save"></textarea>
         return;
       }
 
+      const enteredEmail = String(adminEmailInput?.value || '').trim().toLowerCase();
       const enteredPassword = String(adminPassword.value || '').trim();
+
+      if (!enteredEmail) {
+        adminGate.classList.remove('unlocking');
+        adminGate.classList.add('error');
+        adminEmailInput?.classList.add('is-error');
+        adminGateMsg.textContent = 'Enter owner email';
+        adminEmailInput?.focus();
+        adminEmailInput?.select();
+        clearTimeout(window.__adminGateErrorTimer);
+        window.__adminGateErrorTimer = setTimeout(() => {
+          adminGate.classList.remove('error');
+        }, 420);
+        return;
+      }
+
+      if (!ADMIN_EMAILS.includes(enteredEmail)) {
+        adminGate.classList.remove('unlocking');
+        adminGate.classList.add('error');
+        adminEmailInput?.classList.add('is-error');
+        adminGateMsg.textContent = 'Only owner emails can enter';
+        adminEmailInput?.focus();
+        adminEmailInput?.select();
+        clearTimeout(window.__adminGateErrorTimer);
+        window.__adminGateErrorTimer = setTimeout(() => {
+          adminGate.classList.remove('error');
+        }, 420);
+        return;
+      }
 
       if (!enteredPassword) {
         adminGate.classList.remove('unlocking');
@@ -1649,6 +1740,7 @@ or any stock notes you want to save"></textarea>
       }
 
       adminGate.classList.remove('error');
+      adminEmailInput?.classList.remove('is-error');
       adminPassword.classList.remove('is-error');
       adminGate.classList.add('unlocking');
       adminGateMsg.textContent = 'Access granted';
@@ -1658,13 +1750,14 @@ or any stock notes you want to save"></textarea>
       try {
         adminSessionApproved = true;
         await signOut(auth).catch(() => {});
-        await signInAsConfiguredAdmin(ADMIN_SHARED_PASSWORD);
+        await signInAsConfiguredAdmin(enteredEmail, ADMIN_SHARED_PASSWORD);
         await new Promise(resolve => setTimeout(resolve, 760));
         await openAdminShell();
       } catch (error) {
         adminSessionApproved = false;
         adminGate.classList.remove('unlocking');
         adminGate.classList.add('error');
+        adminEmailInput?.classList.add('is-error');
         adminPassword.classList.add('is-error');
         adminGateMsg.textContent = 'Firebase owner login failed';
         adminUnlockBtn.disabled = false;
@@ -1676,10 +1769,22 @@ or any stock notes you want to save"></textarea>
       }
     });
 
-    adminPassword.addEventListener('input', () => {
+    adminEmailInput?.addEventListener('input', () => {
       adminGate.classList.remove('error');
+      adminEmailInput.classList.remove('is-error');
       adminPassword.classList.remove('is-error');
       adminGateMsg.textContent = '';
+    });
+
+    adminPassword.addEventListener('input', () => {
+      adminGate.classList.remove('error');
+      adminEmailInput?.classList.remove('is-error');
+      adminPassword.classList.remove('is-error');
+      adminGateMsg.textContent = '';
+    });
+
+    adminEmailInput?.addEventListener('keydown', event => {
+      if (event.key === 'Enter') adminUnlockBtn.click();
     });
 
     adminPassword.addEventListener('keydown', event => {
@@ -1756,6 +1861,10 @@ or any stock notes you want to save"></textarea>
     document.getElementById('rejectOrderBtn').addEventListener('click', rejectOrder);
     document.getElementById('saveStockBtn').addEventListener('click', saveStock);
     document.getElementById('clearStockBtn').addEventListener('click', () => { stockNotesInput.value = ''; });
+    saveSharedNotesBtn?.addEventListener('click', saveSharedNotes);
+    clearSharedNotesBtn?.addEventListener('click', () => {
+      if (sharedAdminNotesInput) sharedAdminNotesInput.value = '';
+    });
     document.getElementById('useStockNotesBtn').addEventListener('click', () => {
       orderCredentialInput.value = orderStockPreview.value;
     });
