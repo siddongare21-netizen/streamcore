@@ -597,7 +597,8 @@ or any stock notes you want to save"></textarea>
       'siddongare21@gmail.com'
     ].map(email => String(email || '').trim().toLowerCase()).filter(Boolean);
     const ADMIN_GOOGLE_EMAILS = [
-      'tanishgajbhiye45@gmail.com'
+      'tanishgajbhiye45@gmail.com',
+      'siddongare21@gmail.com'
     ].map(email => String(email || '').trim().toLowerCase()).filter(Boolean);
     const ADMIN_PASSWORD_EMAILS = ADMIN_EMAILS.filter(email => !ADMIN_GOOGLE_EMAILS.includes(email));
     const ADMIN_SHARED_PASSWORD = 'tanu31102008';
@@ -722,7 +723,7 @@ or any stock notes you want to save"></textarea>
       const normalizedEmail = String(result?.user?.email || '').trim().toLowerCase();
       if (!ADMIN_GOOGLE_EMAILS.includes(normalizedEmail)) {
         await signOut(auth).catch(() => {});
-        throw new Error('Only the Google owner account can enter here.');
+        throw new Error('Only the two owner Google accounts can enter here.');
       }
       return result;
     }
