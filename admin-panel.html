@@ -59,6 +59,11 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;background:
 .gate-btn::before{content:"";position:absolute;inset:-30% auto -30% -40%;width:42%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent);transform:translateX(-180%) skewX(-18deg);animation:buttonSweep 3.8s ease-in-out infinite}
 .gate-btn:hover{transform:translateY(-2px);box-shadow:0 20px 44px rgba(92,76,232,0.34)}
 .gate-btn:disabled{cursor:wait;filter:saturate(1.15)}
+.gate-alt-btn{margin-top:10px;width:100%;border:none;border-radius:14px;padding:14px 16px;font-size:.95rem;font-weight:700;color:#edf7ff;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);cursor:pointer;transition:transform .24s ease,border-color .24s ease,background .24s ease,box-shadow .24s ease}
+.gate-alt-btn:hover{transform:translateY(-1px);border-color:rgba(79,209,197,0.28);background:rgba(79,209,197,0.08);box-shadow:0 14px 28px rgba(79,209,197,0.1)}
+.gate-alt-btn:disabled{cursor:wait;opacity:.8}
+.gate-divider{display:flex;align-items:center;gap:12px;margin-top:12px;color:var(--muted);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}
+.gate-divider::before,.gate-divider::after{content:"";flex:1;height:1px;background:rgba(255,255,255,0.08)}
 .gate-msg{min-height:22px;margin-top:12px;font-size:.88rem;color:#fca5a5;letter-spacing:.08em}
 #adminGate.unlocking .gate-card{animation:gateUnlock .82s ease both}
 #adminGate.unlocking .gate-btn{background:linear-gradient(135deg,#3dd6c2,#16a34a);box-shadow:0 0 40px rgba(61,214,194,0.3)}
@@ -304,6 +309,8 @@ tr:last-child td{border-bottom:none}
       <input class="gate-input" id="adminEmail" type="email" placeholder="Enter owner email" autocomplete="username" />
       <input class="gate-input" id="adminPassword" type="password" placeholder="Enter password" />
       <button class="gate-btn" id="adminUnlockBtn">Open Admin Panel</button>
+      <div class="gate-divider">or</div>
+      <button class="gate-alt-btn" id="adminGoogleBtn" type="button">Continue with Google</button>
       <div class="gate-msg" id="adminGateMsg"></div>
     </div>
   </div>
@@ -582,13 +589,17 @@ or any stock notes you want to save"></textarea>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, inMemoryPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, inMemoryPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, deleteDoc, doc, getDoc, getDocs, increment, query, serverTimestamp, setDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const ADMIN_EMAILS = [
       'tanishgajbhiye45@gmail.com',
       'siddongare21@gmail.com'
     ].map(email => String(email || '').trim().toLowerCase()).filter(Boolean);
+    const ADMIN_GOOGLE_EMAILS = [
+      'tanishgajbhiye45@gmail.com'
+    ].map(email => String(email || '').trim().toLowerCase()).filter(Boolean);
+    const ADMIN_PASSWORD_EMAILS = ADMIN_EMAILS.filter(email => !ADMIN_GOOGLE_EMAILS.includes(email));
     const ADMIN_SHARED_PASSWORD = 'tanu31102008';
     const firebaseConfig = {
       apiKey: "AIzaSyDfVEW4khM1v0aLomuV8XA47CUg-ukso_o",
@@ -644,6 +655,7 @@ or any stock notes you want to save"></textarea>
     const adminPassword = document.getElementById('adminPassword');
     const adminGateMsg = document.getElementById('adminGateMsg');
     const adminUnlockBtn = document.getElementById('adminUnlockBtn');
+    const adminGoogleBtn = document.getElementById('adminGoogleBtn');
     const pendingOrdersList = document.getElementById('pendingOrdersList');
     const pendingOrderSearch = document.getElementById('pendingOrderSearch');
     const clearPendingSearch = document.getElementById('clearPendingSearch');
@@ -697,10 +709,22 @@ or any stock notes you want to save"></textarea>
 
     async function signInAsConfiguredAdmin(email, password) {
       const normalizedEmail = String(email || '').trim().toLowerCase();
-      if (!ADMIN_EMAILS.includes(normalizedEmail)) {
+      if (!ADMIN_PASSWORD_EMAILS.includes(normalizedEmail)) {
         throw new Error('Use one of the allowed owner emails.');
       }
       return signInWithEmailAndPassword(auth, normalizedEmail, password);
+    }
+
+    async function signInWithOwnerGoogle() {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      const normalizedEmail = String(result?.user?.email || '').trim().toLowerCase();
+      if (!ADMIN_GOOGLE_EMAILS.includes(normalizedEmail)) {
+        await signOut(auth).catch(() => {});
+        throw new Error('Only the Google owner account can enter here.');
+      }
+      return result;
     }
 
     function closeAdminShell() {
@@ -715,6 +739,10 @@ or any stock notes you want to save"></textarea>
       document.body.classList.remove('admin-live');
       adminUnlockBtn.disabled = false;
       adminUnlockBtn.textContent = 'Open Admin Panel';
+      if (adminGoogleBtn) {
+        adminGoogleBtn.disabled = false;
+        adminGoogleBtn.textContent = 'Continue with Google';
+      }
     }
 
     async function openAdminShell() {
@@ -728,6 +756,10 @@ or any stock notes you want to save"></textarea>
       adminPassword.value = '';
       adminUnlockBtn.disabled = false;
       adminUnlockBtn.textContent = 'Open Admin Panel';
+      if (adminGoogleBtn) {
+        adminGoogleBtn.disabled = false;
+        adminGoogleBtn.textContent = 'Continue with Google';
+      }
     }
 
     function escapeHtml(value) {
@@ -1711,6 +1743,20 @@ or any stock notes you want to save"></textarea>
         return;
       }
 
+      if (ADMIN_GOOGLE_EMAILS.includes(enteredEmail)) {
+        adminGate.classList.remove('unlocking');
+        adminGate.classList.add('error');
+        adminEmailInput?.classList.add('is-error');
+        adminGateMsg.textContent = 'Use Google login for this owner email';
+        adminEmailInput?.focus();
+        adminEmailInput?.select();
+        clearTimeout(window.__adminGateErrorTimer);
+        window.__adminGateErrorTimer = setTimeout(() => {
+          adminGate.classList.remove('error');
+        }, 420);
+        return;
+      }
+
       if (!enteredPassword) {
         adminGate.classList.remove('unlocking');
         adminGate.classList.add('error');
@@ -1766,6 +1812,39 @@ or any stock notes you want to save"></textarea>
         window.__adminGateErrorTimer = setTimeout(() => {
           adminGate.classList.remove('error');
         }, 420);
+      }
+    });
+
+    adminGoogleBtn?.addEventListener('click', async () => {
+      if (adminGoogleBtn.disabled) return;
+      adminGate.classList.remove('error');
+      adminEmailInput?.classList.remove('is-error');
+      adminPassword.classList.remove('is-error');
+      adminGate.classList.add('unlocking');
+      adminGateMsg.textContent = 'Waiting for Google owner sign-in';
+      adminGoogleBtn.disabled = true;
+      adminGoogleBtn.textContent = 'Opening Google...';
+      adminUnlockBtn.disabled = true;
+
+      try {
+        adminSessionApproved = true;
+        await signOut(auth).catch(() => {});
+        await signInWithOwnerGoogle();
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await openAdminShell();
+      } catch (error) {
+        adminSessionApproved = false;
+        adminGate.classList.remove('unlocking');
+        adminGate.classList.add('error');
+        adminGateMsg.textContent = error?.message || 'Google owner login failed';
+        adminGoogleBtn.disabled = false;
+        adminGoogleBtn.textContent = 'Continue with Google';
+        adminUnlockBtn.disabled = false;
+        adminUnlockBtn.textContent = 'Open Admin Panel';
+        clearTimeout(window.__adminGateErrorTimer);
+        window.__adminGateErrorTimer = setTimeout(() => {
+          adminGate.classList.remove('error');
+        }, 520);
       }
     });
 
